@@ -1,0 +1,16 @@
+{
+  "created_at": "2026-08-01T15:05:48.896484+00:00",
+  "status": "superseded_ambiguous_static_label",
+  "superseded_by": "../figure-1-replay-semantics-v2",
+  "single_variable_design": true,
+  "events": "UNRELEASED_INPUT/cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b8-v1",
+  "rho": 0.4,
+  "capacity_blocks": 2458,
+  "cache_scope": "per_layer",
+  "tie_seed": 20260729,
+  "only_changed_variable": "replay semantics",
+  "artifacts": [
+    "figure-1-data.csv",
+    "figure-1.svg"
+  ]
+}

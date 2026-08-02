@@ -1,0 +1,39 @@
+---
+title: "When Does Trace-Driven Evaluation Mislead MoE Expert Caching?"
+subtitle: "Replay Semantics, Workload Contamination, and Operating Regimes"
+author:
+  - |
+    Yu Zhang  
+    China National Chemical Equipment Co. Ltd.
+date: "2026-08-02"
+documentclass: article
+classoption:
+  - 10pt
+geometry:
+  - margin=1in
+papersize: letter
+fontsize: 10pt
+linestretch: 1.0
+colorlinks: true
+linkcolor: blue
+urlcolor: blue
+citecolor: blue
+link-citations: true
+bibliography: paper/references.bib
+reference-section-title: References
+header-includes:
+  - |
+    \usepackage{booktabs}
+    \usepackage{longtable}
+    \usepackage{array}
+    \usepackage{microtype}
+    \usepackage{amsmath,amssymb}
+    \usepackage{graphicx}
+    \usepackage{xcolor}
+    \usepackage{float}
+    \usepackage{enumitem}
+    \usepackage{pdflscape}
+    \setlist{nosep}
+    \emergencystretch=8em
+    \sloppy
+---

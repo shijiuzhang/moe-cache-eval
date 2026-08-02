@@ -1,0 +1,40 @@
+{
+  "created_at": "2026-08-01T15:03:43.600813+00:00",
+  "status": "complete",
+  "kind": "external_route_contamination_validity_check",
+  "source": {
+    "dataset": "allenai/analysis_mixtral",
+    "split_file": "c4_results.jsonl",
+    "url": "https://huggingface.co/datasets/allenai/analysis_mixtral/resolve/main/c4_results.jsonl",
+    "local_path": "UNRELEASED_INPUT/allenai-analysis-mixtral/c4_results.jsonl",
+    "local_bytes": 21565440,
+    "local_sha256": "f0a98cd46d1e7f55c4f0164350ea83e317c0387f38c2a5890f7081fb41676525",
+    "download_note": "Prefix download of the public JSONL; only complete JSON rows are audited. This is not represented as the full dataset."
+  },
+  "interpretation_boundary": "The public C4 artifact has no workload-category labels or matched template arm. It tests diagnostic portability and false-positive behavior, not replication of the internal matched-pair causal effect.",
+  "summary": {
+    "records": 48,
+    "malformed_or_partial_lines_skipped": 0,
+    "tokens_per_record_audited": 512,
+    "layers": 32,
+    "top_k": 2,
+    "unique_token_sequences": 48,
+    "pair_count": 1128,
+    "token_positional_agreement_mean": 0.006409990026595745,
+    "token_positional_agreement_p95": 0.013671875,
+    "token_5gram_jaccard_mean": 0.00010059198041105539,
+    "token_5gram_jaccard_p95": 0.0009887775966346472,
+    "expert_jaccard_mean": 0.18511849261344748,
+    "expert_jaccard_low_token_mean": 0.18511849261344748,
+    "expert_jaccard_higher_token_mean": null,
+    "higher_token_pair_count": 0,
+    "spearman_token_agreement_vs_expert_jaccard": 0.24500012585225672,
+    "spearman_p_value": 7.007084323228752e-17,
+    "contamination_flag": false
+  },
+  "artifacts": [
+    "pairwise.csv",
+    "REPORT.md",
+    "README.md"
+  ]
+}

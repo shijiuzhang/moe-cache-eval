@@ -1,0 +1,3 @@
+protocol,fit_source,deployable,quota_rule,initial_preload_counted,initial_load_blocks,miss_blocks,transferred_blocks,effective_miss_fraction
+static_same_trace,evaluation_trace_itself,False,equal_per_layer_low_index_remainder,True,2458,1723291,1725749,0.1910042084590647
+static_frozen,disjoint_discovery_trace,True,equal_per_layer_low_index_remainder,True,2458,1747500,1749958,0.19368363685947837

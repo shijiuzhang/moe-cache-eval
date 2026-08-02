@@ -1,0 +1,20 @@
+.DS_Store
+.venv/
+.cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Large or conditionally redistributable research payloads
+data/
+artifacts/*.npz
+artifacts/*.safetensors
+cache-events-*/
+routes-*/
+models/
+
+# Local build intermediates
+paper/**/*.aux
+paper/**/*.log
+

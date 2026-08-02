@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="510" viewBox="0 0 980 510">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#202124}.axis{stroke:#5f6368;stroke-width:1}.grid{stroke:#dadce0;stroke-width:1}.label{font-size:13px}.small{font-size:11px}.title{font-size:20px;font-weight:700}</style>
+<text class="title" x="95" y="28">Replay semantics selectively changes policy rankings</text>
+<line class="grid" x1="95" y1="415.0" x2="945" y2="415.0"/>
+<text class="small" x="83" y="419.0" text-anchor="end">0%</text>
+<line class="grid" x1="95" y1="355.0" x2="945" y2="355.0"/>
+<text class="small" x="83" y="359.0" text-anchor="end">5%</text>
+<line class="grid" x1="95" y1="295.0" x2="945" y2="295.0"/>
+<text class="small" x="83" y="299.0" text-anchor="end">10%</text>
+<line class="grid" x1="95" y1="235.0" x2="945" y2="235.0"/>
+<text class="small" x="83" y="239.0" text-anchor="end">15%</text>
+<line class="grid" x1="95" y1="175.0" x2="945" y2="175.0"/>
+<text class="small" x="83" y="179.0" text-anchor="end">20%</text>
+<line class="grid" x1="95" y1="115.0" x2="945" y2="115.0"/>
+<text class="small" x="83" y="119.0" text-anchor="end">25%</text>
+<line class="grid" x1="95" y1="55.0" x2="945" y2="55.0"/>
+<text class="small" x="83" y="59.0" text-anchor="end">30%</text>
+<line class="axis" x1="95" y1="55" x2="95" y2="415"/>
+<line class="axis" x1="95" y1="415" x2="945" y2="415"/>
+<rect x="124.0" y="119.9" width="39.7" height="295.1" fill="#d93025"/>
+<text class="small" x="143.8" y="114.9" text-anchor="middle">24.59</text>
+<rect x="168.0" y="183.4" width="39.7" height="231.6" fill="#188038"/>
+<text class="small" x="187.9" y="178.4" text-anchor="middle">19.30</text>
+<text class="label" x="165.8" y="439" text-anchor="middle">lru</text>
+<rect x="265.6" y="177.4" width="39.7" height="237.6" fill="#d93025"/>
+<text class="small" x="285.5" y="172.4" text-anchor="middle">19.80</text>
+<rect x="309.7" y="185.3" width="39.7" height="229.7" fill="#188038"/>
+<text class="small" x="329.5" y="180.3" text-anchor="middle">19.14</text>
+<text class="label" x="307.5" y="439" text-anchor="middle">lfu</text>
+<rect x="407.3" y="137.3" width="39.7" height="277.7" fill="#d93025"/>
+<text class="small" x="427.1" y="132.3" text-anchor="middle">23.14</text>
+<rect x="451.4" y="198.9" width="39.7" height="216.1" fill="#188038"/>
+<text class="small" x="471.2" y="193.9" text-anchor="middle">18.01</text>
+<text class="label" x="449.2" y="439" text-anchor="middle">lfru</text>
+<rect x="549.0" y="119.9" width="39.7" height="295.1" fill="#d93025"/>
+<text class="small" x="568.8" y="114.9" text-anchor="middle">24.59</text>
+<rect x="593.0" y="183.4" width="39.7" height="231.6" fill="#188038"/>
+<text class="small" x="612.9" y="178.4" text-anchor="middle">19.30</text>
+<text class="label" x="590.8" y="439" text-anchor="middle">least_stale</text>
+<rect x="690.6" y="290.7" width="39.7" height="124.3" fill="#d93025"/>
+<text class="small" x="710.5" y="285.7" text-anchor="middle">10.36</text>
+<rect x="734.7" y="295.8" width="39.7" height="119.2" fill="#188038"/>
+<text class="small" x="754.5" y="290.8" text-anchor="middle">9.93</text>
+<text class="label" x="732.5" y="439" text-anchor="middle">belady</text>
+<rect x="832.3" y="185.8" width="39.7" height="229.2" fill="#d93025"/>
+<text class="small" x="852.1" y="180.8" text-anchor="middle">19.10</text>
+<rect x="876.4" y="185.8" width="39.7" height="229.2" fill="#188038"/>
+<text class="small" x="896.2" y="180.8" text-anchor="middle">19.10</text>
+<text class="label" x="874.2" y="439" text-anchor="middle">static*</text>
+<rect x="95" y="465" width="14" height="14" fill="#d93025"/>
+<text class="label" x="116" y="476">sequential expert-ID replay</text>
+<rect x="355" y="465" width="14" height="14" fill="#188038"/>
+<text class="label" x="376" y="476">event-atomic replay</text>
+<text class="small" x="665" y="476">* same-trace diagnostic</text>
+<text class="label" transform="translate(22 235.0) rotate(-90)" text-anchor="middle">effective transfer fraction</text>
+</svg>

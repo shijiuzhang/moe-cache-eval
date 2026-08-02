@@ -1,0 +1,31 @@
+{
+  "created_at": "2026-08-01T15:04:42.926138+00:00",
+  "status": "complete",
+  "purpose": "show union/cache is necessary for regime reporting but not sufficient",
+  "controlled_invariant": "multiset of event expert sets and therefore union/cache distribution",
+  "changed_variable": "scheduler-step order and therefore temporal reuse",
+  "events": "UNRELEASED_INPUT/cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b8-v1",
+  "rho": 0.4,
+  "capacity_blocks": 2458,
+  "permutations": 20,
+  "seed": 20260801,
+  "tie_seed": 20260729,
+  "original": {
+    "condition": "original",
+    "permutation_seed": "",
+    "best_causal_policy": "lfru",
+    "best_causal_effective_miss": 0.18010819095584174,
+    "belady_effective_miss": 0.099329329409098,
+    "recoverable_gap": 0.44850187611150233,
+    "mean_union_to_capacity": 0.8236582566183166,
+    "event_union_std": 7.288097520164589
+  },
+  "permuted_gap_range": [
+    0.30791247036203384,
+    0.310631560165127
+  ],
+  "permuted_causal_miss_range": [
+    0.1915729879439557,
+    0.1917014862864267
+  ]
+}

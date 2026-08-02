@@ -1,0 +1,27 @@
+{
+  "artifact": {
+    "path": "static-protocol-comparison.csv",
+    "rows": 2,
+    "sha256": "62664fcf8df1f8a70f516668f9f4999215e0be51f0ba054199e208aed3460a20"
+  },
+  "capacity_blocks": 2458,
+  "created_at": "2026-08-02T06:53:16.981518+00:00",
+  "events": {
+    "manifest_sha256": "e170f4dfd2837e4e96312a56eaae1d0718c478ef431a3a502ee662a60849a244",
+    "root": "UNRELEASED_INPUT/cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b8-v1"
+  },
+  "logical_assignments": 9035136,
+  "paper_usage": {
+    "static_frozen": "held-out deployment-style baseline",
+    "static_same_trace": "diagnostic replay-invariance reference only"
+  },
+  "relative_frozen_vs_same_trace_transfer_penalty": 0.014028111851723429,
+  "scope": "one frozen B=8 held-out event stream; not a new hypothesis test",
+  "static_pins": {
+    "path": "UNRELEASED_INPUT/controller-probe-d1-affinity-static-pins-v1.json",
+    "sha256": "fe170949ea408da77af2f90d3179c55d3dd3358e5beaef494a81475e27f1cc90",
+    "source_event_root": "UNRELEASED_INPUT/cache-events-controller-probe-d1-affinity-matched-fcfs-w4-a24-b8-v1",
+    "source_manifest_sha256": "ac2f9fae852064e199a02a15cd95f26bf3d3f8407dd78770319a16ebcbfc6b77"
+  },
+  "status": "complete_posthoc_protocol_audit"
+}

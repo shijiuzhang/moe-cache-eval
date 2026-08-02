@@ -1,0 +1,46 @@
+{
+  "created_at": "2026-08-02T05:22:37.210523+00:00",
+  "status": "complete",
+  "kind": "external_route_contamination_synthetic_positive_control",
+  "source": {
+    "dataset": "allenai/analysis_mixtral",
+    "split_file": "c4_results.jsonl",
+    "url": "https://huggingface.co/datasets/allenai/analysis_mixtral/resolve/main/c4_results.jsonl",
+    "local_path": "UNRELEASED_INPUT/allenai-analysis-mixtral/c4_results.jsonl",
+    "local_bytes": 21565440,
+    "local_sha256": "f0a98cd46d1e7f55c4f0164350ea83e317c0387f38c2a5890f7081fb41676525",
+    "download_note": "Prefix download of the public JSONL; only complete JSON rows are audited. This is not represented as the full dataset."
+  },
+  "synthetic_transformation": {
+    "kind": "shared_token_and_route_prefix",
+    "prefix_tokens": 64,
+    "donor_record": 0,
+    "purpose": "Sensitivity positive control only; not a naturally occurring or model-generated contamination effect."
+  },
+  "interpretation_boundary": "This artifact deliberately injects an identical token-and-route prefix into public C4 records. It tests detector sensitivity to a known synthetic perturbation, not model response to a prompt template and not the magnitude of a natural contamination effect.",
+  "summary": {
+    "records": 48,
+    "malformed_or_partial_lines_skipped": 0,
+    "tokens_per_record_audited": 512,
+    "layers": 32,
+    "top_k": 2,
+    "unique_token_sequences": 48,
+    "pair_count": 1128,
+    "token_positional_agreement_mean": 0.1304974927969858,
+    "token_positional_agreement_p95": 0.13671875,
+    "token_5gram_jaccard_mean": 0.057527065234672936,
+    "token_5gram_jaccard_p95": 0.06098964326812428,
+    "expert_jaccard_mean": 0.28635732952866433,
+    "expert_jaccard_low_token_mean": null,
+    "expert_jaccard_higher_token_mean": 0.28635732952866433,
+    "higher_token_pair_count": 1128,
+    "spearman_token_agreement_vs_expert_jaccard": 0.26234582326045175,
+    "spearman_p_value": 3.2860782806564465e-19,
+    "contamination_flag": true
+  },
+  "artifacts": [
+    "pairwise.csv",
+    "REPORT.md",
+    "README.md"
+  ]
+}

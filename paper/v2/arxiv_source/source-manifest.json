@@ -1,0 +1,30 @@
+{
+  "00README.XXX": {
+    "bytes": 182,
+    "sha256": "ce5350a865e711b7301c44dba67ed8bd5e0672079e82086aa90dbac20805e14c"
+  },
+  "figures/figure1_replay_semantics.pdf": {
+    "bytes": 15533,
+    "sha256": "c422506987c7a7584d9bfeb046c1e5c796dedeb8c691c21b4e6ae649fa5fb9ec"
+  },
+  "figures/figure2_template_attribution.pdf": {
+    "bytes": 18533,
+    "sha256": "2b9c8a289fd89d70a4a9b155dc8ef97466919fc1a1a95d8a6ccdfb8cfceb99bf"
+  },
+  "figures/figure3_regime_not_sufficient.pdf": {
+    "bytes": 16098,
+    "sha256": "fa84c873f56518c4cbb1d9c84296a6e058b06bf9ff2c71cb928eab97c79a494c"
+  },
+  "figures/figure4_gap_decomposition.pdf": {
+    "bytes": 15784,
+    "sha256": "c4326d00dfbd797e5e28d75650e0d3e9645092af047ed79d792fc32ee7984c72"
+  },
+  "manuscript.tex": {
+    "bytes": 153827,
+    "sha256": "75ee7497a5484a0c3457b622d5dbb1e0aea47f2f9aa2b7ab7cc55d2144eb423b"
+  },
+  "references.bib": {
+    "bytes": 11237,
+    "sha256": "ce20664f594f13483872fa5e537ea17a703615b3c27019a34bd02a79c7d0fe54"
+  }
+}

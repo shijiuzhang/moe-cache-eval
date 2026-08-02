@@ -1,0 +1,54 @@
+{
+  "created_at": "2026-08-01T15:06:26.251036+00:00",
+  "status": "complete",
+  "method": "event-atomic replay sensitivity over frozen tie-break seeds",
+  "rho": 0.4,
+  "cache_scope": "per_layer",
+  "tie_seeds": [
+    11,
+    23,
+    47,
+    89,
+    131
+  ],
+  "event_roots": [
+    "UNRELEASED_INPUT/cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b8-v1",
+    "UNRELEASED_INPUT/cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b2-v1",
+    "UNRELEASED_INPUT/cache-events-controller-probe-d1-diverse-matched-stagger-fcfs-b8-v1",
+    "UNRELEASED_INPUT/cache-events-controller-probe-d1-single-template-matched-stagger-fcfs-b8-v1"
+  ],
+  "summary": [
+    {
+      "event_root": "cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b8-v1",
+      "num_tie_seeds": 5,
+      "gap_min": 0.44850424842485354,
+      "gap_median": 0.4485093318847383,
+      "gap_max": 0.44852017628595087,
+      "gap_std": 7.5131296042605934e-06
+    },
+    {
+      "event_root": "cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b2-v1",
+      "num_tie_seeds": 5,
+      "gap_min": 0.5042067059131706,
+      "gap_median": 0.5042118324228376,
+      "gap_max": 0.5042182404108378,
+      "gap_std": 4.5109948183203065e-06
+    },
+    {
+      "event_root": "cache-events-controller-probe-d1-diverse-matched-stagger-fcfs-b8-v1",
+      "num_tie_seeds": 5,
+      "gap_min": 0.4486015556733553,
+      "gap_median": 0.4486172325950486,
+      "gap_max": 0.448619671147194,
+      "gap_std": 7.941860422680942e-06
+    },
+    {
+      "event_root": "cache-events-controller-probe-d1-single-template-matched-stagger-fcfs-b8-v1",
+      "num_tie_seeds": 5,
+      "gap_min": 0.45350029564358163,
+      "gap_median": 0.4535163594061074,
+      "gap_max": 0.45351944848294373,
+      "gap_std": 7.57950390355111e-06
+    }
+  ]
+}

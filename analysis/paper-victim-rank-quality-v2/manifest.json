@@ -1,0 +1,107 @@
+{
+  "kind": "victim_rank_quality_tie_aware",
+  "created_at": "2026-08-02T11:59:51.591726+00:00",
+  "status": "complete",
+  "inputs": {
+    "fit_events": "cache-events-controller-probe-d1-diverse-matched-stagger-fcfs-b8-v1",
+    "fit_manifest_sha256": "9fe9100e613bd45e52c350795eaf7b91f716fd19643494f879056a69238ef264",
+    "eval_events": "cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b8-v1",
+    "eval_manifest_sha256": "e170f4dfd2837e4e96312a56eaae1d0718c478ef431a3a502ee662a60849a244",
+    "predictor": "ordinary least squares on 8 causal features",
+    "features": [
+      "log_recency",
+      "first_seen",
+      "log_freq",
+      "log_inter_gap",
+      "gate_mass",
+      "log_concurrent",
+      "layer_frac",
+      "popularity_rate"
+    ],
+    "coefficients": [
+      0.14312884823344113,
+      1.5116005257447762,
+      0.6243173259020338,
+      0.11104432684119742,
+      -0.6477737356451998,
+      -0.05043670973955291,
+      -0.013073530866014295,
+      -0.014018277476561074,
+      4.5198483989837035
+    ]
+  },
+  "config": {
+    "capacity_blocks": 2458,
+    "cache_scope": "per_layer",
+    "replay": "event_atomic",
+    "policy": "predicted-next-use eviction with predicted bypass admission",
+    "sampling": "every 37th eviction decision with >=3 candidates",
+    "seed": 20260802,
+    "bootstrap": "cluster bootstrap over scheduler steps, 2000 reps",
+    "tie_handling": "optimal victim set = all candidates attaining the maximum true next-use key; Spearman uses average ranks for ties; the spearman_finite variant drops candidates never used again"
+  },
+  "counts": {
+    "eviction_decisions": 1708373,
+    "sampled_decisions": 46172,
+    "mean_candidates": 51.24168327124664,
+    "mean_optimal_set_size": 1.2420514597591614,
+    "mean_never_again_candidates": 0.07333448843454908,
+    "distinct_scheduler_steps": 3055
+  },
+  "summary": {
+    "pred_hits_optimal": {
+      "mean": 0.033916659447284066,
+      "ci95_low": 0.03222294301452044,
+      "ci95_high": 0.03568883371563611
+    },
+    "random_hits_optimal": {
+      "mean": 0.02417049293944382,
+      "ci95_low": 0.022792680603734017,
+      "ci95_high": 0.025577409244121437
+    },
+    "lru_hits_optimal": {
+      "mean": 0.20638049034046607,
+      "ci95_low": 0.20200460129225092,
+      "ci95_high": 0.21071821971336901
+    },
+    "lfru_hits_optimal": {
+      "mean": 0.22110803084120245,
+      "ci95_low": 0.21681970822777866,
+      "ci95_high": 0.2255812324097306
+    },
+    "spearman_all": {
+      "mean": -0.20683542381179562,
+      "ci95_low": -0.20965517034587272,
+      "ci95_high": -0.2038137197212894
+    },
+    "spearman_finite": {
+      "mean": -0.2060404966082683,
+      "ci95_low": -0.2088626431825648,
+      "ci95_high": -0.2030328892770808
+    },
+    "regret_pred": {
+      "mean": 0.005193026819831652,
+      "ci95_low": 0.0051006079264020576,
+      "ci95_high": 0.005288940588833807
+    },
+    "regret_random": {
+      "mean": 0.005300057471998664,
+      "ci95_low": 0.005208336643658396,
+      "ci95_high": 0.005392213132069077
+    },
+    "regret_lru": {
+      "mean": 0.0031501066542196764,
+      "ci95_low": 0.0030870810568678756,
+      "ci95_high": 0.003211733915074799
+    },
+    "regret_lfru": {
+      "mean": 0.003009575841724768,
+      "ci95_low": 0.002948905483536456,
+      "ci95_high": 0.0030679741008996313
+    }
+  },
+  "artifacts": {
+    "decisions_csv": "victim-decisions.csv",
+    "decisions_csv_sha256": "ab66cadbded51cf686c79a020d9088c1f408b9e085a8eb62688894a2f55ef9d0"
+  }
+}

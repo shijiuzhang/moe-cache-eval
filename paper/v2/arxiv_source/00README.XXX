@@ -1,0 +1,3 @@
+Main file: manuscript.tex
+Preferred compiler: XeLaTeX
+The bibliography has already been rendered into manuscript.tex by Pandoc citeproc; references.bib is included for auditability.

@@ -1,0 +1,44 @@
+{
+  "artifact": {
+    "path": "matched-route-comparison.csv",
+    "rows": 48,
+    "sha256": "be5a13036afc2c870480d8496ddde7028b5402e0ee38f31c4cd9e1f439b64763"
+  },
+  "bands": [
+    [
+      0,
+      16
+    ],
+    [
+      16,
+      64
+    ],
+    [
+      64,
+      160
+    ],
+    [
+      160,
+      384
+    ]
+  ],
+  "batch_size": 8,
+  "inputs": {
+    "control_probe_sha256": "fab2314ebf829e446c765ee4b4fcd32e5101089c86b4996c6bffb266fc73e6da",
+    "control_routes": "UNRELEASED_INPUT/controller-probe-d1-single-template-confirmatory-chat-nothink-decode384-v1",
+    "diverse_probe_sha256": "f6ed35a70ccc0b10c6e2a7f243f2dab0d96e8992539eaa8b15a6abb7ea0a6a39",
+    "diverse_routes": "UNRELEASED_INPUT/controller-probe-d1-diverse-confirmatory-chat-nothink-decode384-v1"
+  },
+  "kind": "controller_probe_d1_matched_route_comparison",
+  "matched_pairs": 72,
+  "matched_schedule_inputs": {
+    "heldout-diverse-arrivals.json": "c68f8e5c8ebfe29cae42086e260a43af740a96faa26847600e9a309eda962e16",
+    "heldout-diverse-ids.txt": "16918a1f44bfcae68e18d836d940c0c932ee255f6854221aff49bf7390704e21",
+    "matched-control-arrivals.json": "a2223c7d8d2ec38a48244e1edcd76e9f10d598e2f7a346e9bf826bb5ef010df4",
+    "matched-control-ids.txt": "d8ca94a0073f98ac5712d6d71b766d876cbcd5f2aa47e397677454bfe769cdff",
+    "matched-diverse-arrivals.json": "cd7f5fd87517ffe91f6f408ed15464af5c49ffecfe1a53a3221617cdc3367d8a",
+    "matched-diverse-ids.txt": "4ee03c3213b482204e46d58356ed022caa786e03288dd1818eaa41c8ed83fc36"
+  },
+  "status": "complete",
+  "trials": 100
+}

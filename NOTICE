@@ -1,0 +1,8 @@
+MoE Hierarchy Lab
+Copyright 2026 Yu Zhang
+
+The Apache License 2.0 applies only to original project source code unless a
+file states otherwise. Third-party datasets, model weights, generated text,
+route tensors, and derived probe records retain their upstream licences and
+attribution requirements. See paper/ARTIFACT_LICENSE_MATRIX.md and
+paper/artifact_attributions.csv before redistributing any artifact payload.

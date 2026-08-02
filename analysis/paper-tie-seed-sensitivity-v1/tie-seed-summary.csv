@@ -1,0 +1,5 @@
+event_root,num_tie_seeds,gap_min,gap_median,gap_max,gap_std
+cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b8-v1,5,0.44850424842485354,0.4485093318847383,0.44852017628595087,7.5131296042605934e-06
+cache-events-controller-probe-d1-diverse-heldout-stagger-fcfs-b2-v1,5,0.5042067059131706,0.5042118324228376,0.5042182404108378,4.5109948183203065e-06
+cache-events-controller-probe-d1-diverse-matched-stagger-fcfs-b8-v1,5,0.4486015556733553,0.4486172325950486,0.448619671147194,7.941860422680942e-06
+cache-events-controller-probe-d1-single-template-matched-stagger-fcfs-b8-v1,5,0.45350029564358163,0.4535163594061074,0.45351944848294373,7.57950390355111e-06

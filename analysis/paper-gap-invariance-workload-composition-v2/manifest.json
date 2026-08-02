@@ -1,0 +1,36 @@
+{
+  "kind": "belady_gap_invariance_across_workload_composition",
+  "created_at": "2026-08-02T05:24:59.142675+00:00",
+  "status": "complete",
+  "generator": "scripts/build_paper_gap_invariance.py",
+  "source": {
+    "root": "UNRELEASED_INPUT/controller-probe-d1-diverse-confirmatory-chat-nothink-decode384-v1",
+    "manifest_sha256": "ffb64594b5b47f4beb92dc2a054f2a35a97651157b11a35cfaa2990b1c584afb"
+  },
+  "scope": {
+    "model": "Qwen3-30B-A3B-4bit",
+    "split": "D1 diverse confirmatory",
+    "cache_scope": "per_layer",
+    "rho": 0.4,
+    "batch_size": 8,
+    "replay": "event_atomic",
+    "tie_seed": 20260729,
+    "policies": [
+      "lru",
+      "lfu",
+      "lfru",
+      "least_stale",
+      "belady"
+    ]
+  },
+  "conditions": 13,
+  "gap_min": 0.44177430907159965,
+  "gap_max": 0.45929495308141005,
+  "gap_mean": 0.4508572657626881,
+  "artifacts": [
+    "gap-invariance.csv",
+    "condition-specs.json",
+    "README.md"
+  ],
+  "exclusion": "Do not pool with the rho sweep or B=2; those are different operating points."
+}

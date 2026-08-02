@@ -1,0 +1,24 @@
+{
+  "artifact": {
+    "path": "gap-attribution.csv",
+    "rows": 2,
+    "sha256": "3a017bd1b18c5c7bf5434f2ebd23ed9f024728feec71bfbcd81440d73783208e"
+  },
+  "capacities_blocks": [
+    2458
+  ],
+  "created_at": "2026-08-01T08:04:25.798785+00:00",
+  "discovery_admission_share": 0.0337330534106679,
+  "heldout_admission_share": 0.03404975964372929,
+  "heldout_future_victim_share": 0.9659502403562708,
+  "heldout_total_gap_fraction_of_lfru": 0.504218240410838,
+  "inputs": {
+    "discovery_manifest_sha256": "5245a0dbbea6358417a0d74da4938f62a8067282db718cd89e3b1fea570e84dd",
+    "heldout_manifest_sha256": "b902ece8b2344f3dbaf8fe0dfae9d76bed2da42792babf146b09bb3bb585fbd7"
+  },
+  "kind": "belady_gap_attribution",
+  "primary_capacity_blocks": 2458,
+  "status": "complete",
+  "verdict": "future_victim_dominant_stop_dynamic_controller",
+  "warning": "forced-admit Belady is a decomposition oracle, not a deployable policy"
+}

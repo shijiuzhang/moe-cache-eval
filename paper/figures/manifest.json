@@ -1,0 +1,36 @@
+{
+  "builder": "scripts/build_submission_figures.py",
+  "inputs": {
+    "replay": {
+      "path": "paper/artifacts/figure-1-replay-semantics-v2/figure-1-data.csv",
+      "sha256": "6f775aef8ea8d5e191e9931a462e8d5077b45be7e6dd726b3ef912e9fe0a7975"
+    },
+    "workload": {
+      "path": "analysis/controller-probe-d1-qwen3-matched-route-comparison-v3/matched-route-comparison.csv",
+      "sha256": "be5a13036afc2c870480d8496ddde7028b5402e0ee38f31c4cd9e1f439b64763"
+    },
+    "regime": {
+      "path": "analysis/paper-regime-ablation-qwen3-heldout-v1/regime-ablation.csv",
+      "sha256": "8bd01b011a23fc3c6c133fcb66b14760fe5dc8bf29359abc7a6958c23cb70d74"
+    },
+    "gap_b8": {
+      "path": "analysis/controller-probe-d1-belady-gap-attribution-v1/gap-attribution.csv",
+      "sha256": "ae259456598a3f8c1d104662c3d41126f1091a380e6ad715668dab41bb996079"
+    },
+    "gap_b2": {
+      "path": "analysis/controller-probe-d1-belady-gap-attribution-b2-v1/gap-attribution.csv",
+      "sha256": "3a017bd1b18c5c7bf5434f2ebd23ed9f024728feec71bfbcd81440d73783208e"
+    }
+  },
+  "outputs": [
+    "figure1_replay_semantics.pdf",
+    "figure1_replay_semantics.png",
+    "figure2_template_attribution.pdf",
+    "figure2_template_attribution.png",
+    "figure3_regime_not_sufficient.pdf",
+    "figure3_regime_not_sufficient.png",
+    "figure4_gap_decomposition.pdf",
+    "figure4_gap_decomposition.png"
+  ],
+  "note": "No values are manually entered; all plotted values are read from frozen CSV artifacts."
+}
