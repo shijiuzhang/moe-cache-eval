@@ -114,7 +114,6 @@
 \usepackage{xcolor}
 \usepackage{float}
 \usepackage{enumitem}
-\usepackage{pdflscape}
 \setlist{nosep}
 \emergencystretch=8em
 \sloppy
@@ -1861,18 +1860,44 @@ audits, not confirmatory results.
 \textbf{Table 17.} Pre-registered criteria and outcomes, with
 measurement scope.
 
-\begin{landscape}
-\scriptsize
-
-| mechanism | model | $\rho$ | concurrency | scheduling | other constraints | criterion | measured | outcome in scope |
-|---|---|---:|---|---|---|---|---:|---|
-| steady-state prefill eviction / admission | 40- and 64-expert | 20/30/40% | prefill, 128-token blocks | — | strictly lossless | gap $\geq$ 10% | 0.155–3.169% | not met |
-| warm-cache workload transition | 40- and 64-expert | 20/30/40% | prefill, 128-token blocks | directed A$\rightarrow$B transitions | windows N = 10/25/50/100 | gap $\geq$ 10% | 1439/1440 units < 10% | not met |
-| semantic category partitioning | 128-expert | 40% | B = 8 | FCFS | equal total capacity; **6 slots < top-`k` = 8** | transfer $\downarrow$ $\geq$ 5% | **+115.9%** | invalid test of mechanism; design floor dominated |
-| causal affinity batching | 128-expert | 40% | B = 8, 24 admitted | deadline rotation | W = 4, strictly lossless | transfer $\downarrow$ $\geq$ 10% | 4.76% / 4.55% | not met |
-
-\normalsize
-\end{landscape}
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+mechanism
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+frozen measurement setting
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+pre-registered criterion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+measured outcome in scope
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+steady-state prefill eviction / admission & 40- and 64-expert models;
+\(\rho\) = 20/30/40\%; 128-token prefill blocks; strictly lossless & gap
+\(\geq\) 10\% & 0.155--3.169\%; \textbf{not met} \\
+warm-cache workload transition & 40- and 64-expert models; \(\rho\) =
+20/30/40\%; directed A\(\rightarrow\)B transitions; windows N =
+10/25/50/100 & gap \(\geq\) 10\% & 1439/1440 units below 10\%;
+\textbf{not met} \\
+semantic category partitioning & 128-expert model; \(\rho\) = 40\%; B =
+8; FCFS; equal total capacity; \textbf{6 slots \textless{}
+top-\texttt{k} = 8} & transfer reduction \(\geq\) 5\% & transfer
+increased 115.9\%; \textbf{invalid test of the mechanism because the
+design floor dominated} \\
+causal affinity batching & 128-expert model; \(\rho\) = 40\%; B = 8 with
+24 admitted; deadline rotation; W = 4; strictly lossless & transfer
+reduction \(\geq\) 10\% & 4.76\% (LFRU) / 4.55\% (static); \textbf{not
+met} \\
+\end{longtable}
+}
 
 The warm-transition experiment covers 1440 units --- two models × three
 residency fractions × three request-order seeds × twenty directed
@@ -2781,24 +2806,92 @@ simulation; \textbf{C} architecture/training co-design; \textbf{D}
 prediction study. ``Union ratio'' means the measured per-step/per-layer
 union divided by usable cache capacity, not a null model estimate.
 
-\begin{landscape}
-\scriptsize
+\textbf{Table A1.} Per-paper extraction from the frozen public versions.
+``NR'' means not reported in the public paper.
 
-| work | class / evaluation vehicle | workloads and reported generation setting | capacity / concurrency reporting | event replay applicability | union ratio | prompt-surface fields | interpretation |
-|---|---|---|---|---|---|---|---|
-| [SpecMD](https://arxiv.org/abs/2602.03921) | A; PyTorch hooks on one A100-80GB with software capacity/bandwidth constraints | GSM8K, TruthfulQA, NaturalQuestions; autoregressive generation | 1/5/25% capacity; 5GB/s example; active batch/chat formatting not reported | N/A to its end-to-end path | not reported | template multiplicity and chat template not reported | directly comparable policy names do not imply the same execution contract or denominator |
-| [DALI](https://arxiv.org/abs/2602.03495) | A; KTransformers-based RTX 3090 system | C4; WikiText calibration; default prompt/output 64 | batch-size sweeps; often 50% cache, some 25% ablations | N/A | not reported | chat formatting and template multiplicity not reported | reports real throughput; Axis I is not a criticism of it |
-| [Fate](https://arxiv.org/abs/2502.12224) | A/D; two-PC implementation | ChatGPT-prompts, HumanEval, GSM8K; decode output up to 1024 and prefill lengths 128/256/512 | memory budgets reported; active decode concurrency not reported | N/A | not reported | chat formatting and template multiplicity not reported | predicts next experts for prefetch, not next-use distance |
-| [Pre-gated MoE](https://arxiv.org/abs/2308.12066) | C; trained architecture and FasterTransformer implementation | XSum, closed-book QA, SQuAD; primary system focus batch 1 | model/cache design reported | not the paper's trace-replay question | not reported | task datasets reported; chat template not applicable/reported | modifies training and routing contract; outside strictly post-hoc caching scope |
-| [SiDA-MoE](https://arxiv.org/abs/2310.18859) | C/D; hash-based predictor/system design | C4 and Switch-family evaluation | model configuration reported | not the primary question | not reported | category-template risk not applicable to the reported corpus setup | prediction objective differs from victim next-use ranking |
-| [MoE-Beyond v1](https://arxiv.org/abs/2508.17137v1) | B/D; token/layer activation predictor plus trace-based simulator | 6,994 Puffin prompts for training; 100 WebGLM-QA prompts for test | batch size 1 explicitly; cache-capacity sweep | applicable in principle; token-by-token replay described, fused-event retention details not reported | not reported | chat formatting not reported | batch 1 removes cross-request union; insufficient detail for event-contract comparison |
-| [Mixtral-Offloading](https://arxiv.org/abs/2312.17238) | A; end-to-end offloading implementation | OpenAssistant conversations; autoregressive sampling | practical focus batch 1; per-layer cache sizes reported | N/A | not reported | source conversations reported; chat-template details not reported | real-system latency is not invalidated by our replay result |
-| [HOBBIT](https://arxiv.org/abs/2411.01433) | A; llama.cpp-based CPU–GPU system | Alpaca for performance; GSM8K and TruthfulQA for quality; several input/output lengths | batch 1; cache/precision budgets reported | N/A | not reported | chat formatting and category-template multiplicity not reported | includes lossy precision fallback, outside our strictly lossless scope |
-| [MoE-Infinity](https://arxiv.org/abs/2401.14361) | A; RTX A5000 end-to-end system | 290 BIGBench/FLAN/MMLU tasks; prompt 512/output 32 in main latency test | local deployment, effectively batch 1 in reported path | N/A | not reported | many tasks reported; task rendering details not sufficient for §5 diagnostics | request-level activation maps and real execution answer a different question |
-| [SP-MoE](https://arxiv.org/abs/2510.10302) | A; speculative decoding and expert prefetch system | four public datasets; autoregressive evaluation | batch size 1 reported | N/A | not reported | chat/template multiplicity not reported | prefetch/speculation target differs from cache victim prediction |
-
-\normalsize
-\end{landscape}
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+work
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+class and evaluation vehicle
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+reported experimental setting
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+reporting interpretation
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\href{https://arxiv.org/abs/2602.03921}{SpecMD} & A; PyTorch hooks on
+one A100-80GB with software capacity/bandwidth constraints & GSM8K,
+TruthfulQA and NaturalQuestions; autoregressive generation; 1/5/25\%
+capacity; 5GB/s example; active batch and chat formatting NR &
+End-to-end path, so event replay is N/A; union ratio and template
+multiplicity NR. Comparable policy names do not imply the same execution
+contract or denominator. \\
+\href{https://arxiv.org/abs/2602.03495}{DALI} & A; KTransformers-based
+RTX 3090 system & C4 with WikiText calibration; default prompt/output
+64; batch-size sweeps; often 50\% cache with some 25\% ablations; chat
+formatting and template multiplicity NR & Event replay is N/A and union
+ratio is NR. DALI reports real throughput; Axis I is not a criticism of
+it. \\
+\href{https://arxiv.org/abs/2502.12224}{Fate} & A/D; two-PC
+implementation & ChatGPT-prompts, HumanEval and GSM8K; decode output up
+to 1024; prefill lengths 128/256/512; memory budgets reported; active
+decode concurrency, chat formatting and template multiplicity NR & Event
+replay is N/A and union ratio is NR. Fate predicts next experts for
+prefetch, not next-use distance. \\
+\href{https://arxiv.org/abs/2308.12066}{Pre-gated MoE} & C; trained
+architecture and FasterTransformer implementation & XSum, closed-book QA
+and SQuAD; primary system focus at batch 1; model/cache design and task
+datasets reported; chat template not applicable or NR & Event replay is
+not the paper's question and union ratio is NR. The method modifies
+training and the routing contract, outside strictly post-hoc caching. \\
+\href{https://arxiv.org/abs/2310.18859}{SiDA-MoE} & C/D; hash-based
+predictor/system design & C4 and Switch-family evaluation; model
+configuration reported; category-template risk not applicable to the
+reported corpus setup & Event replay is not the primary question and
+union ratio is NR. Its prediction objective differs from victim next-use
+ranking. \\
+\href{https://arxiv.org/abs/2508.17137v1}{MoE-Beyond v1} & B/D;
+token/layer activation predictor plus trace-based simulator & 6,994
+Puffin training prompts and 100 WebGLM-QA test prompts; batch size 1;
+cache-capacity sweep; chat formatting NR & Token-by-token replay is
+described, but fused-event retention details and union ratio are NR.
+Batch 1 removes cross-request union, leaving insufficient detail for an
+event-contract comparison. \\
+\href{https://arxiv.org/abs/2312.17238}{Mixtral-Offloading} & A;
+end-to-end offloading implementation & OpenAssistant conversations with
+autoregressive sampling; practical focus at batch 1; per-layer cache
+sizes and source conversations reported; chat-template details NR &
+Event replay is N/A and union ratio is NR. Its real-system latency is
+not invalidated by our replay result. \\
+\href{https://arxiv.org/abs/2411.01433}{HOBBIT} & A; llama.cpp-based
+CPU--GPU system & Alpaca for performance; GSM8K and TruthfulQA for
+quality; several input/output lengths; batch 1; cache/precision budgets
+reported; chat formatting and template multiplicity NR & Event replay is
+N/A and union ratio is NR. Lossy precision fallback is outside our
+strictly lossless scope. \\
+\href{https://arxiv.org/abs/2401.14361}{MoE-Infinity} & A; RTX A5000
+end-to-end system & 290 BIGBench/FLAN/MMLU tasks; prompt 512/output 32
+in the main latency test; local deployment, effectively batch 1; task
+rendering insufficient for §5 diagnostics & Event replay is N/A and
+union ratio is NR. Request-level activation maps and real execution
+answer a different question. \\
+\href{https://arxiv.org/abs/2510.10302}{SP-MoE} & A; speculative
+decoding and expert-prefetch system & Four public datasets;
+autoregressive evaluation; batch size 1; chat/template multiplicity NR &
+Event replay is N/A and union ratio is NR. Its prefetch/speculation
+target differs from cache-victim prediction. \\
+\end{longtable}
+}
 
 \subsection{A.3 What may and may not be
 concluded}\label{a.3-what-may-and-may-not-be-concluded}

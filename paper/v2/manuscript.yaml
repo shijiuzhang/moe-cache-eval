@@ -32,7 +32,6 @@ header-includes:
     \usepackage{xcolor}
     \usepackage{float}
     \usepackage{enumitem}
-    \usepackage{pdflscape}
     \setlist{nosep}
     \emergencystretch=8em
     \sloppy

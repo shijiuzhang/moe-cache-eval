@@ -20,18 +20,12 @@ incapable of a fair positive test are post-hoc audits, not confirmatory results.
 
 **Table 17.** Pre-registered criteria and outcomes, with measurement scope.
 
-\begin{landscape}
-\scriptsize
-
-| mechanism | model | ρ | concurrency | scheduling | other constraints | criterion | measured | outcome in scope |
-|---|---|---:|---|---|---|---|---:|---|
-| steady-state prefill eviction / admission | 40- and 64-expert | 20/30/40% | prefill, 128-token blocks | — | strictly lossless | gap ≥ 10% | 0.155–3.169% | not met |
-| warm-cache workload transition | 40- and 64-expert | 20/30/40% | prefill, 128-token blocks | directed A→B transitions | windows N = 10/25/50/100 | gap ≥ 10% | 1439/1440 units < 10% | not met |
-| semantic category partitioning | 128-expert | 40% | B = 8 | FCFS | equal total capacity; **6 slots < top-`k` = 8** | transfer ↓ ≥ 5% | **+115.9%** | invalid test of mechanism; design floor dominated |
-| causal affinity batching | 128-expert | 40% | B = 8, 24 admitted | deadline rotation | W = 4, strictly lossless | transfer ↓ ≥ 10% | 4.76% / 4.55% | not met |
-
-\normalsize
-\end{landscape}
+| mechanism | frozen measurement setting | pre-registered criterion | measured outcome in scope |
+|---|---|---|---|
+| steady-state prefill eviction / admission | 40- and 64-expert models; ρ = 20/30/40%; 128-token prefill blocks; strictly lossless | gap ≥ 10% | 0.155–3.169%; **not met** |
+| warm-cache workload transition | 40- and 64-expert models; ρ = 20/30/40%; directed A→B transitions; windows N = 10/25/50/100 | gap ≥ 10% | 1439/1440 units below 10%; **not met** |
+| semantic category partitioning | 128-expert model; ρ = 40%; B = 8; FCFS; equal total capacity; **6 slots < top-`k` = 8** | transfer reduction ≥ 5% | transfer increased 115.9%; **invalid test of the mechanism because the design floor dominated** |
+| causal affinity batching | 128-expert model; ρ = 40%; B = 8 with 24 admitted; deadline rotation; W = 4; strictly lossless | transfer reduction ≥ 10% | 4.76% (LFRU) / 4.55% (static); **not met** |
 
 The warm-transition experiment covers 1440 units — two models × three residency
 fractions × three request-order seeds × twenty directed transitions between five
