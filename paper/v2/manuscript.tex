@@ -106,6 +106,8 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \usepackage{booktabs}
+\usepackage{hyperref}
+\IfFileExists{orcidlink.sty}{\usepackage{orcidlink}}{\newcommand{\orcidlink}[1]{}}
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{microtype}
@@ -126,7 +128,7 @@
 \makeatother
 \hypersetup{
   pdftitle={When Does Trace-Driven Evaluation Mislead MoE Expert Caching?},
-  pdfauthor={Yu Zhang China National Chemical Equipment Co.~Ltd.},
+  pdfauthor={Yu Zhang  China National Chemical Equipment Co.~Ltd. ORCID: },
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -143,9 +145,11 @@
 \makeatother
 \subtitle{Replay Semantics, Workload Contamination, and Operating
 Regimes}
-\author{Yu Zhang\\
-China National Chemical Equipment Co.~Ltd.}
-\date{2026-08-02}
+\author{Yu Zhang \orcidlink{0009-0000-8884-6497}\\
+China National Chemical Equipment Co.~Ltd.\\
+ORCID:
+\href{https://orcid.org/0009-0000-8884-6497}{0009-0000-8884-6497}}
+\date{2026-08-04}
 
 \begin{document}
 \maketitle
