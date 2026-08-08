@@ -309,9 +309,9 @@ future-victim knowledge. We then trained a next-use-distance predictor
 on causal features available at eviction time --- recency, frequency,
 gate mass, concurrent routing multiplicity, layer, and popularity rate
 --- fitted on one trace and evaluated on a disjoint one. It transfers at
-R²=0.24 and, substituted for the oracle's input in the same eviction and
-admission machinery, recovers −11.4\% of the gap: it is worse than the
-causal baseline it was meant to improve.
+R\(^2\)=0.24 and, substituted for the oracle's input in the same
+eviction and admission machinery, recovers \$-\$11.4\% of the gap: it is
+worse than the causal baseline it was meant to improve.
 
 \textbf{Position.} We state our claim narrowly. We do not show that
 expert caching is a closed problem, that future-victim knowledge is
@@ -401,7 +401,7 @@ A model has \texttt{L} MoE layers and \texttt{N} routed experts per
 layer, and routes each token to \texttt{k} experts per layer. The unit
 of cache management is an \textbf{expert block} \texttt{b\ =\ (l,\ e)}
 with \texttt{l\ in\ {[}L{]}}, \texttt{e\ in\ {[}N{]}}; the block
-universe has size \texttt{L·N}.
+universe has size \texttt{L.N}.
 
 Requests are served under first-come-first-served continuous batching.
 At scheduling step \texttt{s}, \texttt{A(s)} denotes the set of active
@@ -516,11 +516,11 @@ define
 \item
   \texttt{logical} --- expert assignments \textbf{before} intra-event
   deduplication. For the decode traces used in the primary experiments
-  this is \texttt{Σ\_\{s,l\}\ \textbar{}A(s)\textbar{}\ ·\ k}; for
+  this is \texttt{sum\_\{s,l\}\ \textbar{}A(s)\textbar{}\ .\ k}; for
   prefill it must additionally sum the routed tokens contributed by each
   request rather than merely the request count;
 \item
-  \texttt{union\ \ \ =\ Σ\_\{s,l\}\ \textbar{}E(s,l)\textbar{}} ---
+  \texttt{union\ \ \ =\ sum\_\{s,l\}\ \textbar{}E(s,l)\textbar{}} ---
   distinct blocks touched.
 \end{itemize}
 
@@ -528,7 +528,7 @@ We report
 
 \begin{quote}
 \texttt{effective\ miss\ fraction\ \ m\ =\ M\ /\ logical}
-\texttt{recoverable\ gap\ \ \ \ \ \ \ \ \ \ g\ =\ (m\_best-causal\ −\ m\_Belady)\ /\ m\_best-causal}
+\texttt{recoverable\ gap\ \ \ \ \ \ \ \ \ \ g\ =\ (m\_best-causal\ -\ m\_Belady)\ /\ m\_best-causal}
 \end{quote}
 
 and, separately, \texttt{union\ /\ logical}.
@@ -585,7 +585,7 @@ residency at fixed service quality.
 \begin{longtable}[]{@{}lrrrr@{}}
 \toprule\noalign{}
 & experts \texttt{N} & top-\texttt{k} & MoE layers \texttt{L} & blocks
-\texttt{L·N} \\
+\texttt{L.N} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -1067,12 +1067,12 @@ archetype & single-template set & & diversity-controlled set & \\
 \endlastfoot
 & early (t 0--8) & late (t 32--63) & early (t 0--16) & late (t
 160--384) \\
-process diagnostics & 65.7\% & 29.1\% & 6.0\% & \textbf{−7.8\%} \\
+process diagnostics & 65.7\% & 29.1\% & 6.0\% & \textbf{\$-\$7.8\%} \\
 equipment / BOM & 39.2\% & 13.8\% & 3.7\% & 6.2\% \\
-ERP & 24.5\% & 11.5\% & 6.8\% & −8.6\% \\
+ERP & 24.5\% & 11.5\% & 6.8\% & \$-\$8.6\% \\
 document RAG & 1.2\% & \textbf{20.2\%} & 7.1\% & \textbf{17.1\%} \\
 office / legal & 4.0\% & 9.7\% & 11.6\% & \textbf{20.1\%} \\
-tool agent & 7.1\% & 5.8\% & −8.6\% & 24.3\% \\
+tool agent & 7.1\% & 5.8\% & \$-\$8.6\% & 24.3\% \\
 \end{longtable}
 }
 
@@ -1179,44 +1179,22 @@ draws, against a size-matched reference. Interval propagates the
 reference's draw-to-draw spread; it is not a population confidence
 interval.
 
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1364}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1818}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1818}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1818}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1818}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1364}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-archetype
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-draw 1
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-draw 2
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-mean
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-improvement vs 17.81\%
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-±1 s.d. of reference
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-office / legal & 8.76\% & 8.15\% & 8.45\% & \textbf{52.5\%} & 49.2 --
-55.5 \\
-document RAG & 10.57\% & 10.69\% & 10.63\% & \textbf{40.3\%} & 36.1 --
-44.0 \\
-equipment / BOM & 14.64\% & 13.33\% & 13.99\% & 21.5\% & 15.9 -- 26.4 \\
-ERP & 17.33\% & 15.18\% & 16.25\% & 8.8\% & 2.3 -- 14.4 \\
-process diagnostics & 17.65\% & 16.34\% & 16.99\% & 4.6\% & \textbf{−2.2
--- 10.5} \\
-tool agent & 16.85\% & 18.17\% & 17.51\% & 1.7\% & \textbf{−5.3 --
-7.8} \\
-\end{longtable}
-}
+archetype \textbar{} draw 1 \textbar{} draw 2 \textbar{} mean \textbar{}
+improvement vs 17.81\% \textbar{} \$\pm\$1 s.d. of reference \textbar{}
+
+\textbar---\textbar---:\textbar---:\textbar---:\textbar---:\textbar---\textbar{}
+\textbar{} office / legal \textbar{} 8.76\% \textbar{} 8.15\% \textbar{}
+8.45\% \textbar{} \textbf{52.5\%} \textbar{} 49.2 -- 55.5 \textbar{}
+\textbar{} document RAG \textbar{} 10.57\% \textbar{} 10.69\% \textbar{}
+10.63\% \textbar{} \textbf{40.3\%} \textbar{} 36.1 -- 44.0 \textbar{}
+\textbar{} equipment / BOM \textbar{} 14.64\% \textbar{} 13.33\%
+\textbar{} 13.99\% \textbar{} 21.5\% \textbar{} 15.9 -- 26.4 \textbar{}
+\textbar{} ERP \textbar{} 17.33\% \textbar{} 15.18\% \textbar{} 16.25\%
+\textbar{} 8.8\% \textbar{} 2.3 -- 14.4 \textbar{} \textbar{} process
+diagnostics \textbar{} 17.65\% \textbar{} 16.34\% \textbar{} 16.99\%
+\textbar{} 4.6\% \textbar{} \textbf{\$-\(2.2 – 10.5** |
+| tool agent | 16.85% | 18.17% | 17.51% | 1.7% | **
+\)-\$5.3 -- 7.8} \textbar{}
 
 Only the top two archetypes are clearly separated from the reference;
 equipment/BOM is positive with a wide interval; and the bottom three are
@@ -1615,8 +1593,8 @@ for the miss fractions of the best causal policy, Belady, and
 forced-admit Belady:
 
 \begin{quote}
-\texttt{admission\ share\ \ \ \ \ \ =\ (m\_F\ −\ m\_B)\ /\ (m\_c\ −\ m\_B)}
-\texttt{future-victim\ share\ \ =\ (m\_c\ −\ m\_F)\ /\ (m\_c\ −\ m\_B)}
+\texttt{admission\ share\ \ \ \ \ \ =\ (m\_F\ -\ m\_B)\ /\ (m\_c\ -\ m\_B)}
+\texttt{future-victim\ share\ \ =\ (m\_c\ -\ m\_F)\ /\ (m\_c\ -\ m\_B)}
 \end{quote}
 
 \textbf{Table 14.} Decomposition of the recoverable gap.
@@ -1903,13 +1881,14 @@ met} \\
 \end{longtable}
 }
 
-The warm-transition experiment covers 1440 units --- two models × three
-residency fractions × three request-order seeds × twenty directed
-transitions between five workload proxies × four post-transition
-windows. A single unit exceeded the threshold, at 10.74\%, and decayed
-to 6.83\%, 5.03\% and 3.95\% as the window widened from 10 to 25, 50 and
-100 requests, which is the signature of a short-lived warm-start
-transient rather than a sustainable control opportunity.
+The warm-transition experiment covers 1440 units --- two models
+\(\times\) three residency fractions \(\times\) three request-order
+seeds \(\times\) twenty directed transitions between five workload
+proxies \(\times\) four post-transition windows. A single unit exceeded
+the threshold, at 10.74\%, and decayed to 6.83\%, 5.03\% and 3.95\% as
+the window widened from 10 to 25, 50 and 100 requests, which is the
+signature of a short-lived warm-start transient rather than a
+sustainable control opportunity.
 
 \subsection{8.2 One invalidated design}\label{one-invalidated-design}
 
@@ -1987,7 +1966,7 @@ oracle gain
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 share
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Δp99
+\(\Delta\)p99
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
@@ -2109,19 +2088,35 @@ scope, \(\rho\) = 40\%, event-atomic; pin list frozen from the
 calibration split; initial load counted.)}
 
 {\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}rrrrr@{}}
+\begin{longtable}[]{@{}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
 \toprule\noalign{}
-active B & static pinned & LFRU & Belady & static vs LFRU \\
+\begin{minipage}[b]{\linewidth}\raggedleft
+active B
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+static pinned
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+LFRU
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Belady
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+static vs LFRU
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-2 & 21.50\% & 12.84\% & 6.37\% & \textbf{−67.4\%} \\
-4 & 20.81\% & 16.26\% & 8.43\% & −28.0\% \\
-8 & 19.37\% & 18.01\% & 9.93\% & −7.5\% \\
-16 & 17.10\% & 16.64\% & 11.32\% & −2.8\% \\
-24 & 15.28\% & 14.92\% & 12.21\% & −2.4\% \\
-32 & 13.84\% & 13.52\% & 12.20\% & \textbf{−2.3\%} \\
+2 & 21.50\% & 12.84\% & 6.37\% & \textbf{\$-\$67.4\%} \\
+4 & 20.81\% & 16.26\% & 8.43\% & \$-\$28.0\% \\
+8 & 19.37\% & 18.01\% & 9.93\% & \$-\$7.5\% \\
+16 & 17.10\% & 16.64\% & 11.32\% & \$-\$2.8\% \\
+24 & 15.28\% & 14.92\% & 12.21\% & \$-\(2.4% |
+| 32 | 13.84% | 13.52% | 12.20% | **
+\)-\$2.3\%** \\
 \end{longtable}
 }
 
@@ -2173,12 +2168,12 @@ top 40\% & \textbf{72.3\%} \\
 }
 
 For the \texttt{Static-same-trace} diagnostic at \(\rho\) = 40\%, the
-identity predicts a miss ratio of 1 − 0.723 = 27.99\% of \textbf{union
-accesses}, and the simulator reports 27.99\% under that denominator
-before adding the one-time preload. This is not the pre-dedup
-effective-miss fraction used in Table 19. The identity is exact for the
-union-access denominator: static residency traffic depends only on the
-access-count distribution and not on access order.
+identity predicts a miss ratio of 1 \(-\) 0.723 = 27.99\% of
+\textbf{union accesses}, and the simulator reports 27.99\% under that
+denominator before adding the one-time preload. This is not the
+pre-dedup effective-miss fraction used in Table 19. The identity is
+exact for the union-access denominator: static residency traffic depends
+only on the access-count distribution and not on access order.
 
 This has a useful consequence. Unlike every other policy in this paper,
 the performance of a static pinned set can be computed from an
@@ -2222,7 +2217,7 @@ static vs LFRU
 \bottomrule\noalign{}
 \endlastfoot
 continuous batching, B = 8 & 7.69 & 19.37\% & 18.01\% &
-\textbf{−7.5\%} \\
+\textbf{\$-\$7.5\%} \\
 deadline rotation, 24 admitted / 8 served, W = 4 & 7.83 & 19.15\% &
 23.08\% & \textbf{+17.0\%} \\
 \end{longtable}
@@ -2299,11 +2294,11 @@ share of gate mass & 21.5\% & 16.4\% & 13.7\% & 11.9\% & 10.5\% & 9.4\%
 \end{longtable}
 }
 
-The highest-ranked expert carries only 2.7× the mass of the lowest, and
-ranks 1--4 account for 63.5\% of the total. This says that rank is a
-weak byte-allocation heuristic on this model. It does \textbf{not}
-measure the quality loss from reducing precision: gate mass is not
-causal output importance, quantization error is not equivalent to
+The highest-ranked expert carries only 2.7\(\times\) the mass of the
+lowest, and ranks 1--4 account for 63.5\% of the total. This says that
+rank is a weak byte-allocation heuristic on this model. It does
+\textbf{not} measure the quality loss from reducing precision: gate mass
+is not causal output importance, quantization error is not equivalent to
 dropping a contribution, and no mixed-precision implementation was
 evaluated. We therefore retain the distribution as a design warning, not
 as evidence that mixed precision is closed or that a larger model will
@@ -3059,28 +3054,49 @@ evaluation trace itself --- deliberately leaky, so the static arm is
 shown at its best case and the trend is conservative.)}
 
 {\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}lrrrrr@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1304}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}@{}}
 \toprule\noalign{}
-model & experts & \texttt{r\_bar} & static & LFRU & static vs LFRU \\
+\begin{minipage}[b]{\linewidth}\raggedright
+model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+experts
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\texttt{r\_bar}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+static
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+LFRU
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+static vs LFRU
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-40-expert & 40 & 0.500 & 31.15\% & 25.91\% & −20.2\% \\
-64-expert & 64 & 0.312 & 35.64\% & 25.65\% & \textbf{−39.0\%} \\
-128-expert & 128 & 0.293 & 19.57\% & 12.83\% & \textbf{−52.6\%} \\
-128-expert & 128 & 0.156 & 19.87\% & 10.57\% & −87.9\% \\
+40-expert & 40 & 0.500 & 31.15\% & 25.91\% & \$-\(20.2% |
+| 64-expert | 64 | 0.312 | 35.64% | 25.65% | **
+\)-\(39.0%** |
+| 128-expert | 128 | 0.293 | 19.57% | 12.83% | **
+\)-\$52.6\%** \\
+128-expert & 128 & 0.156 & 19.87\% & 10.57\% & \$-\$87.9\% \\
 \end{longtable}
 }
 
 Two directions are visible: at comparable \texttt{r\_bar}, the
-disadvantage grows with expert count (−39.0\% at 64 experts, −52.6\% at
-128); and within a single model it grows as the regime becomes slacker
-(−52.6\% at \texttt{r\_bar} = 0.29, −87.9\% at \texttt{r\_bar} = 0.16).
-Both are consistent with the mechanism of §9.1 --- more experts means a
-flatter popularity distribution, so a fixed top-fraction captures less
-of the traffic, while a dynamic policy still tracks a working set that
-remains small relative to capacity.
+disadvantage grows with expert count (\$-\$39.0\% at 64 experts,
+\$-\(52.6% at 128); and within a single model it
+grows as the regime becomes slacker (\)-\$52.6\% at \texttt{r\_bar} =
+0.29, \$-\$87.9\% at \texttt{r\_bar} = 0.16). Both are consistent with
+the mechanism of §9.1 --- more experts means a flatter popularity
+distribution, so a fixed top-fraction captures less of the traffic,
+while a dynamic policy still tracks a working set that remains small
+relative to capacity.
 
 We label this hypothesis-generating rather than a result. There are only
 two comparable points on the expert-count axis; the models differ in
@@ -3116,8 +3132,8 @@ full 51. Weighting these by each partition's share of logical expert
 assignments (0.1415, 0.1557, 0.7028) predicts
 
 \begin{quote}
-0.1415 × 61.08\% + 0.1557 × 61.08\% + 0.7028 × 27.25\% =
-\textbf{37.30\%}
+0.1415 \(\times\) 61.08\% + 0.1557 \(\times\) 61.08\% + 0.7028
+\(\times\) 27.25\% = \textbf{37.30\%}
 \end{quote}
 
 against a measured 37.99\%. \textbf{Capacity fragmentation alone
@@ -3135,10 +3151,11 @@ presenting the outcome as a mechanism-level refutation.
 Whether the arithmetic generalizes is a separate question, and for the
 frontier-scale reference frame of §3.2 it does not: 358 per-layer slots
 divided six ways gives approximately 59.7 per partition against a
-per-category per-step union of roughly 16--26, a margin of 2.3--3.7×.
-Hard partitioning may still lose there for the sharing and duplication
-reasons, but it would not be excluded by capacity arithmetic, and the
-−115.9\% figure must not be carried across.
+per-category per-step union of roughly 16--26, a margin of
+2.3--3.7\(\times\). Hard partitioning may still lose there for the
+sharing and duplication reasons, but it would not be excluded by
+capacity arithmetic, and the \$-\$115.9\% figure must not be carried
+across.
 
 \section*{References}\label{bibliography}
 \addcontentsline{toc}{section}{References}

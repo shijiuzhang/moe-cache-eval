@@ -39,6 +39,13 @@ def section_paths(paper_dir: Path):
 
 TEXT_MATH = {
     "ρ": r"$\rho$",
+    "−": "$-$",
+    "Σ": r"$\Sigma$",
+    "Δ": r"$\Delta$",
+    "×": r"$\times$",
+    "·": r"$\cdot$",
+    "±": r"$\pm$",
+    "²": "$^2$",
     "≈": "approximately ",
     "→": r"$\rightarrow$",
     "↓": r"$\downarrow$",
@@ -52,6 +59,13 @@ TEXT_MATH = {
 }
 CODE_ASCII = {
     "ρ": "rho",
+    "−": "-",
+    "Σ": "sum",
+    "Δ": "delta",
+    "×": "x",
+    "·": ".",
+    "±": "+/-",
+    "²": "^2",
     "≈": "~=",
     "→": "->",
     "↓": "down",
