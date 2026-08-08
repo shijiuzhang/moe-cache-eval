@@ -28,7 +28,8 @@ redistributing data-derived material.
 
 - [`paper/v2/manuscript.pdf`](paper/v2/manuscript.pdf)
 - [`paper/v2/arxiv_source.tar.gz`](paper/v2/arxiv_source.tar.gz)
-- Primary arXiv category: `cs.PF`; cross-list: `cs.LG`
+- Primary arXiv category: `cs.LG`; cross-list: `cs.PF`
+- Preprint archived at [doi.org/10.5281/zenodo.21788821](https://doi.org/10.5281/zenodo.21788821) (deposited 2026-08-04)
 
 ## Quick checks
 

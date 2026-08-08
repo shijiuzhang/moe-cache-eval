@@ -21,23 +21,49 @@ copy here, because two independently edited abstracts will drift.
 
 ## Subject-class decision
 
-### Frozen classification
+### Final classification (2026-08-04)
 
-- **Primary:** `cs.PF` (Performance)
-- **Cross-list:** `cs.LG` (Machine Learning)
+- **Primary:** `cs.LG` (Machine Learning)
+- **Cross-list:** `cs.PF` (Performance)
 
-Reason: the paper's object is a machine-learning model, but its main
-contribution is performance measurement and evaluation: replay semantics,
-cache simulation, workload contamination, operating-regime normalization, and
-an evaluation checklist. This matches the official `cs.PF` description more
-directly than the official `cs.AI` description.
+### Why this changed from the earlier `cs.PF` primary
+
+The earlier draft froze `cs.PF` primary on accuracy grounds: the contribution is
+performance measurement rather than a machine-learning method. That reasoning is
+still correct on the merits, but two practical facts decided it the other way.
+
+1. **The cited literature is cs.LG primary.** MoE-Infinity, HOBBIT, SpecMD, Fate
+   and DALI are all `cs.LG` primary, several with `cs.PF` or `cs.DC` cross-listed.
+   Readers who follow this line of work watch `cs.LG`; `cs.PF` carries far less
+   traffic.
+2. **Endorsement domain is shared, so it is not a tie-breaker.** arXiv's
+   endorsement request for `cs.LG` states that an endorser qualifies by having
+   submitted three papers to *any* of the `cs.*` categories — `cs.PF` included —
+   between three months and five years ago. Endorsement therefore does not
+   distinguish the two choices, and the earlier concern that a `cs.PF` primary
+   might be unendorsable does not apply.
+
+If arXiv moderation reclassifies the submission to `cs.PF`, that is an
+acceptable outcome and requires no action.
+
+### Endorsement status
+
+- Endorsement requested for `cs.LG` on 2026-08-04.
+- Code issued to `zhangyu.2002@tsinghua.org.cn`. **Do not publish the code.**
+- First endorser approached: Leyang Xue (University of Edinburgh), submitter of
+  MoE-Infinity (arXiv 2401.14361, `cs.LG` primary / `cs.PF` cross-list),
+  confirmed eligible via arXiv's own "Which of the authors of this article can
+  endorse?" check.
+- Method: forward the arXiv endorsement email with a short covering note; link
+  the Zenodo DOI rather than attaching the PDF.
+- Contact one endorser at a time; arXiv prohibits mass solicitation.
 
 ### Why not `cs.DC` as primary
 
 `cs.DC` covers distributed algorithms, parallel computation and cluster
 computing. The paper discusses concurrency but does not introduce or evaluate a
-distributed protocol or cluster implementation. It is a possible cross-list
-only for a later real-system version.
+distributed protocol or cluster implementation. It is a possible cross-list only
+for a later real-system version.
 
 ## Comments field
 

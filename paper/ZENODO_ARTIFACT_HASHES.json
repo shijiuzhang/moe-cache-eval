@@ -1,0 +1,194 @@
+{
+  "record": "Artifact integrity manifest accompanying the Zenodo deposit",
+  "purpose": "Establishes, by third-party timestamp, that these artifacts existed in this exact state at the deposit date. Large routing artifacts are not uploaded; their hashes are recorded here so a later public release can be verified against this record.",
+  "created_at": "2026-08-04T09:50:19.991310+00:00",
+  "hash_algorithm": "SHA-256",
+  "deposited_manuscript_sha256": "32b16ce0bf1fcc7860d40425918f45d76c171bc6b53a6d47d382b66b169d9a60",
+  "entries": {
+    "manuscript": {
+      "path": "paper/v2/manuscript.pdf",
+      "sha256": "32b16ce0bf1fcc7860d40425918f45d76c171bc6b53a6d47d382b66b169d9a60",
+      "bytes": 272781
+    },
+    "manuscript_source": {
+      "path": "paper/v2/manuscript_source.md",
+      "sha256": "1cc4c8bd9c60d79370610d1b219c9c554a5ca30b13d67e703e4e7930bbf0e923",
+      "bytes": 120620
+    },
+    "manuscript_tex": {
+      "path": "paper/v2/manuscript.tex",
+      "sha256": "7a25aff86ba103fb338aaa83a591dbe4a42973c850c9c9a80bfaf33fe757d924",
+      "bytes": 155450
+    },
+    "references": {
+      "path": "paper/references.bib",
+      "sha256": "ce20664f594f13483872fa5e537ea17a703615b3c27019a34bd02a79c7d0fe54",
+      "bytes": 11237
+    },
+    "probe_set": {
+      "path": "data/controller_probe_d1/controller_probe_d1.jsonl",
+      "sha256": "28b8bd031302ec66edb2aad9eb835084113701a91ef476b4e14c21e37431eb74",
+      "bytes": 1988278
+    },
+    "probe_manifest": {
+      "path": "data/controller_probe_d1/manifest.json",
+      "sha256": "a86c7b49c45ed36bbd802fa1191edf0dc1fe9600d8c489b79a8ea0300566a060",
+      "bytes": 5839
+    },
+    "probe_audit": {
+      "path": "data/controller_probe_d1/audit.json",
+      "sha256": "9e9716959e43bd18cb5e4a20d7f2b76afec49bce35674b647f1dc66d08d14fd0",
+      "bytes": 14269
+    },
+    "simulator": {
+      "path": "moe_controller/simulation.py",
+      "sha256": "97246ac87f3af4732f7587db28d435ee930c92469535661a9421bd97fbea88e3",
+      "bytes": 33081
+    },
+    "events_module": {
+      "path": "moe_controller/events.py",
+      "sha256": "e4b25f731e6f99c361730fbe983f4e69a3c98e53219d9bc41d1970176b6a3162",
+      "bytes": 14664
+    },
+    "convert_module": {
+      "path": "moe_controller/convert.py",
+      "sha256": "576e267d175bbdecf5c8f9a74603be149d9ccef23b20188999a9fd5c8b77871e",
+      "bytes": 23878
+    },
+    "probe_builder": {
+      "path": "scripts/build_controller_probe_d1.py",
+      "sha256": "7110c296a676e86744e8fe1d80b33d701a6f7e77ab60a6609c7eb2c045ed17f9",
+      "bytes": 106409
+    },
+    "contamination_auditor": {
+      "path": "scripts/audit_probe_diversity.py",
+      "sha256": "03f2cd86366d68dea5633224900d0bc0e9a6cee2507df12fc10eb5fe5f2f774c",
+      "bytes": 12525
+    },
+    "rank_quality_script": {
+      "path": "scripts/measure_victim_rank_quality.py",
+      "sha256": "45cf9a0d34ecfde966a493a11884b1b2a18cd7c677b5426376c36c834aff7ea2",
+      "bytes": 14528
+    },
+    "gap_invariance_v2": {
+      "path": "analysis/paper-gap-invariance-workload-composition-v2",
+      "files": {
+        "README.md": {
+          "sha256": "3b2ac908128f4bac860ffad31b17a832fc7c87717dd92d45e0a53fd593c3b19f",
+          "bytes": 865
+        },
+        "condition-specs.json": {
+          "sha256": "4e20b55aeb30ee279e81ae436d5a423a866d1ddbb319a64e92f2f6f973f87dd7",
+          "bytes": 16225
+        },
+        "gap-invariance.csv": {
+          "sha256": "c1704c6a7f2dae8b4c4deb50524f9febc1aedf53a5b75866204814d22536bf13",
+          "bytes": 2698
+        },
+        "manifest.json": {
+          "sha256": "a2878541ad6420279a0aaf06cbd9bf2c7808349735b25f26bebb70610c89af4c",
+          "bytes": 1069
+        }
+      }
+    },
+    "victim_rank_quality_v2": {
+      "path": "analysis/paper-victim-rank-quality-v2",
+      "files": {
+        "manifest.json": {
+          "sha256": "42f39be2fad900424009dc848626646d7f111b8cb5b61c8e66cf0a98f464dc22",
+          "bytes": 3499
+        },
+        "victim-decisions.csv": {
+          "sha256": "ab66cadbded51cf686c79a020d9088c1f408b9e085a8eb62688894a2f55ef9d0",
+          "bytes": 6533492
+        }
+      }
+    },
+    "gap_attribution_b8": {
+      "path": "analysis/controller-probe-d1-belady-gap-attribution-v1",
+      "files": {
+        "gap-attribution.csv": {
+          "sha256": "ae259456598a3f8c1d104662c3d41126f1091a380e6ad715668dab41bb996079",
+          "bytes": 3235
+        },
+        "manifest.json": {
+          "sha256": "5423b1b9aca62f44691def4eb188cb4e7331c13bf8fc013779e64326ff1891e6",
+          "bytes": 885
+        }
+      }
+    },
+    "gap_attribution_b2": {
+      "path": "analysis/controller-probe-d1-belady-gap-attribution-b2-v1",
+      "files": {
+        "gap-attribution.csv": {
+          "sha256": "3a017bd1b18c5c7bf5434f2ebd23ed9f024728feec71bfbcd81440d73783208e",
+          "bytes": 1019
+        },
+        "manifest.json": {
+          "sha256": "45d0e7cf3435127e0a8b20fe5221c85599c53cb4bb623f9c4170f5526de7e6fe",
+          "bytes": 922
+        }
+      }
+    },
+    "affinity_confirmatory": {
+      "path": "analysis/controller-probe-d1-affinity-confirmatory-v1",
+      "files": {
+        "manifest.json": {
+          "sha256": "ae48ca5a0874feb8745112b09927d62cdc26b613d158e81307947172f7d08c63",
+          "bytes": 1775
+        },
+        "schedule-policy-results.csv": {
+          "sha256": "47bda6ee0d68abc36ce7201103d66b341bd16e1adc91e6da7c1d7327013ec4a1",
+          "bytes": 1078
+        }
+      }
+    },
+    "static_pin_concurrency": {
+      "path": "analysis/controller-probe-d1-static-pin-concurrency-audit-v1",
+      "files": {
+        "manifest.json": {
+          "sha256": "f1668f4da041d1fd97c29c9446a13f01676778a6784773f52cbe40ba6b665096",
+          "bytes": 1829
+        },
+        "static-pin-concurrency.csv": {
+          "sha256": "f580453b384af5f110be77e3c896aa4083cad329717eb4a27ed7ee10ceb09614",
+          "bytes": 1534
+        }
+      }
+    },
+    "figure1": {
+      "path": "paper/artifacts/figure-1-replay-semantics-v1",
+      "files": {
+        "figure-1-data.csv": {
+          "sha256": "6f775aef8ea8d5e191e9931a462e8d5077b45be7e6dd726b3ef912e9fe0a7975",
+          "bytes": 1115
+        },
+        "figure-1.svg": {
+          "sha256": "90d17c5ef8b5a0881fb54f89f5be0e4c975019cd48cc551125e15aa78592af6d",
+          "bytes": 4002
+        },
+        "manifest.json": {
+          "sha256": "4c338d4c789b308025a9d6e838ad13801412939f72e4270ee3ade613e866c17d",
+          "bytes": 526
+        }
+      }
+    },
+    "toy_trace": {
+      "path": "paper/artifacts/event-atomic-toy-trace-v1",
+      "files": {
+        "README.md": {
+          "sha256": "ef9f69c59f222ca706b23f45dd0e5c3265d23c8bf5de96924f8bada04791712b",
+          "bytes": 984
+        },
+        "events.csv": {
+          "sha256": "4828703c6b1ef500110826ac5de12e249dad00c11a884ec469f2969e2a1717a6",
+          "bytes": 294
+        },
+        "manifest.json": {
+          "sha256": "406c1330732eff104838487294d02389cb7c03300996bd538b136fff55ae564c",
+          "bytes": 1429
+        }
+      }
+    }
+  }
+}
