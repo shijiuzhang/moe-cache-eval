@@ -28,7 +28,7 @@ Experts cache studies. It contains:
 - cache-policy, scheduling, contamination, and operating-regime analyses;
 - the tie-aware victim-ranking measurement and its 46,172 sampled decisions;
 - preregistrations and content-free aggregate result artifacts;
-- the 39-page arXiv manuscript, figures, and self-contained source archive.
+- the 38-page arXiv manuscript, figures, and self-contained source archive.
 
 ## Scope of this release
 

@@ -1,7 +1,7 @@
 # Artifact licence and redistribution matrix
 
-Status: conservative release plan, 2026-08-02. This is an engineering
-provenance review, not legal advice.
+Status: current public-release boundary audited 2026-08-11. This is an
+engineering provenance review, not legal advice.
 
 ## Release rule
 
@@ -13,7 +13,7 @@ cryptographic hash instead of the payload.
 | Artifact family | Inputs / upstream terms | Release now? | Required action |
 |---|---|---:|---|
 | simulator, conversion and audit code | original project code | **yes under Apache-2.0** | root `LICENSE` and `NOTICE` added; preserve third-party notices |
-| paper text and original figures | original author work | yes after author licence choice | select arXiv paper licence; state figure sources |
+| paper text and original figures | original author work | yes under the terms selected for each distribution | Zenodo record 10.5281/zenodo.21788821 is CC-BY-4.0; arXiv records its non-exclusive distribution licence; figures are original renderings of released aggregate results |
 | event-atomic toy trace | original synthetic artifact | yes | release with code licence or CC0/CC-BY as explicitly selected |
 | derived CSV/JSON result tables | simulator outputs from locally held routes | generally yes | exclude prompt text and token-level identifiers; include input hashes and methodology |
 | ControllerProbe-D1 builder and selection IDs | original transformation code plus public IDs | yes | preserve source URLs, revisions and attribution |
@@ -52,11 +52,49 @@ scripts/download_external_routes.py
 analysis/                       # aggregate, content-free result tables
 ```
 
-## Blocking decisions before public release
+## Current public-release audit
+
+The repository boundary at commit `779a0be` was audited before this status was
+recorded. The audit covered both the checked-out tree and every blob reachable
+from the Git history, because making a repository public exposes its history as
+well as its current files.
+
+Result: **pass for the current payload boundary**.
+
+- No model weights, raw route tensors, rendered prompts, token sequences,
+  dataset caches, JSONL source payloads, Parquet files, NumPy arrays, or
+  safetensors occur in the current tree or reachable history.
+- No private keys, common API-token forms, arXiv endorsement material, local
+  absolute paths, or credentials were found. The author email in
+  `paper/ARXIV_SUBMISSION_METADATA.md` is intentional publication metadata.
+- The AllenAI/Mixtral files contain only pairwise aggregate diagnostics and
+  content-free manifests. The unreleased 21.6 MB JSONL prefix is identified by
+  URL, byte count and SHA-256 but is not mirrored.
+- `analysis/paper-victim-rank-quality-v2/victim-decisions.csv`, the largest
+  released artifact, contains decision-level ranks, hit indicators and regrets;
+  it contains no expert IDs, request text, token IDs or routes.
+- The arXiv source archives contain only the manuscript source, bibliography,
+  four aggregate-result figures and a source manifest.
+- The released ControllerProbe-D1 material is limited to builders, opaque
+  selection IDs, arrival offsets, manifests, aggregate comparisons and hashes.
+  The mixed-licence rendered prompt bundle is not present.
+- `paper/artifact_attributions.csv` supplies the machine-readable upstream
+  attribution table required by the conservative release plan.
+
+The public GitHub repository and the open Zenodo record were also checked on
+2026-08-11. Zenodo identifies arXiv:2608.07911 as an alternate identifier and
+10.48550/arXiv.2608.07911 as an identical work.
+
+## Gates for any future payload expansion
+
+The following are **not blockers for the current repository**, because the
+affected payloads are excluded. They become blocking again if a later release
+adds those payload families.
 
 1. Split ControllerProbe-D1 by source/licence, or release only the deterministic
    builder plus source IDs until the split is implemented.
 2. Verify exact OLMoE and Granite model-card licences for the frozen revisions.
 3. Verify the AllenAI route artifact's redistribution terms; absent an explicit
    grant, do not upload the 21.6 MB local prefix.
-4. Generate a machine-readable attribution file from the two source manifests.
+4. Regenerate and extend the machine-readable attribution file whenever a new
+   source family is added.

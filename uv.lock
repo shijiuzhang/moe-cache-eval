@@ -149,7 +149,7 @@ wheels = [
 ]
 
 [[package]]
-name = "moe-hierarchy-lab"
+name = "moe-cache-eval"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
