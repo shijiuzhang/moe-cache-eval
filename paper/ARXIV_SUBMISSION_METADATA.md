@@ -1,4 +1,22 @@
-# arXiv submission metadata (working draft)
+# arXiv submission metadata
+
+## ✅ ANNOUNCED
+
+| | |
+|---|---|
+| **arXiv ID** | **[arXiv:2608.07911](https://arxiv.org/abs/2608.07911)** |
+| **arXiv DOI** | 10.48550/arXiv.2608.07911 |
+| Announced | 2026-08-08 (v1) |
+| Subjects | Machine Learning (cs.LG); Performance (cs.PF) |
+| Licence | arXiv.org perpetual, non-exclusive licence 1.0 — **irrevocable for v1** |
+| Preprint archive | [10.5281/zenodo.21788821](https://doi.org/10.5281/zenodo.21788821) |
+
+The v1 licence cannot be changed. A different licence can only be chosen when
+submitting a new version, and there is no reason to publish a version solely to
+change it.
+
+---
+
 
 Last checked: 2026-08-02
 

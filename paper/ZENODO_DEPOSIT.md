@@ -7,6 +7,8 @@
 | **DOI** | **10.5281/zenodo.21788821** |
 | **Resolves to** | https://doi.org/10.5281/zenodo.21788821 |
 | **Deposit date (priority date)** | **2026-08-04** |
+| **arXiv** | [arXiv:2608.07911](https://arxiv.org/abs/2608.07911) — announced 2026-08-08, cs.LG primary, cs.PF cross-list |
+| **arXiv DOI** | 10.48550/arXiv.2608.07911 |
 | Author | Zhang, Yu — ORCID [0009-0000-8884-6497](https://orcid.org/0009-0000-8884-6497) |
 | Affiliation | China National Chemical Equipment Co. Ltd. |
 | Files | Embargoed until 2026-12-31 |
@@ -20,9 +22,9 @@ Regimes.* Zenodo. https://doi.org/10.5281/zenodo.21788821
 
 ### Outstanding actions on this record
 
-- [ ] After arXiv posting: add the arXiv ID under **Alternate identifiers**
-      (`Scheme: arXiv`, `Identifier: arXiv:26XX.XXXXX`)
-- [ ] After arXiv posting: shorten the embargo to release the files
+- [ ] Add the arXiv ID under **Alternate identifiers**
+      (`Scheme: arXiv`, `Identifier: arXiv:2608.07911`)
+- [ ] Shorten the embargo to release the files
 - [x] ~~Merge the wide-table layout fix from `moe-cache-eval-release`~~ — **not
       required.** Verified 2026-08-04: the portrait-table restructuring was made
       in the lab first and copied outward, and the deposited build reports

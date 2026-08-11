@@ -1,5 +1,23 @@
 # MoE Cache Evaluation
 
+> **Paper:** Yu Zhang. *When Does Trace-Driven Evaluation Mislead MoE Expert
+> Caching? Replay Semantics, Workload Contamination, and Operating Regimes.*
+> arXiv:2608.07911 (2026). <https://arxiv.org/abs/2608.07911>
+>
+> ```bibtex
+> @misc{zhang2026moecacheeval,
+>   title  = {When Does Trace-Driven Evaluation Mislead MoE Expert Caching?
+>             Replay Semantics, Workload Contamination, and Operating Regimes},
+>   author = {Zhang, Yu},
+>   year   = {2026},
+>   eprint = {2608.07911},
+>   archivePrefix = {arXiv},
+>   primaryClass  = {cs.LG},
+>   doi    = {10.48550/arXiv.2608.07911}
+> }
+> ```
+
+
 Reproducibility package for **When Does Trace-Driven Evaluation Mislead MoE
 Expert Caching?** by Yu Zhang (China National Chemical Equipment Co. Ltd.).
 
@@ -29,7 +47,8 @@ redistributing data-derived material.
 - [`paper/v2/manuscript.pdf`](paper/v2/manuscript.pdf)
 - [`paper/v2/arxiv_source.tar.gz`](paper/v2/arxiv_source.tar.gz)
 - Primary arXiv category: `cs.LG`; cross-list: `cs.PF`
-- Preprint archived at [doi.org/10.5281/zenodo.21788821](https://doi.org/10.5281/zenodo.21788821) (deposited 2026-08-04)
+- **Preprint: [arXiv:2608.07911](https://arxiv.org/abs/2608.07911)** (announced 2026-08-08)
+- Archived with artifact hashes at [doi.org/10.5281/zenodo.21788821](https://doi.org/10.5281/zenodo.21788821) (deposited 2026-08-04)
 
 ## Quick checks
 
@@ -69,4 +88,3 @@ artifacts/         redistribution boundary notes
 Original project source code is licensed under the Apache License 2.0. Dataset,
 model, prompt, and route-derived artifacts retain their upstream terms. See
 [`LICENSE`](LICENSE), [`NOTICE`](NOTICE), and the artifact licence matrix.
-
