@@ -37,6 +37,55 @@ and Operating Regimes*.
 Use the abstract in `01_abstract_intro.md` verbatim. Do not maintain a second
 copy here, because two independently edited abstracts will drift.
 
+## Journal submission
+
+| | |
+|---|---|
+| **Journal** | *Performance Evaluation* (Elsevier, ISSN 0166-5316) |
+| **Manuscript number** | **PEVA-D-26-00369** |
+| Submitted | 2026-08-11 |
+| Handling editor | Giuliano Casale (Editor-in-Chief) |
+| System | Editorial Manager, <https://www.editorialmanager.com/peva/> |
+| Review model | Single anonymized |
+| Indexing | SCIE; CCF B |
+| Manuscript file | `paper/submission/manuscript-submission.pdf` — 39 pp, continuous line numbering 1–1270 |
+| Attachments | `cover-letter.pdf`, `declaration-of-interest.pdf` |
+| Suggested reviewers | Chao Li (SJTU), Chuan Wu (HKU), Zibin Zheng (SYSU); none opposed |
+| Preprint declared | arXiv:2608.07911 |
+| SSRN co-posting | Declined |
+| Data availability | Published verbatim, 172 characters, pointing to the GitHub repository and the Zenodo hash manifest |
+
+### Expected timeline, from the journal's published medians
+
+| Milestone | Median | Projected |
+|---|---:|---|
+| Submission to first decision | 4 d | 2026-08-15 |
+| Submission to decision after review | 93 d | 2026-11-12 |
+| Submission to acceptance | 126 d | 2026-12-15 |
+| Acceptance to online publication | 11 d | 2026-12-26 |
+
+The 4-day median for a first decision sits 89 days below the median for a
+decision after review, which implies that most submissions are desk-rejected
+without going out for review. A decision arriving within roughly a week is
+therefore most likely a desk rejection; silence past that point indicates the
+manuscript went to reviewers.
+
+**If desk-rejected:** the next targets in order are JPDC (CCF B, SCIE), then
+FGCS or Concurrency and Computation (CCF C, SCIE). The initial submission was
+free-format under "Your Paper Your Way", so redirecting costs only a revised
+cover letter.
+
+**On acceptance:** the arXiv version may be updated to the accepted manuscript,
+which must then carry CC BY-NC-ND and link to the ScienceDirect version of
+record. arXiv licences are per-version and irrevocable, so that becomes v2.
+Record the journal reference here and on the Zenodo record.
+
+**At revision stage:** Editorial Manager does not accept PDFs for the
+manuscript, table or title-page item types. An editable Word version will need
+to be produced from the LaTeX source at that point.
+
+---
+
 ## Subject-class decision
 
 ### Final classification (2026-08-04)
