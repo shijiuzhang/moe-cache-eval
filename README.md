@@ -50,6 +50,19 @@ redistributing data-derived material.
 - **Preprint: [arXiv:2608.07911](https://arxiv.org/abs/2608.07911)** (announced 2026-08-08)
 - Archived with artifact hashes at [doi.org/10.5281/zenodo.21788821](https://doi.org/10.5281/zenodo.21788821) (deposited 2026-08-04)
 
+## Platform roadmap
+
+The next phase turns the paper's reporting contract into a vendor-neutral,
+open-source capacity-planning and acceptance platform for private model
+deployments. The draft product contract is available for independent audit:
+
+- [`docs/PLATFORM_PRODUCT_SPECIFICATION_V0_1.md`](docs/PLATFORM_PRODUCT_SPECIFICATION_V0_1.md)
+
+Version 0.1 starts with reproducible black-box SLO verification and evidence
+bundles. Engine-specific MoE telemetry is an optional diagnostic extension; the
+specification deliberately excludes a universal score and unmeasured hardware
+claims.
+
 ## Quick checks
 
 Python 3.12 is the frozen research environment. Install dependencies with `uv`
