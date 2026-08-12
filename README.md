@@ -57,11 +57,14 @@ open-source capacity-planning and acceptance platform for private model
 deployments. The draft product contract is available for independent audit:
 
 - [`docs/PLATFORM_PRODUCT_SPECIFICATION_V0_1.md`](docs/PLATFORM_PRODUCT_SPECIFICATION_V0_1.md)
+- [`docs/PLATFORM_SPEC_V0_1_AUDIT.md`](docs/PLATFORM_SPEC_V0_1_AUDIT.md)
+- [`docs/PLATFORM_SPEC_V0_1_AUDIT_DISPOSITION.md`](docs/PLATFORM_SPEC_V0_1_AUDIT_DISPOSITION.md)
 
-Version 0.1 starts with reproducible black-box SLO verification and evidence
-bundles. Engine-specific MoE telemetry is an optional diagnostic extension; the
-specification deliberately excludes a universal score and unmeasured hardware
-claims.
+Version 0.1 is deliberately smaller: a self-calibrating black-box runner that
+records one honest load point and emits a verifiable private evidence bundle.
+SLO adjudication, sweeps, comparison and reports begin in v0.2. Engine-specific
+MoE telemetry is a later diagnostic extension; the specification deliberately
+excludes a universal score and unmeasured hardware claims.
 
 ## Quick checks
 

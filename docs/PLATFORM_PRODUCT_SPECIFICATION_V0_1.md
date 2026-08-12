@@ -2,10 +2,15 @@
 
 ## Product specification v0.1
 
-**Status:** Draft for independent audit  
-**Date:** 2026-08-11  
-**Scope:** Product contract and MVP requirements; not an implementation claim  
-**Working name:** *Platform* (a public product name is intentionally deferred)
+**Status:** Revised after independent audit; ready for audit recheck
+
+**Date:** 2026-08-12
+
+**Scope:** Product contract and staged release requirements; not an implementation claim
+
+**Working name:** *Open Inference Capacity and Acceptance Platform*
+
+**Provisional CLI:** `oicap` (to be frozen at M0 before any evidence bundle is emitted)
 
 This document defines an open, vendor-neutral platform for planning and
 accepting privately deployed large-model appliances. It translates a stated
@@ -50,7 +55,7 @@ can produce a portable evidence bundle that answers:
 - What load was actually applied?
 - What service discipline and admission behavior were observed?
 - Which latency, throughput, quality and reliability targets passed?
-- What is the highest **measured** compliant load?
+- What was the pass/fail outcome at every **measured** load point?
 - Which tested configuration is the least costly one that passes?
 - Where is the first observed failure boundary?
 - Can another party reproduce the result or identify why it is not comparable?
@@ -65,9 +70,9 @@ The Platform MUST distinguish three levels of answer:
 | Interpolated | A value between measured points is estimated with an uncertainty interval | Planning aid only unless independently measured |
 | Extrapolated | A different model, topology, accelerator count or unmeasured regime is projected | Hypothesis only; MUST NOT be presented as a procurement guarantee |
 
-An SLO-to-card-count recommendation in v0.1 MUST select among measured
-configurations. The Platform MUST NOT invent a card count from model size or
-peak bandwidth alone.
+An SLO-to-card-count recommendation, beginning no earlier than v0.2, MUST select
+among measured configurations. The Platform MUST NOT invent a card count from
+model size or peak bandwidth alone.
 
 ---
 
@@ -111,9 +116,11 @@ run, not a correction to the old result.
 
 ### P2. Pareto surface before score
 
-The primary result is a latency-throughput-reliability-quality surface. v0.1
-MUST NOT publish one composite score. A score can hide whether a system favors
-one fast user or many slow users and is unusually easy to game.
+The eventual primary result is a latency-throughput-reliability-quality surface;
+v0.1 supplies its raw measurement foundation. No release MAY publish one
+composite score without a separately audited scoring contract. A score can hide
+whether a system favors one fast user or many slow users and is unusually easy
+to game.
 
 ### P3. User-visible truth before internal proxies
 
@@ -137,7 +144,8 @@ the baseline acceptance result.
 
 Every formal run produces a machine-readable evidence bundle containing the
 scenario, environment fingerprint, raw client observations, metric definitions,
-software versions, hashes and report. A screenshot is not a benchmark result.
+software versions, hashes and recomputable summary. v0.2 may render that bundle
+as an acceptance report. A screenshot is not a benchmark result.
 
 ### P7. No silent policy credit
 
@@ -156,36 +164,55 @@ retention are separate operator decisions.
 
 ## 4. Scope
 
-### 4.1 v0.1 MUST include
+### 4.1 v0.1 — reproducible measurement kernel
+
+v0.1 is intentionally limited to the smallest release that can record one
+honest load point and let another party recompute it. It MUST include:
 
 - an OpenAI-compatible black-box endpoint adapter;
-- a versioned scenario and SLO schema;
+- versioned scenario, SLO, SUT and run-contract schemas, normalization and
+  stable hashing;
 - closed-loop and open-loop load generation with explicit semantics;
 - deterministic workload replay from a local JSONL source;
-- configurable concurrency/rate sweeps;
 - warm-up, measured and cool-down phases;
-- TTFT, inter-token latency, TPOT, end-to-end latency, throughput, goodput,
-  error and timeout metrics;
-- per-workload-class and aggregate results;
-- a discrete search over tested configurations or load points;
-- an HTML report and a machine-readable result bundle;
-- environment, engine and model fingerprints;
-- validators for schema, timing consistency and evidence completeness;
-- a local synthetic server or trace fixture for conformance testing;
-- optional generic host/GPU telemetry when it is available without engine
-  modification;
-- import and comparison of evidence bundles produced by another operator.
+- raw request/chunk/token observations and the §7.2–§7.4 metrics;
+- a required runner self-calibration against a local deterministic null server;
+- one machine-readable, `private-full` evidence bundle per load point;
+- evidence hashing and a `verify` command that recomputes metric summaries;
+- environment, client, engine and model fingerprints;
+- a deterministic synthetic streaming server for conformance tests.
 
-### 4.2 v0.1 SHOULD include
+v0.1 records declared SLOs but does not adjudicate them. It MUST NOT emit
+`PASS`, `FAIL`, maximum-compliant-load, configuration-comparison, procurement
+recommendation, goodput selection or an HTML acceptance report. Those are v0.2
+features and require the additional controls specified below.
 
-- request-level correctness hooks supplied by the workload pack;
-- bootstrap confidence intervals clustered by request or experimental repeat;
-- cold-start and warm-steady-state profiles as separate experiments;
-- cost metadata and selection of the least-cost measured passing configuration;
-- an MoE reporting plugin implementing the relevant checklist from the paper;
-- redacted, aggregate-only publication bundles.
+### 4.2 v0.2 — SLO adjudication and comparison
 
-### 4.3 Explicit non-goals for v0.1
+v0.2 MUST add:
+
+- request-level post-hoc correctness hooks supplied by the workload pack;
+- SLO evaluation with per-gate positive controls and invalidation controls;
+- configurable exploratory and frozen confirmatory sweeps;
+- a pass/fail vector over all measured points and non-monotonicity handling;
+- repeat-level outcomes and clustered confidence intervals;
+- class-aware goodput;
+- comparability checking and refusal of incompatible comparisons;
+- machine-readable comparison output and an HTML acceptance report;
+- `redacted` and `aggregate-public` publication bundles that remain
+  independently recomputable;
+- optional cost metadata and selection among comparable, measured passing
+  configurations.
+
+### 4.3 v0.3 and later
+
+- generic host/GPU telemetry;
+- engine-specific and MoE diagnostic plugins;
+- evidence registry and planning UI;
+- signed public submissions and governance;
+- any composite score, only after a separate anti-gaming decision.
+
+### 4.4 Explicit non-goals
 
 - a universal “AI appliance score”;
 - a hosted leaderboard accepting unaudited vendor claims;
@@ -201,27 +228,28 @@ retention are separate operator decisions.
 
 ## 5. Operating modes
 
-### 5.1 Mode A — Black-box acceptance
+### 5.1 Mode A — Black-box measurement and acceptance
 
 Required access: endpoint URL, authentication supplied locally, and the model's
 request/response contract.
 
 This mode measures the customer-visible system, including server queueing. It
-is the normative v0.1 acceptance mode. It MUST work without SSH, root access,
-engine patches or GPU telemetry.
+is the normative black-box measurement mode in v0.1 and becomes the acceptance
+mode when v0.2 adds adjudication. It MUST work without SSH, root access, engine
+patches or GPU telemetry.
 
 ### 5.2 Mode B — White-box diagnosis
 
 Optional access: node telemetry, engine metrics or trace hooks.
 
-This mode explains a Mode A result with metrics such as GPU memory, KV-cache
+Beginning no earlier than v0.3, this mode explains a Mode A result with metrics such as GPU memory, KV-cache
 occupancy, host-to-device traffic, batch size, preemption and MoE expert cache
 behavior. A Mode B plugin MUST declare its permissions and supported engine
 versions. Its absence MUST NOT invalidate a Mode A result.
 
 ### 5.3 Mode C — Evidence-backed planning
 
-This mode compares existing evidence bundles and selects among measured
+Beginning in v0.2, this mode compares existing evidence bundles and selects among measured
 configurations. It MAY interpolate within a declared envelope, with uncertainty,
 but MUST NOT turn a paper model into an acceptance certificate.
 
@@ -333,6 +361,22 @@ The system-under-test declaration MUST cover:
 - whether speculative decoding, prefix caching, response caching or lossy
   techniques are enabled.
 
+The service discipline is a normative comparability dimension, not free-form
+prose. It MUST state, where known:
+
+```yaml
+service_discipline:
+  batching: continuous        # continuous | rotation | other
+  admission: fcfs             # named rule or versioned implementation
+  preemption: none            # none | recompute | swap | other
+  fairness_bound_ms: null     # required for rotation/fair scheduling
+```
+
+Unknown service discipline prevents mechanism-level attribution. Comparing
+whole appliances with different disciplines is permitted only as a comparison
+of complete SUT configurations; the report MUST enumerate the difference and
+MUST NOT attribute the outcome solely to hardware, caching or another component.
+
 Unknown fields MUST be represented as `unknown`, not silently omitted. A report
 MUST list every unknown field that limits comparability.
 
@@ -353,6 +397,8 @@ The run contract MUST record:
 - client and server clock assumptions;
 - response streaming mode;
 - token-accounting authority and tokenizer revision;
+- self-calibration profile and maximum permitted client schedule lag;
+- validator execution mode and, if inline, its permitted overhead;
 - explicit stop and invalidation rules.
 
 ---
@@ -367,7 +413,10 @@ For each request the runner records monotonic-clock timestamps:
 - `t_submit`: request is handed to the client's HTTP/request subsystem;
 - `t_send_start`: network send begins;
 - `t_first_byte`: first response byte, when observable;
-- `t_first_token`: first complete generated token is received;
+- `t_first_chunk`: first protocol-valid response chunk is received, even when
+  it contains only role metadata, an empty delta, whitespace or a keep-alive;
+- `t_first_token`: receipt time of the first chunk whose decoded content
+  contributes at least one non-whitespace character to the final response body;
 - `t_token[i]`: each subsequent token reception;
 - `t_complete`: valid response stream completes;
 - `t_error`: terminal error or timeout.
@@ -379,6 +428,10 @@ declared arrival process and invalidates that load point; it must not be charged
 to the system under test or silently omitted. If a report presents a narrower
 server-internal latency, it MUST be named separately and MUST NOT replace the
 endpoint value.
+
+The runner MUST record `t_first_chunk` separately and report
+`t_first_token - t_first_chunk`. Role-only deltas, empty content, whitespace-only
+chunks, comments and transport keep-alives do not satisfy `t_first_token`.
 
 ### 7.2 Required latency metrics
 
@@ -393,13 +446,18 @@ zero or removed from denominators without disclosure.
 
 ### 7.3 Required throughput and reliability metrics
 
+v0.1 computes:
+
 - completed requests per second;
 - generated output tokens per second;
 - input plus output tokens per second, reported separately from output tokens;
 - realized active requests and queue depth when observable;
 - HTTP/protocol errors by type;
 - timeouts, cancellations and malformed streams;
-- request success rate;
+- request success rate.
+
+v0.2 additionally computes:
+
 - workload-validator pass rate;
 - **goodput:** output tokens or requests that complete successfully and meet all
   per-request `goodput_eligibility` latency and quality thresholds, divided by
@@ -416,7 +474,56 @@ chunk counts MUST NOT be labelled tokens. A serving stack that does not expose
 token boundaries may still be tested for request latency and success, but token
 latency/throughput fields that cannot be established remain unavailable.
 
-### 7.5 Aggregation rules
+### 7.5 Runner self-calibration and measurement resolution
+
+Before any formal measurement session, the identical runner process,
+machine, event loop, connection settings and token-accounting path MUST execute
+a frozen calibration workload against a local deterministic null endpoint. The
+endpoint emits a fixed streaming response with zero configured application
+delay, including representative chunk boundaries.
+
+The calibration evidence MUST record:
+
+- client schedule lag: mean, p50, p95, p99 and maximum;
+- observed TTFT, ITL, TPOT and end-to-end overhead distributions where defined;
+- achieved versus requested arrival rate;
+- runner process CPU utilization, system CPU utilization and event-loop lag;
+- calibration request count, duration, payload size and response shape;
+- host, runtime and timer implementation fingerprints.
+
+Calibration characterizes runner-plus-local-transport resolution; it does not
+estimate remote network variability or subtract overhead from SUT measurements.
+For a calibration response with configured timing value `d_ref`, metric-specific
+samples are `abs(d_observed - d_ref)`. The default `noise_resolution` is:
+
+```text
+max(monotonic_clock_resolution, p99(abs(d_observed - d_ref)))
+```
+
+The zero-delay null profile uses `d_ref = 0` for TTFT, ITL and end-to-end
+overhead. TPOT uses the same zero-delay token schedule and its ordinary formula.
+If the runtime cannot generate a metric for the null response, that metric is
+uncalibrated and cannot support v0.2 adjudication. The quantile method,
+calibration request count and formula version MUST be frozen before comparing
+configurations. For a difference between two independently calibrated results,
+the default combined resolution is the sum of their metric-specific
+resolutions; a different combination rule requires pre-registration and
+justification.
+
+If an SLO decision lies within `noise_resolution` of its threshold, v0.2 MUST
+return `INSUFFICIENT_EVIDENCE` for that gate unless the contract pre-registers a
+larger decision margin. If an estimated difference between configurations is
+smaller than the combined calibrated resolution, it MUST be labelled
+`within_noise` and MUST NOT drive ranking, selection or pass/fail attribution.
+The raw measured values remain visible; `within_noise` describes the inference,
+not the observations.
+
+Calibration is invalid if its requested arrival rate is not realized within the
+profile tolerance, client schedule lag exceeds its frozen limit, or runner CPU
+saturation exceeds the profile limit. A corresponding SUT load point at or above
+that invalid calibration load cannot establish capacity.
+
+### 7.6 Aggregation rules
 
 - quantiles are computed from request-level observations unless the metric is
   explicitly token-level;
@@ -429,20 +536,47 @@ latency/throughput fields that cannot be established remain unavailable.
 - censored requests at run end MUST be counted and reported;
 - the tool MUST preserve enough raw timing data to recompute all summaries.
 
-### 7.6 Maximum compliant load
+Whenever independent repeats exist, v0.2 MUST report a per-repeat table with
+gate-level and overall outcomes. Repeat disagreement is a result, not a detail
+that may be hidden by an aggregate. The default contract requires every valid
+repeat to pass; any different rule MUST be pre-registered.
 
-For a fixed SUT and scenario, the **maximum measured compliant load** is the
-highest tested load point for which:
+### 7.7 Compliance vector and derived boundaries
+
+For a fixed SUT, scenario, SLO and run contract, v0.2 first reports an ordered
+**compliance vector** containing every tested load point and its
+`PASS`/`FAIL`/`INSUFFICIENT_EVIDENCE` outcome. It may then derive:
+
+- `max_compliant_load`: highest tested point with `PASS`, if one exists;
+- `min_non_compliant_load`: lowest tested point with `FAIL`, if one exists.
+
+A load point passes only when:
 
 1. every required class-specific SLO passes;
 2. global reliability and quality gates pass;
 3. minimum duration and sample-count conditions pass;
 4. every required repeat passes, unless the contract pre-registers another
-   repeat aggregation rule.
+   repeat aggregation rule;
+5. no threshold decision is unresolved by the calibrated noise rule.
 
-An untested point beyond the maximum passing point is not known to fail. The
-runner SHOULD test at least one higher load point to establish an observed
-failure boundary.
+`non_monotonic_compliance` is true exactly when a lower tested load has `FAIL`
+and a higher tested load has `PASS`. Such a result MUST display the complete
+vector prominently and return overall `INSUFFICIENT_EVIDENCE`. A contract MAY
+pre-register a different interpretation for a known non-monotonic SLO, but it
+must define the accepted load set directly rather than silently call the
+highest passing point a capacity boundary.
+
+An `INSUFFICIENT_EVIDENCE` point remains unresolved rather than being ordered as
+pass or fail. If it lies at or below `max_compliant_load`, the sweep cannot claim
+a contiguous compliant range and its overall conclusion is also
+`INSUFFICIENT_EVIDENCE`. If it lies above an otherwise observed
+`PASS...PASS, FAIL...FAIL` boundary, the lower measured boundary may be stated,
+but the unresolved point remains visible and no claim extends through it.
+
+An untested point is unknown. No monotonicity may be inferred between or beyond
+tested points without an explicitly labelled model. The runner SHOULD test at
+least one non-compliant point when estimating a boundary, but a failure below a
+pass is evidence of non-monotonicity, not a lower bound.
 
 ---
 
@@ -475,9 +609,12 @@ Each load point has:
 Cold-start behavior is a separate scenario, not a reason to mix warm-up traffic
 into steady-state metrics.
 
+Runner self-calibration is executed before these SUT phases and stored alongside
+the run. It is not a warm-up substitute and is never mixed into SUT metrics.
+
 ### 8.3 Sweep protocol
 
-The default exploratory sweep MAY adaptively locate a boundary. The final
+Beginning in v0.2, an exploratory sweep MAY adaptively locate a boundary. The final
 confirmatory sweep MUST freeze:
 
 - all tested load points;
@@ -491,9 +628,9 @@ can generate a formal acceptance result.
 
 ### 8.4 Default invalidation conditions
 
-A run is invalid, not failed, when evidence collection itself is broken, for
-example:
+A run is invalid when evidence collection itself is broken, for example:
 
+- the required self-calibration is missing or invalid at the offered load;
 - client timing or tokenizer accounting is unavailable for a required metric;
 - the configured workload mix was not delivered within tolerance;
 - the SUT configuration changed during the run;
@@ -501,34 +638,46 @@ example:
 - too few requests completed to meet the frozen evidence floor;
 - required raw observations or hashes are missing.
 
-Endpoint errors and timeouts under valid load are benchmark failures, not run
-invalidations.
+Endpoint errors and timeouts under valid load are valid adverse SUT
+observations, not run invalidations. v0.1 records them without an SLO verdict;
+v0.2 evaluates them as failures when the frozen SLO requires success.
 
 ---
 
 ## 9. Capacity planning and acceptance logic
 
+This section is normative beginning in v0.2. v0.1 records the contract fields
+and evidence needed by these decisions but does not execute them.
+
 ### 9.1 Configuration registry
 
-A configuration identity is the hash of normalized SUT, scenario, run-contract
+A result identity is the hash of normalized SUT, scenario, SLO, run-contract
 and software-version documents. Results with different identities MUST NOT be
 merged silently.
 
 The registry stores discrete tested points:
 
 ```text
-(model, quantization, engine, engine_config, hardware, scenario, load)
+(model, quantization, engine, engine_config, hardware, scenario, SLO, run, load)
     -> evidence bundle + pass/fail + confidence
 ```
 
 ### 9.2 Selection rule
 
-Given a cost function and SLO, the planner selects the lowest-cost measured
+v0.2 may compare candidates only when normalized `scenario`, `slo` and `run`
+hashes are identical and the candidate identity differs only in `sut`. A
+difference in any other contract hash MUST cause comparison refusal, with every
+differing path enumerated. An explicitly labelled exploratory analysis MAY show
+non-comparable results side by side, but it cannot rank them or issue a selection.
+
+Within a comparable set, the planner selects the lowest-cost measured
 configuration whose confirmatory evidence passes. Cost inputs MUST state
 currency, date, source and whether they represent purchase price, rental price
-or a declared total-cost model. If several configurations are statistically
-indistinguishable, the report SHOULD present all of them rather than manufacture
-a ranking.
+or a declared total-cost model. If service discipline differs between SUTs, the
+comparison is of complete appliances and the difference MUST be prominent; no
+component-level attribution follows. If several configurations are
+statistically indistinguishable or `within_noise`, the report SHOULD present all
+of them rather than manufacture a ranking.
 
 ### 9.3 Conditional envelopes
 
@@ -540,6 +689,11 @@ inputs and assumptions are explicit. The report MUST separate:
 - compute feasibility;
 - measured end-to-end compliance.
 
+Every envelope value must carry `measured`, `interpolated`, or `extrapolated`
+status just like every other product output. A formula whose inputs include an
+unmeasured sustained bandwidth, memory reserve or miss fraction is
+`extrapolated`, even if the arithmetic is exact.
+
 Crossing a memory-capacity boundary is not proof of throughput. Reducing bytes
 is not proof of reducing an integer accelerator count.
 
@@ -550,11 +704,14 @@ The report MUST include:
 - contract identity and hashes;
 - tested configuration and unknown fields;
 - pass/fail by workload class and metric;
-- maximum measured compliant load;
-- first measured non-compliant point, if tested;
+- complete compliance vector over every tested load point;
+- maximum measured compliant load and minimum measured non-compliant load,
+  when defined;
+- `non_monotonic_compliance` and `within_noise` flags;
 - raw throughput and goodput;
 - cold and warm results where requested;
 - confidence and repetition information;
+- per-repeat gate-level and overall outcomes;
 - invalidated attempts;
 - deviations from the frozen contract;
 - measured/interpolated/extrapolated labels;
@@ -569,6 +726,10 @@ The default acceptance conclusion is one of:
 ---
 
 ## 10. Workload packs and quality gates
+
+The basic pack interface and local payload boundary apply in v0.1. Response
+validators, quality adjudication and contamination-based acceptance controls
+apply beginning in v0.2 unless a later subsection explicitly says otherwise.
 
 ### 10.1 Workload pack interface
 
@@ -598,13 +759,19 @@ been independently established.
 
 ### 10.3 Quality gates
 
-Performance without valid output is not compliant. v0.1 MUST support:
+Performance without valid output is not compliant. v0.2 MUST support:
 
 - schema/JSON validity;
 - exact or normalized string checks;
 - deterministic tool-call contract checks;
 - user-provided local validator commands;
 - an explicit `not_evaluated` state.
+
+Post-hoc validation of the buffered responses is the default. It MUST use the
+same response bytes observed during performance measurement while running
+outside the timed request path. Inline validation is allowed only when
+`run.yaml` declares it; the runner MUST measure and report validator overhead,
+and the same mode must be used for every compared configuration.
 
 LLM-as-judge MAY be added later, but its model, prompt, sampling and cost must be
 versioned. It MUST NOT be the only validator for a contractual acceptance test
@@ -627,13 +794,18 @@ These are mandatory for a pack used to claim workload-conditioned MoE behavior.
 
 ## 11. System architecture
 
+The diagram shows the staged target architecture. The experiment planner and
+acceptance-report renderer are v0.2 components; telemetry and MoE plugins are
+v0.3 or later. The v0.1 execution path is contract validator → runner/SUT →
+evidence writer → recomputable metric summary.
+
 ```text
                          +----------------------+
  scenario/slo/sut/run -->| Contract validator   |
                          +----------+-----------+
                                     |
                          +----------v-----------+
-                         | Experiment planner   |
+                         | Experiment planner   |  v0.2
                          | sweep + repetitions  |
                          +----------+-----------+
                                     |
@@ -645,7 +817,7 @@ These are mandatory for a pack used to claim workload-conditioned MoE behavior.
    +----------+-----------+                    +----------+-----------+
               |                                           |
               |                               +-----------v----------+
-              |                               | Optional telemetry   |
+              |                               | Optional telemetry   |  v0.3+
               |                               | and MoE plugins      |
               |                               +-----------+----------+
               +----------------------+--------------------+
@@ -656,8 +828,8 @@ These are mandatory for a pack used to claim workload-conditioned MoE behavior.
                           +----------+-----------+
                                      |
                           +----------v-----------+
-                          | Metrics and report   |
-                          | acceptance + Pareto  |
+                          | Metrics + report     |  summary in v0.1;
+                          | acceptance in v0.2   |
                           +----------------------+
 ```
 
@@ -665,40 +837,45 @@ These are mandatory for a pack used to claim workload-conditioned MoE behavior.
 
 ```text
 platform/
-  contracts/       schemas, normalization and validation
-  workloads/       pack interface and local loaders
-  adapters/        OpenAI-compatible and future endpoint adapters
-  loadgen/         open-loop and closed-loop scheduling
-  observations/    timestamped request/token records
-  telemetry/       optional host, GPU and engine collectors
-  metrics/         definitions, quantiles, CIs and SLO evaluation
-  planner/         sweeps and measured-configuration selection
-  evidence/        manifests, hashes, redaction and verification
-  report/          JSON and HTML rendering
-  cli/             stable command-line interface
+  contracts/       v0.1: schemas, normalization and validation
+  workloads/       v0.1: pack interface and local loaders
+  adapters/        v0.1: OpenAI-compatible endpoint adapter
+  loadgen/         v0.1: open-loop and closed-loop scheduling
+  observations/    v0.1: timestamped request/token records
+  metrics/         v0.1: metrics; v0.2: CIs and SLO evaluation
+  evidence/        v0.1: private manifests, hashes and verification;
+                   v0.2: redaction/publication profiles
+  cli/             v0.1: validate/calibrate/run/verify;
+                   v0.2: explore/compare/report
+  planner/         v0.2: sweeps and measured-configuration selection
+  report/          v0.2: JSON and HTML acceptance rendering
+  telemetry/       v0.3+: optional host, GPU and engine collectors
 ```
 
 ### 11.2 Initial CLI contract
 
 ```bash
 # Validate without sending traffic
-moe-eval validate benchmark/
+oicap validate benchmark/
 
-# Exploratory boundary search; cannot issue a formal PASS
-moe-eval explore benchmark/ --endpoint http://sut.example/v1
+# Calibrate the runner against the local deterministic endpoint
+oicap calibrate benchmark/ --output calibrations/2026-08-12-a
 
-# Frozen confirmatory run
-moe-eval run benchmark/ --endpoint http://sut.example/v1 \
+# v0.1: record one load point; cannot issue a formal PASS
+oicap run benchmark/ --endpoint http://sut.example/v1 \
   --output runs/2026-08-11-a
 
-# Verify hashes and recompute summaries
-moe-eval verify runs/2026-08-11-a
+# v0.1: verify hashes and recompute summaries
+oicap verify runs/2026-08-11-a
 
-# Compare measured configurations
-moe-eval compare runs/* --slo benchmark/slo.yaml
+# v0.2: exploratory boundary search; cannot issue a formal PASS
+oicap explore benchmark/ --endpoint http://sut.example/v1
 
-# Render a self-contained acceptance report
-moe-eval report runs/2026-08-11-a --format html
+# v0.2: compare comparable measured configurations
+oicap compare runs/* --slo benchmark/slo.yaml
+
+# v0.2: render a self-contained acceptance report
+oicap report runs/2026-08-11-a --format html
 ```
 
 Secrets MUST be supplied through environment variables, OS key stores or
@@ -760,15 +937,22 @@ differences. `union / capacity` is required context, not a sufficient statistic.
 
 ### 13.2 Publication profiles
 
-The evidence writer supports:
+v0.1 supports:
 
 - `private-full`: request and response records retained locally;
+
+v0.2 adds:
+
 - `redacted`: payload removed, timing and salted opaque request IDs retained;
 - `aggregate-public`: only contracts, summaries, environment and hashes;
 - `custom`: explicit field-level policy, marked non-standard.
 
-The default is `private-full` locally plus a separately generated
-`aggregate-public` bundle. Nothing is uploaded automatically.
+The v0.1 default is `private-full` locally. From v0.2, the default remains
+`private-full` locally plus a separately generated `aggregate-public` bundle.
+Nothing is uploaded automatically. A redacted or aggregate bundle MUST contain
+enough observations or committed private-input hashes to recompute every
+included summary; otherwise it is a presentation export, not independently
+verifiable evidence, and must be labelled accordingly.
 
 ### 13.3 Threat model
 
@@ -808,74 +992,133 @@ builder-plus-hash release, not payload mirroring.
    capacity.
 8. Report per-class results so a dominant easy class cannot hide another class.
 9. Use at least one held-out or buyer-controlled pack for formal procurement
-   acceptance where feasible.
+   acceptance where feasible. This is the primary defense against benchmark-pack
+   overfitting, not an optional presentation enhancement.
 10. Do not compare results produced under different arrival semantics without
     an explicit normalization argument.
-11. Do not rank statistically indistinguishable configurations.
-12. Preserve the exact evidence needed to recompute every published number.
+11. Do not silently compare results with different service disciplines. A
+    whole-appliance comparison may retain them as SUT differences, but any
+    component-level comparison or attribution is non-comparable.
+12. Do not rank statistically indistinguishable or `within_noise`
+    configurations.
+13. Preserve the exact evidence needed to recompute every published number.
 
 The future public registry SHOULD show methodology-compliance badges and
 evidence completeness before it considers a composite score.
 
 ---
 
-## 15. MVP acceptance criteria
+## 15. Release acceptance criteria
 
-The v0.1 implementation is complete only when all of the following pass.
+### 15.1 v0.1 acceptance criteria
 
-### AC1. Contract validation
+The v0.1 measurement kernel is complete only when V01-AC1 through V01-AC6
+pass. It does not make SLO decisions.
+
+#### V01-AC1. Contract validation
 
 - Valid example contracts are accepted.
 - Unknown major schema versions, invalid workload weights and incomplete SLOs
   are rejected with actionable errors.
 - Normalization produces stable hashes independent of YAML key order.
 
-### AC2. Timing correctness
+#### V01-AC2. Timing and streaming-anchor correctness
 
 - A deterministic synthetic streaming server with injected queue, TTFT and
   token delays reproduces expected metrics within frozen tolerances.
+- A conformance response emits an immediate empty/role-only delta and a delayed
+  substantive chunk; `t_first_chunk` records the former and TTFT uses the
+  latter.
 - Single-token responses yield undefined TPOT without crashing or becoming
   zero.
 - Injected client schedule lag is detected separately from endpoint TTFT.
 - Retries, timeouts and censored requests remain visible.
 
-### AC3. Load semantics
+#### V01-AC3. Load semantics
 
 - Closed-loop mode maintains the configured active-user count when possible.
 - Open-loop mode reproduces the configured arrival schedule independently of
   response latency until an explicit client-saturation limit is reached.
 - Client saturation is detected and invalidates capacity claims above it.
 
-### AC4. SLO evaluation
+#### V01-AC4. Apparatus calibration
 
-- Class-specific gates are evaluated before global aggregation.
-- The known boundary of a synthetic SUT is found by a confirmatory sweep.
-- `PASS`, `FAIL` and `INSUFFICIENT_EVIDENCE` are exercised by tests.
+- The null endpoint produces a complete calibration record for every supported
+  timing metric, schedule lag, arrival-rate realization and runner CPU load.
+- A fixture above the permitted client load invalidates calibration.
+- Repeating the calibration under a frozen environment produces a stable
+  `noise_resolution` within its registered tolerance.
 
-### AC5. Evidence reproducibility
+#### V01-AC5. Evidence reproducibility
 
 - `verify` detects any modified evidence file.
 - Recomputed summaries match stored summaries byte-for-byte or within a
   documented floating-point tolerance.
-- Secrets and payloads are absent from `aggregate-public` fixtures.
+- Secret fixtures are absent from the evidence bundle and logged command.
+- The evidence records calibration identity and refuses verification when the
+  referenced calibration is missing or modified.
 
-### AC6. Report integrity
-
-- Every plotted value can be traced to a result field.
-- Measured and estimated values use visibly different styling.
-- The report lists unknown SUT fields, deviations and invalidated runs.
-- No composite score is emitted.
-
-### AC7. Cross-platform minimum
+#### V01-AC6. Cross-platform and research compatibility
 
 - The black-box runner and verifier pass on Linux x86-64 and macOS arm64.
-- A report bundle produced on one platform verifies on the other.
-
-### AC8. Existing research compatibility
-
+- An evidence bundle produced on one platform verifies on the other.
 - The event-atomic simulator's existing tests remain green.
-- A Mode D import can render its result as simulated evidence without being
-  eligible for a Mode A acceptance `PASS`.
+- v0.1 emits no SLO verdict, comparison, HTML acceptance report or composite
+  score.
+
+### 15.2 v0.2 acceptance criteria
+
+Every frozen SLO gate needs its own positive control. Reaching the `FAIL` branch
+somewhere is not sufficient.
+
+#### V02-AC1. Gate-level positive controls
+
+- For TTFT, ITL, TPOT, end-to-end latency, request success rate, quality pass
+  rate and every supported global gate, a synthetic fixture violating that gate
+  and no other gate produces `FAIL` attributed to exactly that gate.
+- A fixture within the calibrated noise margin of a gate produces
+  `INSUFFICIENT_EVIDENCE`, not `PASS` or `FAIL`.
+- A pair of configurations separated by less than combined calibrated
+  resolution is labelled `within_noise` and cannot be ranked.
+
+#### V02-AC2. Invalidation controls
+
+For every invalidation condition in §8.4, a fixture triggering that condition
+and no other condition produces `INSUFFICIENT_EVIDENCE` with the expected
+reason. Endpoint errors and timeouts under otherwise valid load remain `FAIL`.
+
+#### V02-AC3. Compliance-vector controls
+
+- A monotonic pass/fail fixture produces the expected full vector and derived
+  boundaries.
+- A `{FAIL, PASS, PASS}` or `{PASS, FAIL, PASS}` fixture raises
+  `non_monotonic_compliance` and yields overall `INSUFFICIENT_EVIDENCE` under
+  the default contract.
+- A three-repeat fixture with two passes and one failure exposes all three
+  outcomes and produces overall `FAIL` under the default every-repeat rule.
+- Every repeat's gate-level and overall outcome appears in machine-readable
+  output and the HTML report.
+
+#### V02-AC4. Comparability controls
+
+- Candidates with identical normalized scenario/SLO/run hashes and different
+  SUT hashes are accepted for whole-SUT comparison.
+- A difference in scenario, SLO or run hash is refused and the differing paths
+  are enumerated.
+- A service-discipline difference is prominent and blocks component-level
+  attribution.
+
+#### V02-AC5. Evidence and report integrity
+
+- Every plotted value can be traced to a result field.
+- Measured, interpolated, extrapolated and `within_noise` values use visibly
+  different styling.
+- Redacted and aggregate-public fixtures can recompute every included summary;
+  otherwise they are automatically labelled presentation-only exports.
+- The report lists unknown SUT fields, deviations and invalidated runs.
+- A Mode D import is labelled simulated and cannot produce a Mode A acceptance
+  `PASS`.
+- No composite score is emitted.
 
 ---
 
@@ -887,16 +1130,17 @@ The v0.1 implementation is complete only when all of the following pass.
 - resolve blocking ambiguities;
 - freeze v0.1 schemas and acceptance criteria.
 
-Exit: reviewed specification with numbered audit dispositions.
+Exit: reviewed specification with numbered audit dispositions and provisional
+CLI name frozen before the first evidence bundle.
 
 ### M1 — Reproducible black-box kernel
 
 - contracts, OpenAI-compatible adapter, deterministic test server;
 - closed/open load generators;
 - raw observations and required metrics;
-- local CLI and evidence hashing.
+- self-calibration, local CLI and evidence hashing.
 
-Exit: AC1–AC3 and core AC5 tests pass.
+Exit: V01-AC1 through V01-AC6 pass. This release is **v0.1**.
 
 ### M2 — Acceptance reports
 
@@ -904,9 +1148,9 @@ Exit: AC1–AC3 and core AC5 tests pass.
 - HTML report and comparison CLI;
 - invalidation/deviation workflow.
 
-Exit: AC4 and AC6 pass on synthetic overload fixtures.
+Exit: V02-AC1 through V02-AC5 pass. This release is **v0.2**.
 
-### M3 — Real-system calibration
+### M3 — Real-system validation
 
 - run against at least two different serving stacks or configurations;
 - measure client overhead and repeatability;
@@ -933,6 +1177,26 @@ trace.
 
 Exit: public registry policy, moderation process and anti-gaming review. A
 single score remains a separate decision.
+
+### 16.1 Planning assumption and effort envelope
+
+The planning basis is one part-time primary implementer, assisted by an
+independent asynchronous auditor, with no dedicated GPU test cluster. Estimates
+below are implementation effort, not calendar promises and exclude delays in
+obtaining external hardware:
+
+| Milestone | Part-time effort estimate | External dependency |
+|---|---:|---|
+| M0 | 2–4 working days | auditor recheck |
+| M1 / v0.1 | 4–6 weeks | none; synthetic server and a reachable API are enough |
+| M2 / v0.2 | 4–6 additional weeks | none for synthetic conformance |
+| M3 | 2–4 weeks after access | two real serving configurations |
+| M4 | 3–6 weeks | one engine with stable telemetry hooks |
+| M5 | 6–10 weeks | hosting, moderation and governance decisions |
+
+Only M0 and M1 are authorized for immediate implementation. Later milestones
+require a separate go/no-go review based on the evidence and maintenance burden
+of the preceding release.
 
 ---
 
@@ -993,16 +1257,17 @@ This project separates implementation from result adjudication.
 
 ---
 
-## 20. Questions for the v0.1 audit
+## 20. Questions for audit recheck
 
 The independent audit should explicitly answer:
 
 1. Is the black-box acceptance boundary sufficient to prevent engine-specific
    proxies from becoming pass/fail metrics?
-2. Are TTFT, ITL, TPOT, goodput, retry and censoring definitions unambiguous?
+2. Are TTFT, first-chunk, ITL, TPOT, goodput, retry and censoring definitions
+   unambiguous?
 3. Are open-loop and closed-loop semantics separated strongly enough?
-4. Can the maximum-compliant-load rule be gamed by sparse sweep points or repeat
-   selection?
+4. Does the compliance-vector rule expose non-monotonicity and repeat
+   disagreement without creating a false capacity scalar?
 5. Is `INSUFFICIENT_EVIDENCE` used wherever missing data would otherwise create
    a false pass?
 6. Does the measured/interpolated/extrapolated distinction prevent unsupported
@@ -1012,23 +1277,31 @@ The independent audit should explicitly answer:
    without exposing customer payloads?
 9. Are the anti-gaming controls realistic for procurement and vendor-operated
    tests?
-10. Which MVP requirements are unnecessarily broad and should be deferred?
+10. Is the reduced v0.1 measurement-kernel scope achievable under the stated
+    one-part-time-implementer assumption?
 11. Which critical acceptance failure mode is absent?
 12. Are any requirements based on paper-only evidence being incorrectly treated
     as deployment facts?
 
 ---
 
-## 21. Frozen product statement for v0.1
+## 21. Product statements by release
 
 The v0.1 product claim is limited to:
 
 > Given a versioned workload contract, SLO and system configuration, the
-> Platform can execute a reproducible black-box load test, determine whether
-> each **measured** load point satisfies the contract, identify the highest
-> measured compliant point, and produce a verifiable evidence bundle and
-> acceptance report. Optional telemetry can explain the result but cannot
-> replace it.
+> Platform can self-calibrate its runner, execute one reproducible black-box
+> load point, record raw request and streaming observations, compute the frozen
+> timing/throughput/reliability metrics, and produce a verifiable private
+> evidence bundle from which another operator can recompute those metrics.
+
+v0.1 does not issue an SLO verdict. The prospective v0.2 claim, subject to its
+own acceptance criteria, is:
+
+> Given comparable evidence across a frozen sweep, the Platform can report the
+> complete compliance vector, detect non-monotonic or noise-limited decisions,
+> issue `PASS`, `FAIL` or `INSUFFICIENT_EVIDENCE`, and compare only compatible
+> measured SUT configurations in a verifiable acceptance report.
 
 It does **not** claim to predict unmeasured hardware, save a fixed number of
 accelerators, improve the serving engine, or provide a universal model score.
