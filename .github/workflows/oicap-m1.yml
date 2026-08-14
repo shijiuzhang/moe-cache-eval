@@ -1,0 +1,86 @@
+name: oicap-m1
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  conformance:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.14"
+          enable-cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install frozen environment
+        run: uv sync --frozen --no-default-groups
+      - name: Run full regression suite
+        run: uv run --no-default-groups python -m unittest tests.test_oicap -v
+      - name: Build wheel and inspect packaged schemas
+        run: |
+          uv build --wheel
+          uv run --no-default-groups python -c "from importlib.resources import files; assert (files('oicap') / 'schemas' / '0.1' / 'run.schema.json').is_file()"
+
+  research-regression:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.14"
+          enable-cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - run: uv run python -m unittest discover -s tests -v
+
+  portable-evidence-producer:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.14"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen --no-default-groups
+      - name: Generate evidence on macOS arm64
+        run: >-
+          uv run --no-default-groups python scripts/generate_oicap_ci_bundle.py
+          --benchmark examples/oicap/basic
+          --calibration $RUNNER_TEMP/calibration
+          --output $RUNNER_TEMP/evidence
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-oicap-evidence
+          path: ${{ runner.temp }}/evidence
+          if-no-files-found: error
+
+  portable-evidence-verifier:
+    needs: portable-evidence-producer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.14"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen --no-default-groups
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-oicap-evidence
+          path: ${{ runner.temp }}/evidence
+      - name: Verify macOS evidence on Linux x86-64
+        run: uv run --no-default-groups oicap verify $RUNNER_TEMP/evidence

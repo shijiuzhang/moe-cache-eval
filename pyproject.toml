@@ -1,9 +1,15 @@
 [project]
 name = "moe-cache-eval"
-version = "0.1.0"
-description = "Trace-driven measurement and evaluation tools for MoE expert caching"
+version = "0.1.0.dev0"
+description = "Open Inference Capacity and Acceptance Platform measurement kernel"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "psutil>=7,<8",
+    "pyyaml>=6,<7",
+]
+
+[dependency-groups]
+research = [
     "accelerate>=1.12,<2",
     "huggingface-hub>=0.36,<2",
     "numpy>=2,<3",
@@ -19,8 +25,18 @@ dependencies = [
     "wonderwords>=3.0,<4",
 ]
 
+[project.scripts]
+oicap = "oicap.cli:main"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["moe_controller*", "oicap*"]
+
+[tool.setuptools.package-data]
+oicap = ["schemas/0.1/*.json"]
+
 [tool.uv]
-package = false
-environments = [
-    "sys_platform == 'darwin' and platform_machine == 'arm64'",
-]
+default-groups = ["research"]

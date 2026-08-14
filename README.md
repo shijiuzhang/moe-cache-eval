@@ -66,6 +66,11 @@ SLO adjudication, sweeps, comparison and reports begin in v0.2. Engine-specific
 MoE telemetry is a later diagnostic extension; the specification deliberately
 excludes a universal score and unmeasured hardware claims.
 
+The M1 implementation is now under local audit. Its exact implemented boundary,
+evidence layout and still-pending acceptance controls are recorded in
+[`docs/OICAP_M1_IMPLEMENTATION.md`](docs/OICAP_M1_IMPLEMENTATION.md). It is an
+implementation checkpoint, not yet a v0.1 release.
+
 ## Quick checks
 
 Python 3.12 is the frozen research environment. Install dependencies with `uv`

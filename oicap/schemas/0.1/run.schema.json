@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oicap.dev/schemas/0.1/run.schema.json",
+  "title": "OICAP run contract 0.1",
+  "type": "object",
+  "required": ["schema_version", "run_id", "setup", "client", "measurement", "max_in_flight", "timeout_s", "retry_policy", "drain", "token_accounting", "validator", "self_calibration"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "seed": {"type": "integer"},
+    "setup": {"type": "object", "required": ["endpoint_health", "tokenizer_check"], "properties": {"endpoint_health": {"const": "none"}, "tokenizer_check": {"const": "none"}}},
+    "client": {"type": "object", "required": ["transport", "connection_pooling", "streaming"], "properties": {"transport": {"const": "python_urllib"}, "connection_pooling": {"const": "none"}, "streaming": {"const": true}}},
+    "warmup": {"type": "object", "properties": {"requests": {"type": "integer", "minimum": 0}}},
+    "measurement": {"type": "object", "required": ["requests"], "properties": {"requests": {"type": "integer", "minimum": 1}}},
+    "max_in_flight": {"type": "integer", "minimum": 1},
+    "timeout_s": {"type": "number", "exclusiveMinimum": 0},
+    "retry_policy": {
+      "type": "object", "required": ["max_attempts", "backoff_ms", "retry_on"],
+      "properties": {
+        "max_attempts": {"type": "integer", "minimum": 1},
+        "backoff_ms": {"type": "number", "minimum": 0},
+        "retry_on": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "drain": {"type": "object", "required": ["policy"], "properties": {"policy": {"const": "complete_all"}}},
+    "token_accounting": {"type": "object", "required": ["authority"], "properties": {"authority": {"enum": ["none", "server_usage", "synthetic_one_token_per_content_event"]}}},
+    "validator": {"type": "object", "required": ["mode"], "properties": {"mode": {"const": "none"}}},
+    "self_calibration": {
+      "type": "object",
+      "required": ["profile", "repetitions", "max_schedule_lag_p99_ms", "max_runner_process_cpu_percent_one_core", "min_arrival_rate_ratio", "noise_stability_tolerance_ms"],
+      "properties": {"repetitions": {"type": "integer", "minimum": 2}}
+    }
+  }
+}

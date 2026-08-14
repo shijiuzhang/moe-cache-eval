@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oicap.dev/schemas/0.1/slo.schema.json",
+  "title": "OICAP recorded SLO contract 0.1",
+  "type": "object",
+  "required": ["schema_version", "targets"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "targets": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "object", "minProperties": 1}},
+    "global": {"type": "object"}
+  }
+}

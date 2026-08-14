@@ -1,0 +1,16 @@
+schema_version: "0.1"
+sut_id: local-example
+model:
+  id: example-model
+  revision: unknown
+engine:
+  name: openai-compatible
+  version: unknown
+hardware:
+  accelerator: unknown
+  count: unknown
+service_discipline:
+  batching: unknown
+  admission: unknown
+  preemption: unknown
+  fairness_bound_ms: null

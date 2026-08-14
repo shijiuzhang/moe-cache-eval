@@ -1,0 +1,37 @@
+schema_version: "0.1"
+run_id: basic-load-point
+seed: 20260812
+setup:
+  endpoint_health: none
+  tokenizer_check: none
+client:
+  transport: python_urllib
+  connection_pooling: none
+  streaming: true
+warmup:
+  requests: 2
+measurement:
+  requests: 8
+max_in_flight: 4
+timeout_s: 10
+retry_policy:
+  max_attempts: 1
+  backoff_ms: 0
+  retry_on: [timeout, http_429, http_502, http_503, http_504]
+drain:
+  policy: complete_all
+token_accounting:
+  # Test-only: each oicap_test content event is emitted as one synthetic token.
+  # Real OpenAI-compatible endpoints must use server_usage or none.
+  authority: synthetic_one_token_per_content_event
+validator:
+  mode: none
+self_calibration:
+  profile: local_zero_delay_stream_v1
+  repetitions: 2
+  max_schedule_lag_p99_ms: 20
+  # Deliberately permissive for this tiny local example. A production profile
+  # must calibrate and freeze a meaningful runner headroom limit.
+  max_runner_process_cpu_percent_one_core: 10000
+  min_arrival_rate_ratio: 0.98
+  noise_stability_tolerance_ms: 20
