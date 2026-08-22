@@ -16,9 +16,15 @@
 | Licence | CC BY 4.0 |
 | Deposited manuscript SHA-256 | `32b16ce0bf1fcc7860d40425918f45d76c171bc6b53a6d47d382b66b169d9a60` |
 
-**Cite as:** Zhang, Y. (2026). *When Does Trace-Driven Evaluation Mislead MoE
-Expert Caching? Replay Semantics, Workload Contamination, and Operating
-Regimes.* Zenodo. https://doi.org/10.5281/zenodo.21788821
+**Cite as:** Zhang, Y. (2026). *Reproducible Evaluation of MoE Expert Caching:
+Replay Semantics, Workload Contamination, and Operating Regimes.* Zenodo.
+https://doi.org/10.5281/zenodo.21788820
+
+The **concept** DOI is used here deliberately: it resolves to the newest version,
+which since 2026-08-22 is version 3 (`10.5281/zenodo.22055736`). The version DOIs
+`…21788821` (v1) and `…21913767` (v2) still resolve to records carrying the
+previous title, "When Does Trace-Driven Evaluation Mislead MoE Expert Caching?",
+which was changed in version 3.
 
 ### Outstanding actions on this record
 
@@ -66,8 +72,11 @@ decision governed by `ARTIFACT_LICENSE_MATRIX.md`.
 **Title**
 
 ```
-When Does Trace-Driven Evaluation Mislead MoE Expert Caching? Replay Semantics, Workload Contamination, and Operating Regimes
+Reproducible Evaluation of MoE Expert Caching: Replay Semantics, Workload Contamination, and Operating Regimes
 ```
+
+From version 3 onward. Versions 1 and 2 were deposited under the previous title
+and are not retitled; Zenodo's title field is per-version.
 
 **Publication date** — the deposit date (this is the date that carries the
 priority claim; do not backdate).
@@ -281,3 +290,103 @@ request a cross-list to `cs.PF` after the paper is live.
 ```
 
 Steps 1–3 take under an hour and are the ones that make every later step safe.
+
+---
+
+## Licence consistency across venues
+
+| Venue | Licence | Revocable |
+|---|---|---|
+| arXiv v1 (2608.07911) | arXiv.org perpetual non-exclusive 1.0 | No — per-version and frozen |
+| Zenodo (10.5281/zenodo.21788821) | CC BY 4.0 | No — published |
+| SSRN | CC BY, chosen 2026-08-12 to match Zenodo | No |
+| Source code repository | Apache License 2.0 | — |
+
+The manuscript is already available under CC BY 4.0 through the Zenodo record.
+Selecting a more restrictive licence at any later venue would not restrict
+anyone, because the CC BY copy exists and cannot be withdrawn; it would only
+make the records disagree. CC BY was therefore chosen at SSRN for consistency
+rather than as a fresh grant.
+
+None of these licences relicense the upstream datasets, model weights or
+third-party code, whose terms remain as recorded in `ARTIFACT_LICENSE_MATRIX.md`.
+
+If Performance Evaluation accepts the paper, the **accepted manuscript** is a
+distinct version and will carry whatever licence Elsevier requires, expected to
+be CC BY-NC-ND. That does not conflict with the preprint licences above and
+does not retroactively affect them.
+
+---
+
+## Version 2 of the deposit — published 2026-08-13
+
+| Field | Value |
+|---|---|
+| **Concept DOI** | **10.5281/zenodo.21788820** — always resolves to the newest version; cite this from now on |
+| Version 2 DOI | 10.5281/zenodo.21913767 |
+| Version 1 DOI | 10.5281/zenodo.21788821 — still resolves to the 2026-08-04 files |
+| Version label | `deposit-2 — manuscript of 2026-08-13` |
+| Manuscript SHA-256 | `e8304da0ebf0935a10c8126e4bf3695f08622ee41bbad872bb7196e3d3063803` |
+| Licence | CC BY 4.0, unchanged |
+
+Contents verified against the local staging copies by MD5 after publication:
+`manuscript.pdf` = `1d87a883222dee6b9a5f9a77b8ad9b9c`,
+`ZENODO_ARTIFACT_HASHES.json` = `efc4486ad7b42e94c24bf231e8362d01`. Both match.
+
+**`references.bib` is absent from version 2.** It was removed with the other
+files and not re-uploaded, and Zenodo does not permit file changes after
+publication. It is not being corrected: the bibliography is already rendered
+into the manuscript, and the file remains available in version 1 and in the
+source repository. Include it if a third version is ever published for another
+reason. — Version 3 was published, and it is restored there.
+
+---
+
+## Version 3 of the deposit — published 2026-08-22
+
+| Field | Value |
+|---|---|
+| **Version 3 DOI** | **10.5281/zenodo.22055736** |
+| **Concept DOI** | 10.5281/zenodo.21788820 — verified to resolve here (`parent` 21788820, `is_last: true`) |
+| Version label | `deposit-3 — manuscript of 2026-08-15` |
+| Publication date | 2026-08-22 |
+| Title | Reproducible Evaluation of MoE Expert Caching: Replay Semantics, Workload Contamination, and Operating Regimes |
+| Manuscript SHA-256 | `fd89c4b43b51476f642f745a3ad52eeb22d400d4d88cc6f139852bfb5bc4b741` |
+| Licence | CC BY 4.0, unchanged |
+
+**What changed.** The declaration of generative AI now names both systems used —
+Codex (OpenAI) and Claude (Anthropic) — with their distinct roles, states the
+author's role precisely, and states that neither system synthesised, altered or
+selected any raw trace, observation or reported number. The title changed. No
+result, number, table, figure or conclusion changed; 39 pages in both versions,
+extracted body +119 words. `references.bib` is restored.
+
+**Verified after publication against the Zenodo API, not the upload form.** The
+record holds exactly three files and every MD5 matches the local staging copy:
+
+| File | Bytes | MD5 |
+|---|---:|---|
+| `manuscript.pdf` | 275,327 | `b1e1f32fb94e77fe9e65dbd67e16d96c` |
+| `ZENODO_ARTIFACT_HASHES.json` | 8,445 | `b039a676568dd76a5f2ac1277248b178` |
+| `references.bib` | 11,237 | `cfffacd126de47570e625f0651b48474` |
+
+Exactly three files matters on its own: the copied `manuscript.pdf` and
+`ZENODO_ARTIFACT_HASHES.json` had to be deleted before uploading, because Zenodo
+cannot replace a file in place. A fourth entry would have meant the old
+manuscript was still attached under the new DOI.
+
+The deposited `ZENODO_ARTIFACT_HASHES.json` was itself corrected before upload:
+its `changed_in_this_version` still described version 2's changes and its
+`supersedes` block pointed at version 1. All 33 hash entries verified against
+disk both before and after. See `ZENODO_V3_INSTRUCTIONS.md`.
+
+### Which DOI to use
+
+Everything written before 2026-08-13 cites the version-1 DOI `…821`, including
+Section 13 of the manuscript, the data availability statement and the cover
+letter. Those remain correct — a version DOI is a fixed, citable snapshot — and
+are not worth revising.
+
+Use the **concept DOI `10.5281/zenodo.21788820`** in anything written from now
+on, including the ORCID entry and the next journal submission, so that the
+reference follows future versions instead of freezing on one.

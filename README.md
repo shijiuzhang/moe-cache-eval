@@ -1,12 +1,12 @@
 # MoE Cache Evaluation
 
-> **Paper:** Yu Zhang. *When Does Trace-Driven Evaluation Mislead MoE Expert
-> Caching? Replay Semantics, Workload Contamination, and Operating Regimes.*
+> **Paper:** Yu Zhang. *Reproducible Evaluation of MoE Expert Caching: Replay
+> Semantics, Workload Contamination, and Operating Regimes.*
 > arXiv:2608.07911 (2026). <https://arxiv.org/abs/2608.07911>
 >
 > ```bibtex
 > @misc{zhang2026moecacheeval,
->   title  = {When Does Trace-Driven Evaluation Mislead MoE Expert Caching?
+>   title  = {Reproducible Evaluation of MoE Expert Caching:
 >             Replay Semantics, Workload Contamination, and Operating Regimes},
 >   author = {Zhang, Yu},
 >   year   = {2026},
@@ -18,8 +18,8 @@
 > ```
 
 
-Reproducibility package for **When Does Trace-Driven Evaluation Mislead MoE
-Expert Caching?** by Yu Zhang (China National Chemical Equipment Co. Ltd.).
+Reproducibility package for **Reproducible Evaluation of MoE Expert Caching**
+by Yu Zhang (China National Chemical Equipment Co. Ltd.).
 
 The repository focuses on measurement correctness for trace-driven Mixture-of-
 Experts cache studies. It contains:

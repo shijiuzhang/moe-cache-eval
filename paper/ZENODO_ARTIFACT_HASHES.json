@@ -1,24 +1,24 @@
 {
-  "record": "Artifact integrity manifest accompanying the Zenodo deposit",
+  "record": "Artifact integrity manifest accompanying the Zenodo deposit, version 3",
   "purpose": "Establishes, by third-party timestamp, that these artifacts existed in this exact state at the deposit date. Large routing artifacts are not uploaded; their hashes are recorded here so a later public release can be verified against this record.",
-  "created_at": "2026-08-04T09:50:19.991310+00:00",
+  "created_at": "2026-08-22T00:00:00+00:00",
   "hash_algorithm": "SHA-256",
-  "deposited_manuscript_sha256": "32b16ce0bf1fcc7860d40425918f45d76c171bc6b53a6d47d382b66b169d9a60",
+  "deposited_manuscript_sha256": "fd89c4b43b51476f642f745a3ad52eeb22d400d4d88cc6f139852bfb5bc4b741",
   "entries": {
     "manuscript": {
       "path": "paper/v2/manuscript.pdf",
-      "sha256": "32b16ce0bf1fcc7860d40425918f45d76c171bc6b53a6d47d382b66b169d9a60",
-      "bytes": 272781
+      "sha256": "fd89c4b43b51476f642f745a3ad52eeb22d400d4d88cc6f139852bfb5bc4b741",
+      "bytes": 275327
     },
     "manuscript_source": {
       "path": "paper/v2/manuscript_source.md",
-      "sha256": "1cc4c8bd9c60d79370610d1b219c9c554a5ca30b13d67e703e4e7930bbf0e923",
-      "bytes": 120620
+      "sha256": "4830cfdad2f7f303232b92f3eef2f057a7cef712a8204d54aaf45776fcf4b508",
+      "bytes": 124217
     },
     "manuscript_tex": {
       "path": "paper/v2/manuscript.tex",
-      "sha256": "7a25aff86ba103fb338aaa83a591dbe4a42973c850c9c9a80bfaf33fe757d924",
-      "bytes": 155450
+      "sha256": "a9a2f1635c96da7bad79cdceeb731e991d5ccfa19b924d2a1d30918eb5237ada",
+      "bytes": 159570
     },
     "references": {
       "path": "paper/references.bib",
@@ -190,5 +190,13 @@
         }
       }
     }
-  }
+  },
+  "supersedes": {
+    "version": 2,
+    "doi": "10.5281/zenodo.21913767",
+    "created_at": "2026-08-13T00:00:00+00:00",
+    "deposited_manuscript_sha256": "e8304da0ebf0935a10c8126e4bf3695f08622ee41bbad872bb7196e3d3063803",
+    "note": "Version 2 remains valid for the files deposited on 2026-08-13 and is not withdrawn. Only the manuscript, its build products and the title changed. Version 1 (10.5281/zenodo.21788821, manuscript 32b16ce0bf1fcc7860d40425918f45d76c171bc6b53a6d47d382b66b169d9a60) likewise remains valid for the files deposited on 2026-08-04."
+  },
+  "changed_in_this_version": "The declaration of generative AI and AI-assisted technologies, added in version 2, named only Claude (Anthropic). It now names both systems used in the work — Codex (OpenAI) and Claude (Anthropic) — with their distinct roles, states the author's role precisely, and states that neither system was used to synthesise, alter or select any raw trace, observation or reported number. The companion statement in section 3 names both systems as well. The title changes to \"Reproducible Evaluation of MoE Expert Caching: Replay Semantics, Workload Contamination, and Operating Regimes\"; the subtitle is unchanged. references.bib, omitted from the version 2 upload, is restored. No result, number, table, figure or conclusion changed; the manuscript is 39 pages in both versions and the extracted body grew by 119 words, which is exactly these edits."
 }

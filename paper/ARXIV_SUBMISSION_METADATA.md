@@ -37,6 +37,25 @@ and Operating Regimes*.
 Use the abstract in `01_abstract_intro.md` verbatim. Do not maintain a second
 copy here, because two independently edited abstracts will drift.
 
+## Deferred corrections for a future arXiv version
+
+Do not publish a new version solely for these. Fold them in whenever a version
+is produced for another reason, such as a journal revision.
+
+1. **Abstract and §13 use the future tense for artifact release.** Both say
+   "On publication we will release the simulator, a diversity-controlled probe
+   set, the contamination diagnostics and a reporting checklist". Everything is
+   already public as of 2026-08-11. A reader of v1 may conclude the artifacts
+   are unavailable. Replace with the present tense and cite
+   <https://github.com/shijiuzhang/moe-cache-eval> and
+   <https://doi.org/10.5281/zenodo.21788821> directly.
+2. **The arXiv licence is per-version and irrevocable.** v1 carries the arXiv
+   perpetual non-exclusive licence. If a future version should carry CC BY or
+   the CC BY-NC-ND required after journal acceptance, that choice is made at
+   the moment the new version is submitted.
+
+---
+
 ## Journal submission
 
 | | |
@@ -50,7 +69,7 @@ copy here, because two independently edited abstracts will drift.
 | Indexing | SCIE; CCF B |
 | Manuscript file | `paper/submission/manuscript-submission.pdf` — 39 pp, continuous line numbering 1–1270 |
 | Attachments | `cover-letter.pdf`, `declaration-of-interest.pdf` |
-| Suggested reviewers | Chao Li (SJTU), Chuan Wu (HKU), Zibin Zheng (SYSU); none opposed |
+| Suggested reviewers | Supplied; three named, none opposed. Names are not recorded here — they are third parties who took no part in this work. |
 | Preprint declared | arXiv:2608.07911 |
 | SSRN co-posting | Declined |
 | Data availability | Published verbatim, 172 characters, pointing to the GitHub repository and the Zenodo hash manifest |
@@ -165,3 +184,107 @@ data, routes, figures or code. See `ARTIFACT_LICENSE_MATRIX.md`.
 
 - Category taxonomy: https://arxiv.org/category_taxonomy
 - Submission help: https://info.arxiv.org/help/submit/index.html
+
+---
+
+## SSRN preprint record
+
+| Field | Value |
+|---|---|
+| SSRN Abstract ID | 7269986 |
+| Abstract page | <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7269986> |
+| Submitted | 2026-08-12 |
+| Licence | CC BY (matches the Zenodo record) |
+| Status | **Revised 2026-08-22** — current manuscript, current title, full AI declaration |
+| Author affiliation as entered | China National Chemical Equipment Co. Ltd |
+
+Posted for reach into the technical-economics readership through the JEL codes
+(C63 computational techniques and simulation modelling, L86 information and
+internet services, O33 technological change and diffusion). The computer-science
+readership for this paper is on arXiv, not SSRN; the SSRN record exists to
+establish an author profile in the second research direction rather than to
+distribute this paper.
+
+**Do not use the "Journal Finder" prompt shown after submission.** The next
+submission goes to a target chosen on its own merits, with a cover letter
+written for it, not through a routing tool.
+
+The record was revised on 2026-08-22 to carry the current manuscript and title.
+The file SSRN serves was downloaded afterwards and checked rather than assumed:
+it is byte-identical to `paper/v2/manuscript.pdf`, 39 pages, with no rendering
+defects and the full declaration present.
+
+### Cross-references still to add
+
+- Zenodo — concept DOI 10.5281/zenodo.21788820, currently version 3
+  (10.5281/zenodo.22055736) → Alternate identifiers → add the SSRN abstract URL.
+- ORCID 0009-0000-8884-6497 → Works → add the SSRN record, and cite the concept
+  DOI rather than a version DOI.
+- No change to the arXiv or journal records; neither has a field for this.
+
+---
+
+## arXiv version 2 — announced 2026-08-14
+
+Replaced in place, so the identifier 2608.07911 is unchanged and v1 remains
+permanently reachable at <https://arxiv.org/abs/2608.07911v1>.
+
+Two changes, neither touching a result: the declaration of generative AI and
+AI-assisted technologies with its companion statement in Section 3, and the
+correction of the rendering defect recorded in `RENDERING_DEFECT_2026-08-13.md`.
+
+Verified against the copy arXiv itself compiled and serves, not against the
+local build: 39 pages, no hits from `scripts/check_rendered_pdf.py`, both AI
+statements present, and all four rows of Table B1 restored. This matters because
+v1 was correct locally and corrupt on arXiv, so a local build proves nothing
+about what readers receive.
+
+Deferred corrections listed earlier in this file were **not** folded in. The
+tense of the artifact-release sentence still reads as future. That was a
+deliberate choice: a version published to correct a disclosure failure should
+change only what it says it changes, so that a reader comparing v1 and v2 sees
+exactly the two stated corrections and nothing else.
+
+---
+
+## arXiv version 3 — submitted 2026-08-22
+
+Replaced in place as `submit/7980236`; the identifier 2608.07911 is unchanged and
+every earlier version remains permanently reachable. Announcement follows the
+usual cycle.
+
+Two changes, neither touching a result, number, table, figure or conclusion.
+
+1. **The declaration of generative AI is completed.** Version 2 named Claude
+   (Anthropic) only; the work also used Codex (OpenAI). Both are now named with
+   their distinct roles, in the declaration and in the Section 3 statement. The
+   declaration also states the author's role precisely and states that neither
+   system synthesised, altered or selected any raw trace, observation or
+   reported number.
+2. **The title changes** to *Reproducible Evaluation of MoE Expert Caching:
+   Replay Semantics, Workload Contamination, and Operating Regimes*. The
+   subtitle is unchanged. The previous interrogative title read as a critique
+   rather than as the reusable evaluation method the paper delivers.
+
+39 pages before and after; extracted word count 18,701 → 18,820, and the
+119-word difference is exactly these two edits.
+
+The abstract was **not** changed. arXiv stores a condensed abstract of 1,893
+characters, cut to fit the 1,920-character limit, while the manuscript's own
+abstract is 2,279. The two have always differed and both are accurate.
+
+### Verification after announcement
+
+Download the PDF **arXiv itself compiles and serves** and run
+`scripts/check_rendered_pdf.py` against it, then confirm the new title on the
+abstract page. A local build proves nothing about what a reader receives.
+
+## Companion records, as of 2026-08-22
+
+| Record | Version | State |
+|---|---|---|
+| arXiv 2608.07911 | v3 submitted | queued for announcement |
+| Zenodo (concept 10.5281/zenodo.21788820) | deposit-3, 10.5281/zenodo.22055736 | published, files verified by MD5 |
+| SSRN 7269986 | revised | live, served file verified byte-identical |
+
+All three carry the same manuscript and the same title.

@@ -1,4 +1,4 @@
-# When Does Trace-Driven Evaluation Mislead MoE Expert Caching?
+# Reproducible Evaluation of MoE Expert Caching
 ## Replay Semantics, Workload Contamination, and Operating Regimes
 
 *Draft v2 — 2026-08-02. Numbers cite frozen repository artifacts; the

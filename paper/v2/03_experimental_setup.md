@@ -125,3 +125,14 @@ We report tie-seed sensitivity for the principal conditions. We do not report
 population confidence intervals for quantities estimated from a single trace,
 and we mark such quantities as implementation-stable rather than
 statistically bounded.
+
+All simulation, workload construction and analysis code released with this
+paper was implemented with the assistance of Codex (OpenAI) and Claude
+(Anthropic) under the author's direction, and the intermediate analyses from
+which the author worked were produced with the same assistance. Correctness was
+established by regenerating every reported
+figure from the released code against frozen result manifests with recorded
+SHA-256 hashes, rather than by inspection of the generated code alone. The
+verification procedure and the manifests are part of the released artifacts, so
+any reader may repeat the check independently. The declaration at the end of
+this paper states the assistance in full.

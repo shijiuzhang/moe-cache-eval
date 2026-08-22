@@ -76,7 +76,7 @@ experts a scheduling step touches at a layer form one committed execution unit.
 A simulator that flattens this unit into individual accesses can evict, part-way
 through the event, an expert that was resident at event start and is required
 later, then count an artificial refetch. The distortion is not uniform noise.
-On Qwen3-30B-A3B at $\rho$=40% and B=8, sequential replay inflates LRU by 27.4%,
+On Qwen3-30B-A3B at \ensuremath{\rho}=40% and B=8, sequential replay inflates LRU by 27.4%,
 LFRU by 28.5%, and Least-Stale by 27.4%, but LFU by only 3.4%, Belady by 4.3%,
 and a same-trace static diagnostic not at all. Because it penalizes exactly one
 family of policies, it inverts their ranking: under sequential replay the
@@ -117,7 +117,7 @@ stream, with the event set and the ratio held exactly constant, moves the gap
 from 44.9% to 30.8% and changes which causal policy is best.
 
 **What remains after correction.** With all three controlled, a large gap to the
-offline optimum persists: 44.2–45.9% across 13 frozen workload compositions at $\rho$=40%
+offline optimum persists: 44.2–45.9% across 13 frozen workload compositions at \ensuremath{\rho}=40%
 and B=8, and 50.4% at B=2. The natural reading is that a substantial opportunity
 is waiting for a better online policy. We tested that reading directly.
 
@@ -130,8 +130,8 @@ at B=2, leaving 84.3% and 96.6% to future-victim knowledge. We then trained a
 next-use-distance predictor on causal features available at eviction time —
 recency, frequency, gate mass, concurrent routing multiplicity, layer, and
 popularity rate — fitted on one trace and evaluated on a disjoint one. It
-transfers at R²=0.24 and, substituted for the oracle's input in the same
-eviction and admission machinery, recovers −11.4% of the gap: it is worse than
+transfers at R\ensuremath{^2}=0.24 and, substituted for the oracle's input in the same
+eviction and admission machinery, recovers \textminus{}11.4% of the gap: it is worse than
 the causal baseline it was meant to improve.
 
 **Position.** We state our claim narrowly. We do not show that expert caching is
@@ -206,7 +206,7 @@ hand-verifiable reference trace is released with the artifacts.
 A model has `L` MoE layers and `N` routed experts per layer, and routes each
 token to `k` experts per layer. The unit of cache management is an **expert
 block** `b = (l, e)` with `l in [L]`, `e in [N]`; the block universe has size
-`L·N`.
+`L.N`.
 
 Requests are served under first-come-first-served continuous batching. At
 scheduling step `s`, `A(s)` denotes the set of active requests. For the
@@ -292,14 +292,14 @@ Let `M` be the number of blocks transferred over a trace, and define
 
 - `logical` — expert assignments **before** intra-event deduplication. For the
   decode traces used in the primary experiments this is
-  `Σ_{s,l} |A(s)| · k`; for prefill it must additionally sum the routed tokens
+  `sum_{s,l} |A(s)| . k`; for prefill it must additionally sum the routed tokens
   contributed by each request rather than merely the request count;
-- `union   = Σ_{s,l} |E(s,l)|` — distinct blocks touched.
+- `union   = sum_{s,l} |E(s,l)|` — distinct blocks touched.
 
 We report
 
 > `effective miss fraction  m = M / logical`
-> `recoverable gap          g = (m_best-causal − m_Belady) / m_best-causal`
+> `recoverable gap          g = (m_best-causal - m_Belady) / m_best-causal`
 
 and, separately, `union / logical`.
 
@@ -347,7 +347,7 @@ quality.
 
 ## 3.2 Models
 
-| | experts `N` | top-`k` | MoE layers `L` | blocks `L·N` |
+| | experts `N` | top-`k` | MoE layers `L` | blocks `L.N` |
 |---|---:|---:|---:|---:|
 | Granite-3.1-3B-A800M | 40 | 8 | 32 | 1,280 |
 | OLMoE-1B-7B-0125 | 64 | 8 | 16 | 1,024 |
@@ -454,6 +454,17 @@ population confidence intervals for quantities estimated from a single trace,
 and we mark such quantities as implementation-stable rather than
 statistically bounded.
 
+All simulation, workload construction and analysis code released with this
+paper was implemented with the assistance of Codex (OpenAI) and Claude
+(Anthropic) under the author's direction, and the intermediate analyses from
+which the author worked were produced with the same assistance. Correctness was
+established by regenerating every reported
+figure from the released code against frozen result manifests with recorded
+SHA-256 hashes, rather than by inspection of the generated code alone. The
+verification procedure and the manifests are part of the released artifacts, so
+any reader may repeat the check independently. The declaration at the end of
+this paper states the assistance in full.
+
 
 # §4 Axis I — Replay Semantics
 
@@ -492,7 +503,7 @@ A natural repair is to randomize the intra-event order. Table 1 shows that this
 addresses only half of the problem.
 
 **Table 1.** Miss ratio under three replay semantics.
-*(64-expert model, per-layer scope, $\rho$ = 40%, LRU; range over 5 tie seeds.)*
+*(64-expert model, per-layer scope, \ensuremath{\rho} = 40%, LRU; range over 5 tie seeds.)*
 
 | replay semantics | miss ratio |
 |---|---:|
@@ -513,7 +524,7 @@ fraction fixed and varies only the replay semantics. It is the data behind
 Figure 1.
 
 **Table 2.** Effective miss fraction under sequential and event-atomic replay.
-*(128-expert model, held-out split, per-layer scope, $\rho$ = 40%, B = 8. Identical
+*(128-expert model, held-out split, per-layer scope, \ensuremath{\rho} = 40%, B = 8. Identical
 trace and capacity in both columns.)*
 
 | policy | sequential replay | event-atomic | inflation |
@@ -564,7 +575,7 @@ best causal policy and the offline optimum is:
 
 **Table 3.** Recoverable gap, prefill, per-layer scope, mean over 5 tie seeds.
 
-| model | $\rho$ = 20% | $\rho$ = 30% | $\rho$ = 40% |
+| model | \ensuremath{\rho} = 20% | \ensuremath{\rho} = 30% | \ensuremath{\rho} = 40% |
 |---|---:|---:|---:|
 | 40-expert | 0.155% | 0.320% | 0.733% |
 | 64-expert | 0.601% | 1.516% | 3.169% |
@@ -614,7 +625,7 @@ configuration, and the metric fixed.
 
 **Table 4.** Reduction in effective miss fraction of a homogeneous
 single-archetype stream relative to a mixed stream.
-*(128-expert model, per-layer scope, $\rho$ = 40%, B = 8, event-atomic.)*
+*(128-expert model, per-layer scope, \ensuremath{\rho} = 40%, B = 8, event-atomic.)*
 
 | workload archetype | single-template probe set | diversity-controlled probe set |
 |---|---:|---:|
@@ -698,12 +709,12 @@ to a category-round-robin mixture, by decode-position band. *(B = 16.)*
 | archetype | single-template set | | diversity-controlled set | |
 |---|---:|---:|---:|---:|
 | | early (t 0–8) | late (t 32–63) | early (t 0–16) | late (t 160–384) |
-| process diagnostics | 65.7% | 29.1% | 6.0% | **−7.8%** |
+| process diagnostics | 65.7% | 29.1% | 6.0% | **\textminus{}7.8%** |
 | equipment / BOM | 39.2% | 13.8% | 3.7% | 6.2% |
-| ERP | 24.5% | 11.5% | 6.8% | −8.6% |
+| ERP | 24.5% | 11.5% | 6.8% | \textminus{}8.6% |
 | document RAG | 1.2% | **20.2%** | 7.1% | **17.1%** |
 | office / legal | 4.0% | 9.7% | 11.6% | **20.1%** |
-| tool agent | 7.1% | 5.8% | −8.6% | 24.3% |
+| tool agent | 7.1% | 5.8% | \textminus{}8.6% | 24.3% |
 
 On the contaminated set the three template-rendered categories decay steeply
 while the two with heterogeneous natural-language payloads are flat or rising;
@@ -745,7 +756,7 @@ together with the shared prefix, is what specifically supports the echo
 interpretation.
 
 One asymmetry deserves note. The fixed-template arm has a *higher* effective
-miss fraction over the full trace (21.99% vs 18.78% at $\rho$ = 40%, B = 8) even
+miss fraction over the full trace (21.99% vs 18.78% at \ensuremath{\rho} = 40%, B = 8) even
 though it shows a larger early-window union reduction, because the fixed
 template also shortens responses and increases cold-start frequency. Template
 echo therefore cannot be read off the end-to-end miss difference; only the
@@ -784,14 +795,14 @@ We replicated all six on a disjoint held-out set of twelve.
 size-matched reference. Interval propagates the reference's draw-to-draw spread;
 it is not a population confidence interval.
 
-| archetype | draw 1 | draw 2 | mean | improvement vs 17.81% | ±1 s.d. of reference |
+| archetype | draw 1 | draw 2 | mean | improvement vs 17.81% | \ensuremath{\pm}1 s.d. of reference |
 |---|---:|---:|---:|---:|---|
 | office / legal | 8.76% | 8.15% | 8.45% | **52.5%** | 49.2 – 55.5 |
 | document RAG | 10.57% | 10.69% | 10.63% | **40.3%** | 36.1 – 44.0 |
 | equipment / BOM | 14.64% | 13.33% | 13.99% | 21.5% | 15.9 – 26.4 |
 | ERP | 17.33% | 15.18% | 16.25% | 8.8% | 2.3 – 14.4 |
-| process diagnostics | 17.65% | 16.34% | 16.99% | 4.6% | **−2.2 – 10.5** |
-| tool agent | 16.85% | 18.17% | 17.51% | 1.7% | **−5.3 – 7.8** |
+| process diagnostics | 17.65% | 16.34% | 16.99% | 4.6% | **\textminus{}2.2 – 10.5** |
+| tool agent | 16.85% | 18.17% | 17.51% | 1.7% | **\textminus{}5.3 – 7.8** |
 
 Only the top two archetypes are clearly separated from the reference;
 equipment/BOM is positive with a wide interval; and the bottom three are not
@@ -859,7 +870,7 @@ reporting the measured union, the fraction of events that exceed the layer
 quota, and the resulting gap.
 
 **Table 9.** Regime and gap versus concurrency.
-*(128-expert model, per-layer scope, $\rho$ = 40%, `c_l` approximately  51.2, event-atomic.)*
+*(128-expert model, per-layer scope, \ensuremath{\rho} = 40%, `c_l` approximately  51.2, event-atomic.)*
 
 | B | union / layer-step | p95 | `r_bar` | events over quota | recoverable gap |
 |---:|---:|---:|---:|---:|---:|
@@ -883,15 +894,15 @@ effect.
 **Table 10.** Gap versus residency fraction at fixed concurrency.
 *(128-expert model, per-layer scope, B = 16.)*
 
-| $\rho$ | best causal | Belady | recoverable gap |
+| \ensuremath{\rho} | best causal | Belady | recoverable gap |
 |---:|---:|---:|---:|
 | 20% | 30.33% | 28.08% | **7.42%** |
 | 30% | 22.24% | 18.09% | 18.65% |
 | 40% | 15.58% | 10.39% | **33.32%** |
 
-A study reporting only the $\rho$ = 20% row would conclude that existing policies are
+A study reporting only the \ensuremath{\rho} = 20% row would conclude that existing policies are
 within 7.4% of optimal and that the problem is closed. A study reporting only
-the $\rho$ = 40% row would conclude that a third of the traffic is recoverable. Both
+the \ensuremath{\rho} = 40% row would conclude that a third of the traffic is recoverable. Both
 are the same model, the same workload and the same concurrency.
 
 ## 6.4 Cross-model comparison fails on batch size and improves on `r_bar`
@@ -899,7 +910,7 @@ are the same model, the same workload and the same concurrency.
 Table 11 compares three models two ways: aligned on batch size, as is
 conventional, and aligned on mean `r_bar`.
 
-**Table 11.** Recoverable gap under two alignment choices. *($\rho$ = 40%, per-layer
+**Table 11.** Recoverable gap under two alignment choices. *(\ensuremath{\rho} = 40%, per-layer
 scope, event-atomic.)*
 
 | alignment | model | B | `r_bar` | gap | spread |
@@ -918,12 +929,12 @@ wide open. Aligned on `r_bar`, the same measurements agree to within a few
 percentage points. The apparent architecture dependence was a regime difference.
 
 This also bounds what small models can be used for. The 40-expert model at
-$\rho$ = 40% cannot reach `r_bar < 0.5` at any concurrency, because a single request
+\ensuremath{\rho} = 40% cannot reach `r_bar < 0.5` at any concurrency, because a single request
 already touches 8 of its 16 per-layer slots. Regimes below that are simply not
 observable on it, and results from it cannot be extrapolated into them.
 
 **A note on the analytical reference frame.** For the frontier-scale
-specification of §3.2 — 896 experts, top-16, $\rho$ = 40%, giving `c_l ~= 358` — the
+specification of §3.2 — 896 experts, top-16, \ensuremath{\rho} = 40%, giving `c_l ~= 358` — the
 expected per-step union at B = 8 under a uniform routing null is approximately 120, so
 `r_bar ~= 0.335` under that null. That places it near the 64-expert model at B = 1 and the 128-expert
 model at B = 2, and far from any of them at B = 8. We state this only to
@@ -1000,7 +1011,7 @@ how much of the gap reuse structure explains in general (§11).
 ## 7.1 The gap is large and stable
 
 **Table 12.** Recoverable gap on the principal conditions.
-*(128-expert model, per-layer scope, $\rho$ = 40%, event-atomic; best causal chosen
+*(128-expert model, per-layer scope, \ensuremath{\rho} = 40%, event-atomic; best causal chosen
 from LRU, LFU, LFRU, Least-Stale.)*
 
 | condition | best causal | Belady | gap |
@@ -1013,12 +1024,12 @@ from LRU, LFU, LFRU, Least-Stale.)*
 The gap does not depend on the contamination of §5: the fixed-template arm,
 whose absolute miss fraction is 22% higher, shows the same gap to within half a
 percentage point. Nor is it an artifact of a particular workload mixture.
-Holding $\rho$ = 40%, B = 8 and the replay semantics fixed, we constructed thirteen
+Holding \ensuremath{\rho} = 40%, B = 8 and the replay semantics fixed, we constructed thirteen
 streams — seven size-matched mixtures drawn from disjoint request pools and six
 homogeneous single-archetype streams — and measured the gap on each.
 
 **Table 13.** Gap invariance across workload composition. *(13 deterministically
-frozen conditions, $\rho$ = 40%, B = 8, per-layer scope. The conditions comprise six
+frozen conditions, \ensuremath{\rho} = 40%, B = 8, per-layer scope. The conditions comprise six
 matched mixtures, one non-matched mixture, and six non-matched pure streams.)*
 
 | | gap |
@@ -1028,13 +1039,13 @@ matched mixtures, one non-matched mixture, and six non-matched pure streams.)*
 | mean | 45.09% |
 
 The best causal policy is LFRU in twelve of thirteen conditions and LFU in the
-homogeneous office/legal stream. **This range applies to $\rho$ = 40%, B = 8 only.**
+homogeneous office/legal stream. **This range applies to \ensuremath{\rho} = 40%, B = 8 only.**
 It must not be pooled with the B = 2 condition of Table 12 or with the residency
 sweep of §6.3, whose gaps span 1.95%–44.78%; those are different operating
 points and combining them would misrepresent the variability.
 
 Across the four principal conditions, varying the tie-breaking seed moves the
-gap by order $10^{-5}$. We report this as implementation stability, not as a
+gap by order \ensuremath{10^{-5}}. We report this as implementation stability, not as a
 population confidence interval: it bounds the simulator's nondeterminism, not
 the sampling variability of the underlying traffic.
 
@@ -1059,11 +1070,11 @@ not a deployable policy — it still consults the future — but it isolates the
 contribution of the admission decision. Writing `m_c`, `m_B`, `m_F` for the miss
 fractions of the best causal policy, Belady, and forced-admit Belady:
 
-> `admission share      = (m_F − m_B) / (m_c − m_B)`
-> `future-victim share  = (m_c − m_F) / (m_c − m_B)`
+> `admission share      = (m_F - m_B) / (m_c - m_B)`
+> `future-victim share  = (m_c - m_F) / (m_c - m_B)`
 
 **Table 14.** Decomposition of the recoverable gap. *(128-expert model,
-per-layer scope, $\rho$ = 40%, held-out split; discovery values in parentheses.)*
+per-layer scope, \ensuremath{\rho} = 40%, held-out split; discovery values in parentheses.)*
 
 | condition | total gap | admission share | future-victim share |
 |---|---:|---:|---:|
@@ -1219,14 +1230,14 @@ incapable of a fair positive test are post-hoc audits, not confirmatory results.
 
 | mechanism | frozen measurement setting | pre-registered criterion | measured outcome in scope |
 |---|---|---|---|
-| steady-state prefill eviction / admission | 40- and 64-expert models; $\rho$ = 20/30/40%; 128-token prefill blocks; strictly lossless | gap $\geq$ 10% | 0.155–3.169%; **not met** |
-| warm-cache workload transition | 40- and 64-expert models; $\rho$ = 20/30/40%; directed A$\rightarrow$B transitions; windows N = 10/25/50/100 | gap $\geq$ 10% | 1439/1440 units below 10%; **not met** |
-| semantic category partitioning | 128-expert model; $\rho$ = 40%; B = 8; FCFS; equal total capacity; **6 slots < top-`k` = 8** | transfer reduction $\geq$ 5% | transfer increased 115.9%; **invalid test of the mechanism because the design floor dominated** |
-| causal affinity batching | 128-expert model; $\rho$ = 40%; B = 8 with 24 admitted; deadline rotation; W = 4; strictly lossless | transfer reduction $\geq$ 10% | 4.76% (LFRU) / 4.55% (static); **not met** |
+| steady-state prefill eviction / admission | 40- and 64-expert models; \ensuremath{\rho} = 20/30/40%; 128-token prefill blocks; strictly lossless | gap \ensuremath{\geq} 10% | 0.155–3.169%; **not met** |
+| warm-cache workload transition | 40- and 64-expert models; \ensuremath{\rho} = 20/30/40%; directed A\ensuremath{\rightarrow}B transitions; windows N = 10/25/50/100 | gap \ensuremath{\geq} 10% | 1439/1440 units below 10%; **not met** |
+| semantic category partitioning | 128-expert model; \ensuremath{\rho} = 40%; B = 8; FCFS; equal total capacity; **6 slots < top-`k` = 8** | transfer reduction \ensuremath{\geq} 5% | transfer increased 115.9%; **invalid test of the mechanism because the design floor dominated** |
+| causal affinity batching | 128-expert model; \ensuremath{\rho} = 40%; B = 8 with 24 admitted; deadline rotation; W = 4; strictly lossless | transfer reduction \ensuremath{\geq} 10% | 4.76% (LFRU) / 4.55% (static); **not met** |
 
-The warm-transition experiment covers 1440 units — two models × three residency
-fractions × three request-order seeds × twenty directed transitions between five
-workload proxies × four post-transition windows. A single unit exceeded the
+The warm-transition experiment covers 1440 units — two models \ensuremath{\times} three residency
+fractions \ensuremath{\times} three request-order seeds \ensuremath{\times} twenty directed transitions between five
+workload proxies \ensuremath{\times} four post-transition windows. A single unit exceeded the
 threshold, at 10.74%, and decayed to 6.83%, 5.03% and 3.95% as the window
 widened from 10 to 25, 50 and 100 requests, which is the signature of a
 short-lived warm-start transient rather than a sustainable control opportunity.
@@ -1271,9 +1282,9 @@ The oracle is a rolling, route-aware bound, not a global optimum, and all
 metrics are computed on the complete cache trajectory rather than per step.
 
 **Table 18.** Causal affinity batching against FCFS, held-out split.
-*(128-expert model, $\rho$ = 40%, per-layer scope, B = 8, 24 admitted, W = 4.)*
+*(128-expert model, \ensuremath{\rho} = 40%, per-layer scope, B = 8, 24 admitted, W = 4.)*
 
-| policy | FCFS | causal | oracle | causal gain | oracle gain | share | Δp99 |
+| policy | FCFS | causal | oracle | causal gain | oracle gain | share | \ensuremath{\Delta}p99 |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | LFRU | 23.08% | 21.98% | 21.71% | **4.76%** | 5.92% | **80.43%** | +7.06% |
 | static pinned | 19.15% | 18.28% | 17.64% | **4.55%** | 7.90% | 57.65% | +10.08% |
@@ -1365,17 +1376,17 @@ policies under standard continuous batching, using a pin list fitted on the
 calibration split and frozen before the held-out split was read.
 
 **Table 19.** Static pinned residency versus dynamic policies across
-concurrency. *(128-expert model, held-out split, per-layer scope, $\rho$ = 40%,
+concurrency. *(128-expert model, held-out split, per-layer scope, \ensuremath{\rho} = 40%,
 event-atomic; pin list frozen from the calibration split; initial load counted.)*
 
 | active B | static pinned | LFRU | Belady | static vs LFRU |
 |---:|---:|---:|---:|---:|
-| 2 | 21.50% | 12.84% | 6.37% | **−67.4%** |
-| 4 | 20.81% | 16.26% | 8.43% | −28.0% |
-| 8 | 19.37% | 18.01% | 9.93% | −7.5% |
-| 16 | 17.10% | 16.64% | 11.32% | −2.8% |
-| 24 | 15.28% | 14.92% | 12.21% | −2.4% |
-| 32 | 13.84% | 13.52% | 12.20% | **−2.3%** |
+| 2 | 21.50% | 12.84% | 6.37% | **\textminus{}67.4%** |
+| 4 | 20.81% | 16.26% | 8.43% | \textminus{}28.0% |
+| 8 | 19.37% | 18.01% | 9.93% | \textminus{}7.5% |
+| 16 | 17.10% | 16.64% | 11.32% | \textminus{}2.8% |
+| 24 | 15.28% | 14.92% | 12.21% | \textminus{}2.4% |
+| 32 | 13.84% | 13.52% | 12.20% | **\textminus{}2.3%** |
 
 The static set never wins, but the margin narrows monotonically from a factor of
 1.7 at B = 2 to 2.3% at B = 32. The mechanism is the regime variable of §6: at
@@ -1412,8 +1423,8 @@ distribution is only moderately concentrated:
 | top 30% | 59.6% |
 | top 40% | **72.3%** |
 
-For the `Static-same-trace` diagnostic at $\rho$ = 40%, the identity predicts a miss
-ratio of 1 − 0.723 = 27.99% of **union accesses**, and the simulator reports
+For the `Static-same-trace` diagnostic at \ensuremath{\rho} = 40%, the identity predicts a miss
+ratio of 1 \textminus{} 0.723 = 27.99% of **union accesses**, and the simulator reports
 27.99% under that denominator before adding the one-time preload. This is not
 the pre-dedup effective-miss fraction used in Table 19. The identity is exact for
 the union-access denominator: static residency traffic depends only on the
@@ -1434,14 +1445,14 @@ which residency policy is better.
 
 **Table 20.** Static versus dynamic residency under two service disciplines.
 *(Identical 72 requests, 23,529 decode forwards, capacity and pin list;
-128-expert model, $\rho$ = 40%.)*
+128-expert model, \ensuremath{\rho} = 40%.)*
 
 | service discipline | mean batch | static pinned | LFRU | static vs LFRU |
 |---|---:|---:|---:|---:|
-| continuous batching, B = 8 | 7.69 | 19.37% | 18.01% | **−7.5%** |
+| continuous batching, B = 8 | 7.69 | 19.37% | 18.01% | **\textminus{}7.5%** |
 | deadline rotation, 24 admitted / 8 served, W = 4 | 7.83 | 19.15% | 23.08% | **+17.0%** |
 
-The static arm barely moves (19.37% $\rightarrow$ 19.15%); LFRU degrades by five percentage
+The static arm barely moves (19.37% \ensuremath{\rightarrow} 19.15%); LFRU degrades by five percentage
 points. Rotating a subset of admitted sessions repeatedly disrupts the recency
 and frequency state on which dynamic policies depend, while a fixed set has no
 state to disrupt.
@@ -1473,7 +1484,7 @@ top-`k` ranks. On the 128-expert model it is nearly flat:
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | share of gate mass | 21.5% | 16.4% | 13.7% | 11.9% | 10.5% | 9.4% | 8.6% | 8.0% |
 
-The highest-ranked expert carries only 2.7× the mass of the lowest, and ranks
+The highest-ranked expert carries only 2.7\ensuremath{\times} the mass of the lowest, and ranks
 1–4 account for 63.5% of the total. This says that rank is a weak byte-allocation
 heuristic on this model. It does **not** measure the quality loss from reducing
 precision: gate mass is not causal output importance, quantization error is not
@@ -1657,7 +1668,7 @@ at the 896-expert scale that motivates the application, and §6.4 shows that its
 regime ratio is reached by our models only at low concurrency — so the setting
 the motivation comes from is the one our data covers least well. Regime coverage
 is also bounded below by expert count: the 40-expert model cannot reach
-`r_bar < 0.5` at $\rho$ = 40% at any concurrency, so conclusions about slack regimes
+`r_bar < 0.5` at \ensuremath{\rho} = 40% at any concurrency, so conclusions about slack regimes
 rest on the 128-expert model alone.
 
 **Workload and probe construction constrain what the conclusions mean.** We
@@ -1689,7 +1700,7 @@ intervals for quantities estimated from a single trace. Where draw-to-draw
 spread is quantified (§5.7) it is an estimate of reference variability from
 seven size-matched draws, and each homogeneous condition is still two draws of
 twelve requests. Reported ranges apply to one operating point: the 44.18–45.93%
-range of §7.1 covers thirteen workload compositions at $\rho$ = 40%, B = 8, and must
+range of §7.1 covers thirteen workload compositions at \ensuremath{\rho} = 40%, B = 8, and must
 not be pooled with the B = 2 condition or the residency sweep, whose gaps span
 1.95–44.78%. Discovery and confirmatory splits share no source group but were
 collected under the same model, decoding configuration and length cap. Finally,
@@ -1862,6 +1873,42 @@ conformance trace that pins down the replay semantics, the contamination
 diagnostics that need no control arm, and the released artifacts. We expect the
 checklist to be incomplete, and we would consider a fifth confounder found by a
 reader to be a use of it rather than a refutation.
+
+
+# Declaration of generative AI and AI-assisted technologies in the writing process
+
+During the preparation of this work the author used two generative AI systems, in
+distinct roles.
+
+Codex (OpenAI), accessed through the Codex command-line interface, was used to
+implement, test and run experimental code — the event-atomic simulator, the
+workload and probe construction, the experiment orchestration and the analysis
+scripts released with the paper — and to produce the intermediate analyses and
+candidate conclusions from which the author worked.
+
+Claude (Anthropic), accessed through the Claude Code command-line interface, was
+used to draft and revise the prose of the manuscript from the author's outlines,
+results and analytical decisions; to contribute to the implementation of the same
+released code; to audit the experimental claims produced in the course of the
+work, in an adversarial review across the two systems in which one audited the
+other's conclusions; and to check the manuscript for internal consistency between
+its stated numbers and the frozen result manifests.
+
+The author set the research questions and the standard of evidence for the work,
+reviewed and adjudicated every experimental design decision and every
+interpretation of results, verified each reported result before inclusion, and is
+solely responsible for the claims advanced in the paper. Neither system was used
+to synthesise, alter or select any raw trace, observation or reported number:
+every quantitative result here was produced by the released, versioned code from
+the frozen inputs recorded in the artifact manifest, and was regenerated and
+checked against that manifest. The invalidated analyses listed in
+Appendix A include cases in which a model-generated conclusion was found to be
+wrong and withdrawn; they are recorded because the subject of this paper is the
+fragility of measurement, and assistance of this kind is one of the ways a
+measurement can go wrong.
+
+The author reviewed and edited all content and takes full responsibility for the
+content of this publication.
 
 
 # Appendix A — Related-work reporting audit
@@ -2059,20 +2106,20 @@ regime variable of §6, and doing so suggests a trend we can report but not
 establish.
 
 **Table B1.** Static versus dynamic at aligned operating regimes.
-*($\rho$ = 40%, per-layer scope. Pin lists fitted on the evaluation trace itself —
+*(\ensuremath{\rho} = 40%, per-layer scope. Pin lists fitted on the evaluation trace itself —
 deliberately leaky, so the static arm is shown at its best case and the trend is
 conservative.)*
 
 | model | experts | `r_bar` | static | LFRU | static vs LFRU |
 |---|---:|---:|---:|---:|---:|
-| 40-expert | 40 | 0.500 | 31.15% | 25.91% | −20.2% |
-| 64-expert | 64 | 0.312 | 35.64% | 25.65% | **−39.0%** |
-| 128-expert | 128 | 0.293 | 19.57% | 12.83% | **−52.6%** |
-| 128-expert | 128 | 0.156 | 19.87% | 10.57% | −87.9% |
+| 40-expert | 40 | 0.500 | 31.15% | 25.91% | \textminus{}20.2% |
+| 64-expert | 64 | 0.312 | 35.64% | 25.65% | **\textminus{}39.0%** |
+| 128-expert | 128 | 0.293 | 19.57% | 12.83% | **\textminus{}52.6%** |
+| 128-expert | 128 | 0.156 | 19.87% | 10.57% | \textminus{}87.9% |
 
 Two directions are visible: at comparable `r_bar`, the disadvantage grows with
-expert count (−39.0% at 64 experts, −52.6% at 128); and within a single model it
-grows as the regime becomes slacker (−52.6% at `r_bar` = 0.29, −87.9% at
+expert count (\textminus{}39.0% at 64 experts, \textminus{}52.6% at 128); and within a single model it
+grows as the regime becomes slacker (\textminus{}52.6% at `r_bar` = 0.29, \textminus{}87.9% at
 `r_bar` = 0.16). Both are consistent with the mechanism of §9.1 — more experts means
 a flatter popularity distribution, so a fixed top-fraction captures less of the
 traffic, while a dynamic policy still tracks a working set that remains small
@@ -2108,7 +2155,7 @@ own slot count gives 61.08% miss at 6 slots and 27.25% at 39 slots, against
 18.76% at the full 51. Weighting these by each partition's share of logical
 expert assignments (0.1415, 0.1557, 0.7028) predicts
 
-> 0.1415 × 61.08% + 0.1557 × 61.08% + 0.7028 × 27.25% = **37.30%**
+> 0.1415 \ensuremath{\times} 61.08% + 0.1557 \ensuremath{\times} 61.08% + 0.7028 \ensuremath{\times} 27.25% = **37.30%**
 
 against a measured 37.99%. **Capacity fragmentation alone accounts for 96% of
 the degradation**; sharing and duplication together account for the remaining 4%.
@@ -2123,6 +2170,6 @@ so rather than presenting the outcome as a mechanism-level refutation.
 Whether the arithmetic generalizes is a separate question, and for the
 frontier-scale reference frame of §3.2 it does not: 358 per-layer slots divided
 six ways gives approximately 59.7 per partition against a per-category per-step union of
-roughly 16–26, a margin of 2.3–3.7×. Hard partitioning may still lose there for
+roughly 16–26, a margin of 2.3–3.7\ensuremath{\times}. Hard partitioning may still lose there for
 the sharing and duplication reasons, but it would not be excluded by capacity
-arithmetic, and the −115.9% figure must not be carried across.
+arithmetic, and the \textminus{}115.9% figure must not be carried across.
