@@ -75,22 +75,26 @@ class _Handler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-cache")
         self.send_header("Connection", "close")
         self.end_headers()
-        if config.get("leading_empty", True):
-            self._event({"choices": [{"delta": {"role": "assistant", "content": ""}}]})
-        _delay_ms(config.get("ttft_ms", 0))
-        tokens = config.get("tokens", ["hello", " world"])
-        token_delay_ms = float(config.get("token_delay_ms", 0))
-        for index, token in enumerate(tokens):
-            if index:
-                _delay_ms(token_delay_ms)
-            self._event({"choices": [{"delta": {"content": str(token)}}]})
-        usage = {
-            "prompt_tokens": int(config.get("prompt_tokens", 1)),
-            "completion_tokens": len(tokens),
-        }
-        self._event({"choices": [{"delta": {}, "finish_reason": "stop"}], "usage": usage})
-        self.wfile.write(b"data: [DONE]\n\n")
-        self.wfile.flush()
+        try:
+            if config.get("leading_empty", True):
+                self._event({"choices": [{"delta": {"role": "assistant", "content": ""}}]})
+            _delay_ms(config.get("ttft_ms", 0))
+            tokens = config.get("tokens", ["hello", " world"])
+            token_delay_ms = float(config.get("token_delay_ms", 0))
+            for index, token in enumerate(tokens):
+                if index:
+                    _delay_ms(token_delay_ms)
+                self._event({"choices": [{"delta": {"content": str(token)}}]})
+            usage = {
+                "prompt_tokens": int(config.get("prompt_tokens", 1)),
+                "completion_tokens": len(tokens),
+            }
+            self._event({"choices": [{"delta": {}, "finish_reason": "stop"}], "usage": usage})
+            self.wfile.write(b"data: [DONE]\n\n")
+            self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError):
+            # Expected when the timeout positive control closes the client socket.
+            pass
         self.close_connection = True
 
     def _event(self, value: dict[str, Any]) -> None:

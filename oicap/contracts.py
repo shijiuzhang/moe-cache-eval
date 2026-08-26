@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 import yaml
+from jsonschema import Draft202012Validator
 
 
 SCHEMA_VERSION = "0.1"
@@ -113,9 +114,24 @@ class ContractSet:
 def load_contracts(root: str | Path) -> ContractSet:
     root_path = Path(root).resolve()
     loaded = {name.removesuffix(".yaml"): _load_yaml(root_path / name) for name in CONTRACT_FILES}
+    for name, document in loaded.items():
+        _validate_published_schema(name, document)
     contracts = ContractSet(root=root_path, **loaded)
     validate_contracts(contracts)
     return contracts
+
+
+def _validate_published_schema(name: str, document: dict[str, Any]) -> None:
+    schema_path = Path(__file__).parent / "schemas" / "0.1" / f"{name}.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(document),
+        key=lambda error: list(error.absolute_path),
+    )
+    if errors:
+        error = errors[0]
+        location = ".".join(map(str, error.absolute_path)) or "<root>"
+        raise ContractError(f"{name}.yaml violates published schema at {location}: {error.message}")
 
 
 def validate_contracts(contracts: ContractSet) -> None:
@@ -237,7 +253,10 @@ def validate_contracts(contracts: ContractSet) -> None:
         )
     for field in (
         "max_schedule_lag_p99_ms",
+        "max_event_loop_lag_p99_ms",
         "max_runner_process_cpu_percent_one_core",
+        "max_runner_system_cpu_percent",
+        "min_closed_loop_concurrency_ratio",
         "min_arrival_rate_ratio",
         "noise_stability_tolerance_ms",
     ):
@@ -247,14 +266,36 @@ def validate_contracts(contracts: ContractSet) -> None:
         raise ContractError("run.self_calibration.repetitions must be >= 2.")
     try:
         schedule_limit = float(calibration["max_schedule_lag_p99_ms"])
+        event_loop_limit = float(calibration["max_event_loop_lag_p99_ms"])
         cpu_limit = float(calibration["max_runner_process_cpu_percent_one_core"])
+        system_cpu_limit = float(calibration["max_runner_system_cpu_percent"])
+        concurrency_ratio = float(calibration["min_closed_loop_concurrency_ratio"])
         rate_ratio = float(calibration["min_arrival_rate_ratio"])
         stability = float(calibration["noise_stability_tolerance_ms"])
     except (TypeError, ValueError) as exc:
         raise ContractError("run.self_calibration limits must be numeric.") from exc
-    if not all(math.isfinite(value) for value in (schedule_limit, cpu_limit, rate_ratio, stability)):
+    if not all(
+        math.isfinite(value)
+        for value in (
+            schedule_limit,
+            event_loop_limit,
+            cpu_limit,
+            system_cpu_limit,
+            concurrency_ratio,
+            rate_ratio,
+            stability,
+        )
+    ):
         raise ContractError("run.self_calibration limits must be finite.")
-    if schedule_limit < 0 or cpu_limit <= 0 or not 0 < rate_ratio <= 1 or stability < 0:
+    if (
+        schedule_limit < 0
+        or event_loop_limit < 0
+        or cpu_limit <= 0
+        or not 0 < system_cpu_limit <= 100
+        or not 0 < concurrency_ratio <= 1
+        or not 0 < rate_ratio <= 1
+        or stability < 0
+    ):
         raise ContractError("run.self_calibration limits are outside their valid ranges.")
     accounting = _mapping(run.get("token_accounting"), "run.token_accounting")
     if accounting.get("authority") not in {

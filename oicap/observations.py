@@ -36,6 +36,7 @@ class RequestObservation:
     response_text: str = ""
     chunks: list[ChunkObservation] = field(default_factory=list)
     token_timestamps_ns: list[int] = field(default_factory=list)
+    token_timing_authority: str | None = None
     input_tokens: int | None = None
     output_tokens: int | None = None
 

@@ -27,8 +27,13 @@
     "validator": {"type": "object", "required": ["mode"], "properties": {"mode": {"const": "none"}}},
     "self_calibration": {
       "type": "object",
-      "required": ["profile", "repetitions", "max_schedule_lag_p99_ms", "max_runner_process_cpu_percent_one_core", "min_arrival_rate_ratio", "noise_stability_tolerance_ms"],
-      "properties": {"repetitions": {"type": "integer", "minimum": 2}}
+      "required": ["profile", "repetitions", "max_schedule_lag_p99_ms", "max_event_loop_lag_p99_ms", "max_runner_process_cpu_percent_one_core", "max_runner_system_cpu_percent", "min_closed_loop_concurrency_ratio", "min_arrival_rate_ratio", "noise_stability_tolerance_ms"],
+      "properties": {
+        "repetitions": {"type": "integer", "minimum": 2},
+        "max_event_loop_lag_p99_ms": {"type": "number", "minimum": 0},
+        "max_runner_system_cpu_percent": {"type": "number", "exclusiveMinimum": 0, "maximum": 100},
+        "min_closed_loop_concurrency_ratio": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
     }
   }
 }

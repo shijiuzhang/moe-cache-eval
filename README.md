@@ -60,8 +60,10 @@ deployments. The draft product contract is available for independent audit:
 - [`docs/PLATFORM_SPEC_V0_1_AUDIT.md`](docs/PLATFORM_SPEC_V0_1_AUDIT.md)
 - [`docs/PLATFORM_SPEC_V0_1_AUDIT_DISPOSITION.md`](docs/PLATFORM_SPEC_V0_1_AUDIT_DISPOSITION.md)
 
-Version 0.1 is deliberately smaller: a self-calibrating black-box runner that
-records one honest load point and emits a verifiable private evidence bundle.
+The schema-0.1 checkpoint is deliberately smaller: a self-calibrating black-box
+runner that records one honest load point and emits a recomputable, unsigned private
+evidence bundle. Verification establishes internal consistency; it does not attest
+producer identity or prevent a producer from regenerating altered evidence.
 SLO adjudication, sweeps, comparison and reports begin in v0.2. Engine-specific
 MoE telemetry is a later diagnostic extension; the specification deliberately
 excludes a universal score and unmeasured hardware claims.

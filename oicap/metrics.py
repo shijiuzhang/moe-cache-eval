@@ -64,6 +64,15 @@ def observation_metrics(obs: RequestObservation) -> dict[str, object]:
         _ms(right - left)
         for left, right in zip(obs.token_timestamps_ns, obs.token_timestamps_ns[1:])
     ]
+    content_timestamps = [
+        chunk.received_ns
+        for chunk in obs.chunks
+        if chunk.kind == "content"
+    ]
+    inter_chunk = [
+        _ms(right - left)
+        for left, right in zip(content_timestamps, content_timestamps[1:])
+    ]
     generated = obs.output_tokens
     tpot = None
     if (
@@ -79,6 +88,7 @@ def observation_metrics(obs: RequestObservation) -> dict[str, object]:
         "first_chunk_to_token_ms": first_chunk_gap,
         "end_to_end_ms": end_to_end,
         "itl_ms": itl,
+        "inter_chunk_latency_ms": inter_chunk,
         "tpot_ms": tpot,
     }
 
@@ -99,7 +109,9 @@ def summarize(observations: Iterable[RequestObservation]) -> dict[str, object]:
 
 
 def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
-    per_request = [observation_metrics(row) for row in rows]
+    measured = [(row, observation_metrics(row)) for row in rows]
+    successful_rows = [row for row in rows if row.success]
+    successful = [(row, values) for row, values in measured if row.success]
     measured_start = min((row.t_submit_ns for row in rows), default=None)
     terminal_times = [
         time
@@ -113,9 +125,8 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
         if measured_start is not None and measured_end is not None
         else 0.0
     )
-    successful = [row for row in rows if row.success]
-    output_tokens = sum(row.output_tokens or 0 for row in successful)
-    input_tokens = sum(row.input_tokens or 0 for row in successful)
+    output_tokens = sum(row.output_tokens or 0 for row in successful_rows)
+    input_tokens = sum(row.input_tokens or 0 for row in successful_rows)
     error_counts = Counter(row.error_type for row in rows if row.error_type)
     submit_times = sorted(row.t_submit_ns for row in rows)
     submission_span_s = (
@@ -130,16 +141,50 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
         if terminal is not None
     ]
 
-    def scalar(name: str) -> list[float]:
-        return [float(value) for item in per_request if (value := item[name]) is not None]
+    def scalar(pairs: list[tuple[RequestObservation, dict[str, object]]], name: str) -> list[float]:
+        return [float(value) for _, item in pairs if (value := item[name]) is not None]
 
-    itl_samples = [float(value) for item in per_request for value in item["itl_ms"]]
+    def populated(
+        values: Iterable[float], population: str, request_count: int
+    ) -> dict[str, float | int | str | None]:
+        result = distribution(values)
+        result["population"] = population
+        result["request_count"] = request_count
+        return result
+
+    itl_samples = [float(value) for _, item in successful for value in item["itl_ms"]]
+    inter_chunk_samples = [
+        float(value)
+        for _, item in successful
+        for value in item["inter_chunk_latency_ms"]
+    ]
+    token_timing_available = bool(successful_rows) and all(
+        row.token_timing_authority == "synthetic_one_token_per_content_event"
+        for row in successful_rows
+    )
+    itl_distribution = populated(
+        itl_samples,
+        "authoritative_token_intervals_from_successful_requests",
+        len(successful_rows),
+    )
+    itl_distribution["availability"] = "available" if token_timing_available else "unavailable"
+    itl_distribution["unavailable_reason"] = (
+        None if token_timing_available else "no_authoritative_per_token_timestamps"
+    )
+    failure_times = [
+        (terminal - row.t_submit_ns) / 1_000_000.0
+        for row in rows
+        if not row.success
+        for terminal in [row.t_error_ns or row.t_complete_ns]
+        if terminal is not None
+    ]
+    overlap = overlap_statistics(intervals)
     return {
         "schema_version": "0.1",
         "metrics_version": METRICS_VERSION,
         "requests": {
             "total": len(rows),
-            "successful": len(successful),
+            "successful": len(successful_rows),
             "timed_out": sum(row.timed_out for row in rows),
             "censored": sum(row.censored for row in rows),
             "success_rate": len(successful) / len(rows) if rows else None,
@@ -149,16 +194,40 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
             "successful_after_retry": sum(row.success and row.attempts > 1 for row in rows),
         },
         "latency_ms": {
-            "schedule_lag": distribution(scalar("schedule_lag_ms")),
-            "ttft": distribution(scalar("ttft_ms")),
-            "first_chunk_to_token": distribution(scalar("first_chunk_to_token_ms")),
-            "end_to_end": distribution(scalar("end_to_end_ms")),
-            "itl": distribution(itl_samples),
-            "tpot": distribution(scalar("tpot_ms")),
+            "schedule_lag": populated(
+                scalar(measured, "schedule_lag_ms"), "all_requests", len(rows)
+            ),
+            "ttft": populated(
+                scalar(successful, "ttft_ms"), "successful_requests", len(successful_rows)
+            ),
+            "first_chunk_to_token": populated(
+                scalar(successful, "first_chunk_to_token_ms"),
+                "successful_requests",
+                len(successful_rows),
+            ),
+            "end_to_end": populated(
+                scalar(successful, "end_to_end_ms"),
+                "successful_requests",
+                len(successful_rows),
+            ),
+            "inter_chunk_latency": populated(
+                inter_chunk_samples,
+                "content_chunk_intervals_from_successful_requests",
+                len(successful_rows),
+            ),
+            "itl": itl_distribution,
+            "tpot": populated(
+                scalar(successful, "tpot_ms"),
+                "successful_requests_with_at_least_two_authoritative_output_tokens",
+                len(successful_rows),
+            ),
+            "time_to_failure": populated(
+                failure_times, "failed_requests_with_observed_terminal_time", len(rows) - len(successful_rows)
+            ),
         },
         "throughput": {
             "measurement_duration_s": duration_s,
-            "completed_requests_per_s": len(successful) / duration_s if duration_s > 0 else None,
+            "completed_requests_per_s": len(successful_rows) / duration_s if duration_s > 0 else None,
             "output_tokens_per_s": output_tokens / duration_s if duration_s > 0 else None,
             "input_plus_output_tokens_per_s": (
                 (input_tokens + output_tokens) / duration_s if duration_s > 0 else None
@@ -167,7 +236,15 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
             "output_tokens": output_tokens,
         },
         "load_realization": {
-            "peak_in_flight": peak_overlap(intervals),
+            "peak_in_flight": overlap["peak_in_flight"],
+            "mean_in_flight": overlap["mean_in_flight"],
+            "overlap_window_s": overlap["overlap_window_s"],
+            "mean_in_flight_before_final_submission": overlap[
+                "mean_in_flight_before_final_submission"
+            ],
+            "concurrency_maintenance_window_s": overlap[
+                "concurrency_maintenance_window_s"
+            ],
             "submission_span_s": submission_span_s,
             "achieved_submission_rate_per_s": (
                 (len(submit_times) - 1) / submission_span_s
@@ -179,6 +256,18 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
 
 
 def peak_overlap(intervals: list[tuple[int, int]]) -> int:
+    return int(overlap_statistics(intervals)["peak_in_flight"])
+
+
+def overlap_statistics(intervals: list[tuple[int, int]]) -> dict[str, float | int | None]:
+    if not intervals:
+        return {
+            "peak_in_flight": 0,
+            "mean_in_flight": None,
+            "overlap_window_s": 0.0,
+            "mean_in_flight_before_final_submission": None,
+            "concurrency_maintenance_window_s": 0.0,
+        }
     events: list[tuple[int, int]] = []
     for start, end in intervals:
         events.append((start, 1))
@@ -186,7 +275,30 @@ def peak_overlap(intervals: list[tuple[int, int]]) -> int:
     # At equal timestamps, completion is processed before a new submission.
     active = 0
     maximum = 0
-    for _, delta in sorted(events, key=lambda item: (item[0], item[1])):
+    area_ns = 0
+    ordered = sorted(events, key=lambda item: (item[0], item[1]))
+    previous = ordered[0][0]
+    for timestamp, delta in ordered:
+        area_ns += active * (timestamp - previous)
+        previous = timestamp
         active += delta
         maximum = max(maximum, active)
-    return maximum
+    window_ns = ordered[-1][0] - ordered[0][0]
+    first_submission_ns = min(start for start, _ in intervals)
+    final_submission_ns = max(start for start, _ in intervals)
+    maintenance_window_ns = final_submission_ns - first_submission_ns
+    maintenance_area_ns = sum(
+        max(0, min(end, final_submission_ns) - max(start, first_submission_ns))
+        for start, end in intervals
+    )
+    return {
+        "peak_in_flight": maximum,
+        "mean_in_flight": area_ns / window_ns if window_ns > 0 else None,
+        "overlap_window_s": window_ns / 1_000_000_000.0,
+        "mean_in_flight_before_final_submission": (
+            maintenance_area_ns / maintenance_window_ns
+            if maintenance_window_ns > 0
+            else None
+        ),
+        "concurrency_maintenance_window_s": maintenance_window_ns / 1_000_000_000.0,
+    }

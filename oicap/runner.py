@@ -3,8 +3,10 @@ from __future__ import annotations
 import asyncio
 import os
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Awaitable, Callable
+
+import psutil
 
 from .contracts import ContractSet
 from .observations import RequestObservation
@@ -17,6 +19,7 @@ class RunResult:
     observations: list[RequestObservation]
     started_ns: int
     finished_ns: int
+    runner_load: dict[str, object] = field(default_factory=dict)
 
 
 async def execute_load_point(
@@ -97,34 +100,80 @@ async def execute_load_point(
                     "warmup",
                 )
             )
+    process = psutil.Process(os.getpid())
+    process.cpu_percent(None)
+    psutil.cpu_percent(None)
+    process_start_ns = time.process_time_ns()
+    event_loop_lag_samples_ms: list[float] = []
+    monitor_stop = asyncio.Event()
+    monitor = asyncio.create_task(
+        _monitor_event_loop_lag(monitor_stop, event_loop_lag_samples_ms)
+    )
+    await asyncio.sleep(0)
     measurement_start_ns = time.perf_counter_ns()
-    if arrival["kind"] == "closed_loop":
-        observations.extend(await _closed_loop(
-            measurement_sequence,
-            execute_with_policy,
-            measurement_start_ns,
-            int(arrival["active_users"]),
-            max_in_flight,
-            timeout_s,
-            token_authority,
-            "measurement",
-            think_time_ms,
-        ))
-    else:
-        observations.extend(await _open_loop(
-            measurement_sequence,
-            execute_with_policy,
-            measurement_start_ns,
-            float(arrival["rate_per_s"]),
-            max_in_flight,
-            timeout_s,
-            token_authority,
-            "measurement",
-        ))
+    try:
+        if arrival["kind"] == "closed_loop":
+            observations.extend(await _closed_loop(
+                measurement_sequence,
+                execute_with_policy,
+                measurement_start_ns,
+                int(arrival["active_users"]),
+                max_in_flight,
+                timeout_s,
+                token_authority,
+                "measurement",
+                think_time_ms,
+            ))
+        else:
+            observations.extend(await _open_loop(
+                measurement_sequence,
+                execute_with_policy,
+                measurement_start_ns,
+                float(arrival["rate_per_s"]),
+                max_in_flight,
+                timeout_s,
+                token_authority,
+                "measurement",
+            ))
+    finally:
+        measurement_finished_ns = time.perf_counter_ns()
+        monitor_stop.set()
+        await monitor
+    measurement_duration_s = max(
+        (measurement_finished_ns - measurement_start_ns) / 1_000_000_000.0,
+        1e-12,
+    )
+    measured = [row for row in observations if row.phase == "measurement"]
+    schedule_lags = sorted(
+        (row.t_submit_ns - row.t_scheduled_ns) / 1_000_000.0 for row in measured
+    )
+    runner_load = {
+        "measurement_duration_s": measurement_duration_s,
+        "runner_process_cpu_percent_one_core": (
+            (time.process_time_ns() - process_start_ns)
+            / 1_000_000_000.0
+            / measurement_duration_s
+            * 100.0
+        ),
+        "runner_system_cpu_percent": psutil.cpu_percent(None),
+        "event_loop_lag_ms": {
+            "definition": "periodic_asyncio_wakeup_lateness",
+            "sample_count": len(event_loop_lag_samples_ms),
+            "interval_ms": 1.0,
+            "p99": _quantile(sorted(event_loop_lag_samples_ms), 0.99),
+            "max": max(event_loop_lag_samples_ms) if event_loop_lag_samples_ms else None,
+        },
+        "request_schedule_lag_ms": {
+            "definition": "request_submit_minus_scheduled_time",
+            "p99": _quantile(schedule_lags, 0.99),
+            "max": max(schedule_lags) if schedule_lags else None,
+        },
+    }
     return RunResult(
         observations=sorted(observations, key=lambda item: item.request_id),
         started_ns=started_ns,
-        finished_ns=time.perf_counter_ns(),
+        finished_ns=measurement_finished_ns,
+        runner_load=runner_load,
     )
 
 
@@ -198,29 +247,70 @@ async def _closed_loop(
     think_time_ms: float = 0,
 ) -> list[RequestObservation]:
     worker_count = min(active_users, max_in_flight, len(sequence))
-    queues = [sequence[index::worker_count] for index in range(worker_count)]
+    queue: asyncio.Queue[tuple[int, WorkloadItem]] = asyncio.Queue()
+    for index, item in enumerate(sequence):
+        queue.put_nowait((index, item))
 
-    async def worker(worker_index: int, queue: list[WorkloadItem]) -> list[RequestObservation]:
+    async def worker(worker_index: int) -> list[RequestObservation]:
         rows: list[RequestObservation] = []
-        for offset, item in enumerate(queue):
-            if offset and think_time_ms:
+        completed = 0
+        while True:
+            try:
+                index, item = queue.get_nowait()
+            except asyncio.QueueEmpty:
+                break
+            if completed and think_time_ms:
                 await asyncio.sleep(think_time_ms / 1000.0)
             scheduled_ns = time.perf_counter_ns()
-            rows.append(
-                await execute(
-                    f"{phase[0]}-r{worker_index:04d}-{offset:06d}",
-                    item.workload_class,
-                    item.body,
-                    scheduled_ns,
-                    timeout_s,
-                    token_authority,
-                    phase,
+            try:
+                rows.append(
+                    await execute(
+                        f"{phase[0]}-r{index:010d}",
+                        item.workload_class,
+                        item.body,
+                        scheduled_ns,
+                        timeout_s,
+                        token_authority,
+                        phase,
+                    )
                 )
-            )
+            finally:
+                completed += 1
+                queue.task_done()
         return rows
 
-    nested = await asyncio.gather(*(worker(index, queue) for index, queue in enumerate(queues)))
+    nested = await asyncio.gather(*(worker(index) for index in range(worker_count)))
     return [row for group in nested for row in group]
+
+
+def _quantile(values: list[float], probability: float) -> float | None:
+    if not values:
+        return None
+    if len(values) == 1:
+        return values[0]
+    position = (len(values) - 1) * probability
+    lower = int(position)
+    upper = min(lower + 1, len(values) - 1)
+    fraction = position - lower
+    return values[lower] * (1 - fraction) + values[upper] * fraction
+
+
+async def _monitor_event_loop_lag(
+    stop: asyncio.Event,
+    samples_ms: list[float],
+    interval_s: float = 0.001,
+) -> None:
+    loop = asyncio.get_running_loop()
+    target = loop.time() + interval_s
+    while not stop.is_set():
+        remaining = max(0.0, target - loop.time())
+        try:
+            await asyncio.wait_for(stop.wait(), timeout=remaining)
+            break
+        except asyncio.TimeoutError:
+            observed = loop.time()
+            samples_ms.append(max(0.0, observed - target) * 1000.0)
+            target = observed + interval_s
 
 
 async def _open_loop(

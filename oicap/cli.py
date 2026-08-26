@@ -30,8 +30,14 @@ def parser() -> argparse.ArgumentParser:
     run.add_argument("--calibration", required=True)
     run.add_argument("--output", required=True)
 
-    verify = sub.add_parser("verify", help="verify hashes and recompute summaries")
+    verify = sub.add_parser(
+        "verify", help="check unsigned bundle internal consistency and recompute summaries"
+    )
     verify.add_argument("bundle")
+    verify.add_argument(
+        "--calibration-source",
+        help="independently check the referenced calibration bundle manifest",
+    )
     return root
 
 
@@ -71,7 +77,7 @@ def main(argv: list[str] | None = None) -> None:
             )
             _print({"ok": True, "evidence_bundle": str(output)})
         elif args.command == "verify":
-            result = verify_bundle(args.bundle)
+            result = verify_bundle(args.bundle, args.calibration_source)
             _print(result)
             if not result["ok"]:
                 raise SystemExit(2)

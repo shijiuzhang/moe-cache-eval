@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import platform
 import shutil
@@ -39,7 +40,7 @@ def environment_fingerprint(repo_root: Path | None = None) -> dict[str, Any]:
     from importlib.metadata import PackageNotFoundError, version
 
     packages: dict[str, str | None] = {}
-    for distribution in ("psutil", "PyYAML"):
+    for distribution in ("jsonschema", "psutil", "PyYAML"):
         try:
             packages[distribution] = version(distribution)
         except PackageNotFoundError:
@@ -76,10 +77,16 @@ def git_fingerprint(root: Path) -> dict[str, Any]:
 
     commit = command("rev-parse", "HEAD")
     status = command("status", "--porcelain=v1")
+    status_lines = status.splitlines() if status else []
     return {
         "git_commit": commit,
         "git_dirty": bool(status) if status is not None else None,
-        "git_status_paths": status.splitlines() if status else [],
+        "git_status_entry_count": len(status_lines),
+        "git_status_paths_sha256": (
+            hashlib.sha256("\n".join(sorted(status_lines)).encode("utf-8")).hexdigest()
+            if status_lines
+            else None
+        ),
     }
 
 
@@ -122,8 +129,11 @@ def write_bundle(
     _write_json(root / "summary.json", summary)
     _write_json(
         root / "apparatus.json",
-        apparatus_assessment(contracts.scenario, summary, calibration_ref),
+        apparatus_assessment(
+            contracts.scenario, summary, calibration_ref, result.runner_load
+        ),
     )
+    _write_json(root / "runner_load.json", result.runner_load)
     _write_json(
         root / "environment.json",
         environment_fingerprint(Path(__file__).resolve().parents[1]),
@@ -150,7 +160,10 @@ def write_bundle(
         "calibration_required": require_calibration,
         "calibration_present": calibration_ref is not None,
         "files": {name: file_sha256(root / name) for name in files},
-        "excluded": ["API keys and authorization headers"],
+        "excluded": [
+            "API keys and authorization headers",
+            "working-tree path names (only count and aggregate hash recorded)",
+        ],
     }
     _write_json(root / "manifest.json", manifest)
     return root
@@ -160,6 +173,7 @@ def apparatus_assessment(
     scenario: dict[str, Any],
     summary: dict[str, Any],
     calibration_ref: dict[str, Any] | None,
+    runner_load: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if calibration_ref is None:
         return {
@@ -177,6 +191,7 @@ def apparatus_assessment(
             "reasons": ["invalid_calibration_record"],
         }
     limits = record["limits"]
+    runner_load = runner_load or {}
     schedule_p99 = summary["latency_ms"]["schedule_lag"]["p99"]
     requested_rate = None
     achieved_rate = summary["load_realization"]["achieved_submission_rate_per_s"]
@@ -194,6 +209,47 @@ def apparatus_assessment(
         )
         if arrival_ratio is None or arrival_ratio < float(limits["min_arrival_rate_ratio"]):
             reasons.append("arrival_rate_not_realized")
+    process_cpu = runner_load.get("runner_process_cpu_percent_one_core")
+    if process_cpu is None or float(process_cpu) > float(
+        limits.get("max_runner_process_cpu_percent_one_core", float("inf"))
+    ):
+        reasons.append("runner_process_cpu_exceeded")
+    system_cpu = runner_load.get("runner_system_cpu_percent")
+    if system_cpu is None or float(system_cpu) > float(
+        limits.get("max_runner_system_cpu_percent", float("inf"))
+    ):
+        reasons.append("runner_system_cpu_exceeded")
+    event_loop_lag = runner_load.get("event_loop_lag_ms")
+    event_loop_p99 = (
+        event_loop_lag.get("p99") if isinstance(event_loop_lag, dict) else None
+    )
+    event_loop_limit = limits.get("max_event_loop_lag_p99_ms")
+    if event_loop_limit is not None and (
+        event_loop_p99 is None or float(event_loop_p99) > float(event_loop_limit)
+    ):
+        reasons.append("event_loop_lag_exceeded")
+    requested_active_users = None
+    realized_mean_in_flight = summary["load_realization"].get(
+        "mean_in_flight_before_final_submission"
+    )
+    closed_loop_ratio = None
+    concurrency_check = "not_applicable"
+    if scenario["arrival"]["kind"] == "closed_loop":
+        requested_active_users = int(scenario["arrival"]["active_users"])
+        think_time_ms = float(scenario.get("session", {}).get("think_time_ms", 0))
+        if think_time_ms > 0:
+            concurrency_check = "not_applicable_declared_think_time"
+        else:
+            concurrency_check = "checked"
+            closed_loop_ratio = (
+                float(realized_mean_in_flight) / requested_active_users
+                if realized_mean_in_flight is not None and requested_active_users
+                else None
+            )
+            if closed_loop_ratio is None or closed_loop_ratio < float(
+                limits.get("min_closed_loop_concurrency_ratio", 1.0)
+            ):
+                reasons.append("closed_loop_concurrency_not_maintained")
     return {
         "schema_version": "0.1",
         "status": "CLIENT_SATURATED" if reasons else "VALID",
@@ -203,11 +259,21 @@ def apparatus_assessment(
         "requested_arrival_rate_per_s": requested_rate,
         "achieved_submission_rate_per_s": achieved_rate,
         "arrival_rate_ratio": arrival_ratio,
+        "runner_process_cpu_percent_one_core": process_cpu,
+        "runner_system_cpu_percent": system_cpu,
+        "event_loop_lag_p99_ms": event_loop_p99,
+        "requested_active_users": requested_active_users,
+        "realized_mean_in_flight": realized_mean_in_flight,
+        "mean_in_flight_definition": "from first through final request submission; drain excluded",
+        "closed_loop_concurrency_ratio": closed_loop_ratio,
+        "closed_loop_concurrency_check": concurrency_check,
         "note": "This is apparatus validity, not an SLO verdict.",
     }
 
 
-def verify_bundle(root: str | Path) -> dict[str, Any]:
+def verify_bundle(
+    root: str | Path, calibration_source: str | Path | None = None
+) -> dict[str, Any]:
     bundle = Path(root).resolve()
     manifest_path = bundle / "manifest.json"
     if not manifest_path.is_file():
@@ -219,6 +285,8 @@ def verify_bundle(root: str | Path) -> dict[str, Any]:
         )
     calibration_ref = bundle / "calibration_ref.json"
     errors: list[str] = []
+    warnings: list[str] = []
+    calibration_source_verified = False
     manifest_files = manifest.get("files")
     if not isinstance(manifest_files, dict):
         raise ValueError("manifest.files must be a mapping.")
@@ -247,9 +315,15 @@ def verify_bundle(root: str | Path) -> dict[str, Any]:
     for name in ("scenario", "slo", "sut", "run"):
         path = bundle / "contracts" / f"{name}.json"
         try:
-            contract_hashes[name] = _json_sha256(
-                json.loads(path.read_text(encoding="utf-8"))
+            document = json.loads(path.read_text(encoding="utf-8"))
+            contract_hashes[name] = _json_sha256(document)
+            schema = json.loads(
+                (bundle / "schemas" / f"{name}.schema.json").read_text(encoding="utf-8")
             )
+            from jsonschema import Draft202012Validator
+
+            if next(Draft202012Validator(schema).iter_errors(document), None) is not None:
+                errors.append(f"contract_schema_violation:{name}")
         except (OSError, json.JSONDecodeError) as exc:
             errors.append(f"contract_unreadable:{name}:{type(exc).__name__}")
     if contract_hashes and contract_hashes != manifest.get("contract_hashes"):
@@ -292,7 +366,15 @@ def verify_bundle(root: str | Path) -> dict[str, Any]:
             reference = json.loads(calibration_ref.read_text(encoding="utf-8"))
         if "stored" not in locals():
             raise TypeError("summary unavailable")
-        expected_apparatus = apparatus_assessment(scenario, stored, reference)
+        runner_load_path = bundle / "runner_load.json"
+        runner_load = (
+            json.loads(runner_load_path.read_text(encoding="utf-8"))
+            if runner_load_path.is_file()
+            else None
+        )
+        expected_apparatus = apparatus_assessment(
+            scenario, stored, reference, runner_load
+        )
         if canonical_json(apparatus) != canonical_json(expected_apparatus):
             errors.append("apparatus_assessment_mismatch")
     except (OSError, json.JSONDecodeError, TypeError) as exc:
@@ -309,7 +391,43 @@ def verify_bundle(root: str | Path) -> dict[str, Any]:
                 errors.append("missing_calibration_record")
             elif _json_sha256(record) != reference.get("calibration_record_sha256"):
                 errors.append("calibration_record_hash_mismatch")
-    return {"ok": not errors, "errors": errors, "recomputed_summary": recomputed}
+            source_digest = reference.get("source_bundle_manifest_sha256")
+            if calibration_source is None:
+                warnings.append("calibration_source_manifest_not_independently_checked")
+            else:
+                source_manifest = Path(calibration_source).resolve() / "manifest.json"
+                if not source_manifest.is_file():
+                    errors.append("calibration_source_manifest_missing")
+                elif file_sha256(source_manifest) != source_digest:
+                    errors.append("calibration_source_manifest_hash_mismatch")
+                else:
+                    calibration_source_verified = True
+    external_calibration_errors = {
+        "calibration_source_manifest_missing",
+        "calibration_source_manifest_hash_mismatch",
+    }
+    internal_consistency_ok = not any(
+        error not in external_calibration_errors for error in errors
+    )
+    ok = not errors
+    return {
+        "ok": ok,
+        "errors": errors,
+        "warnings": warnings,
+        "recomputed_summary": recomputed,
+        "verification_scope": {
+            "internal_consistency": internal_consistency_ok,
+            "producer_identity_attested": False,
+            "detached_signature_verified": False,
+            "external_timestamp_anchor_verified": False,
+            "calibration_source_manifest_verified": calibration_source_verified,
+        },
+        "note": (
+            "Unsigned schema-0.1 verification establishes internal consistency and detects "
+            "changes made without recomputing the bundle. It does not attest who ran "
+            "the measurement or prevent a producer from regenerating altered evidence."
+        ),
+    }
 
 
 def _json_sha256(value: Any) -> str:

@@ -18,7 +18,7 @@ from oicap.cli import main as cli_main
 from oicap.contracts import ContractError, canonical_sha256, load_contracts
 from oicap.evidence import apparatus_assessment, verify_bundle, write_bundle
 from oicap.metrics import observation_metrics, summarize
-from oicap.observations import RequestObservation
+from oicap.observations import ChunkObservation, RequestObservation
 from oicap.openai_adapter import OpenAIAdapter
 from oicap.runner import (
     RunResult,
@@ -99,7 +99,7 @@ class ContractTests(unittest.TestCase):
             slo = yaml.safe_load((root / "slo.yaml").read_text())
             slo["targets"] = {}
             (root / "slo.yaml").write_text(yaml.safe_dump(slo))
-            with self.assertRaisesRegex(ContractError, "non-empty mapping"):
+            with self.assertRaisesRegex(ContractError, "non-empty|violates published schema"):
                 load_contracts(root)
 
     def test_undeclared_chunk_token_authority_is_rejected(self) -> None:
@@ -111,7 +111,7 @@ class ContractTests(unittest.TestCase):
             run = yaml.safe_load((root / "run.yaml").read_text())
             run["token_accounting"]["authority"] = "declared_one_token_per_content_event"
             (root / "run.yaml").write_text(yaml.safe_dump(run))
-            with self.assertRaisesRegex(ContractError, "Unsupported"):
+            with self.assertRaisesRegex(ContractError, "Unsupported|violates published schema"):
                 load_contracts(root)
 
     def test_published_schema_documents_are_valid_json(self) -> None:
@@ -123,6 +123,19 @@ class ContractTests(unittest.TestCase):
         for path in schema_root.glob("*.json"):
             self.assertEqual(json.loads(path.read_text())["$schema"],
                              "https://json-schema.org/draft/2020-12/schema")
+
+    def test_published_schema_is_enforced_before_semantic_validation(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            for source in EXAMPLE.iterdir():
+                if source.is_file():
+                    (root / source.name).write_bytes(source.read_bytes())
+            sut = yaml.safe_load((root / "sut.yaml").read_text())
+            for field in ("model", "engine", "hardware"):
+                sut.pop(field)
+            (root / "sut.yaml").write_text(yaml.safe_dump(sut))
+            with self.assertRaisesRegex(ContractError, "violates published schema"):
+                load_contracts(root)
 
 
 class TimingTests(unittest.IsolatedAsyncioTestCase):
@@ -198,6 +211,31 @@ class TimingTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(row.output_tokens)
         self.assertEqual(row.token_timestamps_ns, [])
 
+    async def test_real_endpoint_reports_inter_chunk_but_not_token_itl(self) -> None:
+        with DeterministicServer() as server:
+            row = await OpenAIAdapter(server.endpoint).execute(
+                "r", "x",
+                {"model": "x", "oicap_test": {
+                    "tokens": ["a", "b", "c"], "token_delay_ms": 5,
+                }},
+                time.perf_counter_ns(), 2, "server_usage",
+            )
+        summary = summarize([row])
+        self.assertEqual(summary["latency_ms"]["itl"]["availability"], "unavailable")
+        self.assertEqual(summary["latency_ms"]["itl"]["count"], 0)
+        self.assertEqual(summary["latency_ms"]["inter_chunk_latency"]["count"], 2)
+
+    async def test_timeout_is_recorded_as_right_censored(self) -> None:
+        with DeterministicServer() as server:
+            row = await OpenAIAdapter(server.endpoint).execute(
+                "r", "x",
+                {"model": "x", "oicap_test": {"queue_ms": 100, "tokens": ["x"]}},
+                time.perf_counter_ns(), 0.01, "server_usage",
+            )
+        self.assertTrue(row.timed_out)
+        self.assertTrue(row.censored)
+        self.assertEqual(row.error_type, "timeout")
+
 
 class LoadSemanticsTests(unittest.IsolatedAsyncioTestCase):
     async def test_open_loop_schedule_is_independent_of_completion(self) -> None:
@@ -245,6 +283,43 @@ class LoadSemanticsTests(unittest.IsolatedAsyncioTestCase):
 
         await _closed_loop(items, execute, time.perf_counter_ns(), 3, 3, 1, "none", "measurement")
         self.assertEqual(maximum, 3)
+
+    async def test_closed_loop_replenishes_from_shared_queue_for_heterogeneous_work(self) -> None:
+        active = 0
+        intervals: list[tuple[int, int]] = []
+        lock = asyncio.Lock()
+        items = [
+            WorkloadItem(str(index), "slow" if index % 2 == 0 else "fast", {})
+            for index in range(6)
+        ]
+
+        async def execute(request_id, workload_class, body, scheduled_ns, timeout_s, authority, phase):
+            nonlocal active
+            start = time.perf_counter_ns()
+            async with lock:
+                active += 1
+                self.assertLessEqual(active, 2)
+            await asyncio.sleep(0.04 if workload_class == "slow" else 0.001)
+            end = time.perf_counter_ns()
+            async with lock:
+                active -= 1
+            intervals.append((start, end))
+            return RequestObservation(
+                request_id=request_id, workload_class=workload_class, phase=phase,
+                t_scheduled_ns=scheduled_ns, t_submit_ns=start,
+                t_first_token_ns=end, t_complete_ns=end, success=True,
+                output_tokens=1, token_timing_authority="none",
+            )
+
+        rows = await _closed_loop(
+            items, execute, time.perf_counter_ns(), 2, 2, 1, "none", "measurement"
+        )
+        summary = summarize(rows)
+        self.assertEqual(len(rows), 6)
+        self.assertEqual(summary["load_realization"]["peak_in_flight"], 2)
+        self.assertGreater(
+            summary["load_realization"]["mean_in_flight_before_final_submission"], 1.8
+        )
 
     async def test_retry_attempt_history_is_not_erased(self) -> None:
         calls = 0
@@ -300,10 +375,62 @@ class EvidenceTests(unittest.TestCase):
             with DeterministicServer() as server:
                 result = asyncio.run(execute_load_point(contracts, server.endpoint))
                 bundle = write_bundle(root / "run", contracts, result, server.endpoint, reference)
-            self.assertTrue(verify_bundle(bundle)["ok"])
+            verification = verify_bundle(bundle, calibration_source=calibration_dir)
+            self.assertTrue(verification["ok"])
+            self.assertTrue(
+                verification["verification_scope"]["calibration_source_manifest_verified"]
+            )
+            self.assertFalse(verification["verification_scope"]["producer_identity_attested"])
             with (bundle / "observations.jsonl").open("a") as handle:
                 handle.write("{}\n")
             self.assertIn("hash_mismatch:observations.jsonl", verify_bundle(bundle)["errors"])
+
+    def test_unsigned_verification_states_its_boundary(self) -> None:
+        contracts = load_contracts(EXAMPLE)
+        now = time.perf_counter_ns()
+        row = RequestObservation(
+            "m", "x", "measurement", now, now,
+            t_first_token_ns=now + 1, t_complete_ns=now + 2,
+            success=True, output_tokens=1,
+        )
+        with tempfile.TemporaryDirectory() as raw:
+            bundle = write_bundle(
+                Path(raw) / "run", contracts, RunResult([row], now, now + 2),
+                "local://fixture", None, require_calibration=False,
+            )
+            result = verify_bundle(bundle)
+        self.assertTrue(result["ok"])
+        self.assertTrue(result["verification_scope"]["internal_consistency"])
+        self.assertFalse(result["verification_scope"]["detached_signature_verified"])
+        self.assertIn("does not attest who ran", result["note"])
+
+    def test_external_calibration_manifest_mismatch_is_detected(self) -> None:
+        contracts = load_contracts(EXAMPLE)
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            calibration_dir = root / "calibration"
+            asyncio.run(calibrate(contracts, calibration_dir))
+            reference = load_calibration(calibration_dir, contracts.measurement_identity)
+            now = time.perf_counter_ns()
+            row = RequestObservation(
+                "m", "x", "measurement", now, now,
+                t_first_token_ns=now + 1, t_complete_ns=now + 2,
+                success=True, output_tokens=1,
+            )
+            bundle = write_bundle(
+                root / "run", contracts, RunResult([row], now, now + 2),
+                "local://fixture", reference,
+            )
+            fake_source = root / "fake-calibration"
+            fake_source.mkdir()
+            (fake_source / "manifest.json").write_text("{}\n")
+            result = verify_bundle(bundle, calibration_source=fake_source)
+        self.assertFalse(result["ok"])
+        self.assertTrue(result["verification_scope"]["internal_consistency"])
+        self.assertFalse(
+            result["verification_scope"]["calibration_source_manifest_verified"]
+        )
+        self.assertIn("calibration_source_manifest_hash_mismatch", result["errors"])
 
     def test_verify_recomputes_contract_identity(self) -> None:
         contracts = load_contracts(EXAMPLE)
@@ -323,11 +450,14 @@ class EvidenceTests(unittest.TestCase):
             scenario_path = bundle / "contracts" / "scenario.json"
             scenario = json.loads(scenario_path.read_text())
             scenario["scenario_id"] = "tampered"
+            scenario.pop("workload_classes")
             scenario_path.write_text(json.dumps(scenario, sort_keys=True, indent=2) + "\n")
             from oicap.contracts import file_sha256
             manifest["files"]["contracts/scenario.json"] = file_sha256(scenario_path)
             manifest_path.write_text(json.dumps(manifest, sort_keys=True, indent=2) + "\n")
-            self.assertIn("contract_hashes_mismatch", verify_bundle(bundle)["errors"])
+            errors = verify_bundle(bundle)["errors"]
+            self.assertIn("contract_schema_violation:scenario", errors)
+            self.assertIn("contract_hashes_mismatch", errors)
 
     def test_calibration_ignores_workload_delay_injection(self) -> None:
         contracts = load_contracts(EXAMPLE)
@@ -406,6 +536,31 @@ class EvidenceTests(unittest.TestCase):
             self.assertEqual(summary["realized_workload_mix"], {"x": 1.0})
             self.assertEqual(len((bundle / "observations.jsonl").read_text().splitlines()), 2)
 
+    def test_latency_distributions_exclude_failed_requests(self) -> None:
+        now = time.perf_counter_ns()
+        rows = [
+            RequestObservation(
+                f"ok-{index}", "x", "measurement", now, now,
+                t_first_token_ns=now + 100_000_000,
+                t_complete_ns=now + 110_000_000,
+                success=True, output_tokens=1,
+            )
+            for index in range(3)
+        ]
+        rows.append(RequestObservation(
+            "empty", "x", "measurement", now, now,
+            t_complete_ns=now + 1_000_000,
+            status_code=200, success=False,
+            error_type="empty_or_non_substantive_response",
+        ))
+        value = summarize(rows)
+        end_to_end = value["latency_ms"]["end_to_end"]
+        self.assertEqual(value["requests"]["successful"], 3)
+        self.assertEqual(end_to_end["count"], 3)
+        self.assertEqual(end_to_end["population"], "successful_requests")
+        self.assertAlmostEqual(end_to_end["mean"], 110.0)
+        self.assertEqual(value["latency_ms"]["time_to_failure"]["count"], 1)
+
     def test_warmup_and_measurement_ids_are_distinct(self) -> None:
         contracts = load_contracts(EXAMPLE)
         with DeterministicServer() as server:
@@ -414,6 +569,8 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(sum(row.phase == "warmup" for row in result.observations), 2)
         self.assertEqual(sum(row.phase == "measurement" for row in result.observations), 8)
+        self.assertGreater(result.runner_load["event_loop_lag_ms"]["sample_count"], 0)
+        self.assertIsNotNone(result.runner_load["event_loop_lag_ms"]["p99"])
 
     def test_client_saturation_blocks_capacity_claim_but_not_as_slo_verdict(self) -> None:
         scenario = {"arrival": {"kind": "open_loop", "process": "constant", "rate_per_s": 100}}
@@ -433,6 +590,56 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(value["status"], "CLIENT_SATURATED")
         self.assertFalse(value["capacity_claim_permitted"])
         self.assertNotIn("slo_verdict", value)
+
+    def test_low_closed_loop_mean_concurrency_invalidates_apparatus(self) -> None:
+        scenario = {"arrival": {"kind": "closed_loop", "active_users": 2}}
+        summary = {
+            "latency_ms": {"schedule_lag": {"p99": 0}},
+            "load_realization": {
+                "achieved_submission_rate_per_s": None,
+                "mean_in_flight_before_final_submission": 1.0,
+            },
+        }
+        calibration = {"record": {"limits": {
+            "max_schedule_lag_p99_ms": 10,
+            "max_runner_process_cpu_percent_one_core": 100,
+            "max_runner_system_cpu_percent": 100,
+            "min_closed_loop_concurrency_ratio": 0.8,
+            "min_arrival_rate_ratio": 0.98,
+        }}}
+        runner_load = {
+            "runner_process_cpu_percent_one_core": 1,
+            "runner_system_cpu_percent": 1,
+        }
+        value = apparatus_assessment(scenario, summary, calibration, runner_load)
+        self.assertEqual(value["status"], "CLIENT_SATURATED")
+        self.assertIn("closed_loop_concurrency_not_maintained", value["reasons"])
+
+    def test_bundle_records_runner_load_without_dirty_path_names(self) -> None:
+        contracts = load_contracts(EXAMPLE)
+        now = time.perf_counter_ns()
+        row = RequestObservation(
+            "m", "x", "measurement", now, now,
+            t_first_token_ns=now + 1, t_complete_ns=now + 2,
+            success=True, output_tokens=1,
+        )
+        load = {
+            "measurement_duration_s": 1.0,
+            "runner_process_cpu_percent_one_core": 1.0,
+            "runner_system_cpu_percent": 2.0,
+        }
+        with tempfile.TemporaryDirectory() as raw:
+            bundle = write_bundle(
+                Path(raw) / "run", contracts, RunResult([row], now, now + 2, load),
+                "local://fixture", None, require_calibration=False,
+            )
+            environment = json.loads((bundle / "environment.json").read_text())
+            recorded = json.loads((bundle / "runner_load.json").read_text())
+            manifest = json.loads((bundle / "manifest.json").read_text())
+        self.assertEqual(recorded, load)
+        self.assertNotIn("git_status_paths", environment["code"])
+        self.assertIn("git_status_entry_count", environment["code"])
+        self.assertIn("runner_load.json", manifest["files"])
 
     def test_censored_observation_remains_in_reliability_summary(self) -> None:
         now = time.perf_counter_ns()

@@ -30,8 +30,14 @@ self_calibration:
   profile: local_zero_delay_stream_v1
   repetitions: 2
   max_schedule_lag_p99_ms: 20
+  max_event_loop_lag_p99_ms: 20
   # Deliberately permissive for this tiny local example. A production profile
   # must calibrate and freeze a meaningful runner headroom limit.
   max_runner_process_cpu_percent_one_core: 10000
+  max_runner_system_cpu_percent: 100
+  # The zero-delay endpoint makes worker-start skew a large fraction of this tiny
+  # fixture. This permissive example threshold still catches the audited static-
+  # partition failure (~0.50); production scenarios must register their own floor.
+  min_closed_loop_concurrency_ratio: 0.60
   min_arrival_rate_ratio: 0.98
   noise_stability_tolerance_ms: 20

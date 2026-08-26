@@ -67,6 +67,7 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
             for name, values in {
                 "ttft_ms": item["latency_ms"]["ttft"],
                 "itl_ms": item["latency_ms"]["itl"],
+                "inter_chunk_latency_ms": item["latency_ms"]["inter_chunk_latency"],
                 "tpot_ms": item["latency_ms"]["tpot"],
                 "end_to_end_ms": item["latency_ms"]["end_to_end"],
             }.items()
@@ -78,15 +79,50 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
             (float(item[metric]) for item in repeat_resolutions if item[metric] is not None),
             default=None,
         )
-        for metric in ("ttft_ms", "itl_ms", "tpot_ms", "end_to_end_ms")
+        for metric in (
+            "ttft_ms",
+            "itl_ms",
+            "inter_chunk_latency_ms",
+            "tpot_ms",
+            "end_to_end_ms",
+        )
     }
     schedule_lags = [
         (row.t_submit_ns - row.t_scheduled_ns) / 1_000_000.0 for row in measured_rows
     ]
+    event_loop_p99_values = [
+        float(value)
+        for current in results
+        for value in [current.runner_load.get("event_loop_lag_ms", {}).get("p99")]
+        if value is not None
+    ]
+    event_loop_max_values = [
+        float(value)
+        for current in results
+        for value in [current.runner_load.get("event_loop_lag_ms", {}).get("max")]
+        if value is not None
+    ]
+    event_loop_lag = {
+        "definition": "periodic_asyncio_wakeup_lateness",
+        "sample_count": sum(
+            int(current.runner_load.get("event_loop_lag_ms", {}).get("sample_count", 0))
+            for current in results
+        ),
+        "interval_ms": 1.0,
+        "p99": max(event_loop_p99_values) if event_loop_p99_values else None,
+        "max": max(event_loop_max_values) if event_loop_max_values else None,
+    }
     config = contracts.run.get("self_calibration", {})
     max_schedule_lag = float(config.get("max_schedule_lag_p99_ms", float("inf")))
+    max_event_loop_lag = float(
+        config.get("max_event_loop_lag_p99_ms", float("inf"))
+    )
     max_process_cpu = float(
         config.get("max_runner_process_cpu_percent_one_core", float("inf"))
+    )
+    max_system_cpu = float(config.get("max_runner_system_cpu_percent", float("inf")))
+    min_closed_loop_ratio = float(
+        config.get("min_closed_loop_concurrency_ratio", 1.0)
     )
     min_arrival_ratio = float(config.get("min_arrival_rate_ratio", 0.98))
     stability_tolerance = float(config["noise_stability_tolerance_ms"])
@@ -96,8 +132,15 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
         invalid_reasons.append("null_endpoint_request_failure")
     if schedule_p99 is None or float(schedule_p99) > max_schedule_lag:
         invalid_reasons.append("schedule_lag_exceeded")
+    if (
+        event_loop_lag["p99"] is None
+        or float(event_loop_lag["p99"]) > max_event_loop_lag
+    ):
+        invalid_reasons.append("event_loop_lag_exceeded")
     if process_cpu > max_process_cpu:
         invalid_reasons.append("runner_process_cpu_exceeded")
+    if system_cpu > max_system_cpu:
+        invalid_reasons.append("runner_system_cpu_exceeded")
     if expected_rate is not None and (
         achieved_rate is None or achieved_rate / expected_rate < min_arrival_ratio
     ):
@@ -111,6 +154,25 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
             instability[metric] = max(values) - min(values)
             if instability[metric] > stability_tolerance:
                 invalid_reasons.append(f"noise_resolution_unstable:{metric}")
+    requested_active_users = contracts.scenario["arrival"].get("active_users")
+    repeat_mean_in_flight = [
+        item["load_realization"].get("mean_in_flight_before_final_submission")
+        for item in repeat_summaries
+    ]
+    mean_in_flight_values = [
+        float(value) for value in repeat_mean_in_flight if value is not None
+    ]
+    mean_in_flight = min(mean_in_flight_values) if mean_in_flight_values else None
+    closed_loop_ratio = None
+    think_time_ms = float(contracts.scenario.get("session", {}).get("think_time_ms", 0))
+    if requested_active_users and think_time_ms == 0:
+        closed_loop_ratio = (
+            float(mean_in_flight) / float(requested_active_users)
+            if mean_in_flight is not None
+            else None
+        )
+        if closed_loop_ratio is None or closed_loop_ratio < min_closed_loop_ratio:
+            invalid_reasons.append("closed_loop_concurrency_not_maintained")
     calibration_record = {
         "schema_version": "0.1",
         "calibration_version": CALIBRATION_VERSION,
@@ -131,8 +193,11 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
         ),
         "runner_process_cpu_percent_one_core": process_cpu,
         "runner_system_cpu_percent": system_cpu,
-        "event_loop_lag_ms": _event_loop_lag(schedule_lags),
+        "event_loop_lag_ms": event_loop_lag,
         "realized_peak_in_flight": summary["load_realization"]["peak_in_flight"],
+        "realized_mean_in_flight": mean_in_flight,
+        "mean_in_flight_definition": "minimum repetition mean from first through final submission; drain excluded",
+        "closed_loop_concurrency_ratio": closed_loop_ratio,
         "request_count": len(measured_rows),
         "repetitions": repetition_count,
         "duration_s": duration_s,
@@ -151,13 +216,28 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
         },
         "limits": {
             "max_schedule_lag_p99_ms": max_schedule_lag,
+            "max_event_loop_lag_p99_ms": max_event_loop_lag,
             "max_runner_process_cpu_percent_one_core": max_process_cpu,
+            "max_runner_system_cpu_percent": max_system_cpu,
+            "min_closed_loop_concurrency_ratio": min_closed_loop_ratio,
             "min_arrival_rate_ratio": min_arrival_ratio,
             "noise_stability_tolerance_ms": stability_tolerance,
         },
         "invalid_reasons": invalid_reasons,
         "valid": not invalid_reasons,
     }
+    result = RunResult(
+        result.observations,
+        result.started_ns,
+        result.finished_ns,
+        {
+            "measurement_duration_s": duration_s,
+            "runner_process_cpu_percent_one_core": process_cpu,
+            "runner_system_cpu_percent": system_cpu,
+            "event_loop_lag_ms": event_loop_lag,
+            "request_schedule_lag_ms": _event_loop_lag(schedule_lags),
+        },
+    )
     bundle = write_bundle(
         output,
         contracts,

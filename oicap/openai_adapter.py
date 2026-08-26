@@ -56,6 +56,7 @@ class OpenAIAdapter:
             t_scheduled_ns=scheduled_ns,
             t_submit_ns=submitted_ns,
             request_body=body,
+            token_timing_authority=token_authority,
         )
         if (
             token_authority == "synthetic_one_token_per_content_event"
@@ -156,12 +157,14 @@ class OpenAIAdapter:
         except TimeoutError as exc:
             observation.t_error_ns = time.perf_counter_ns()
             observation.timed_out = True
+            observation.censored = True
             observation.error_type = "timeout"
             observation.error_message = _safe_error_message(str(exc), self.endpoint)
         except urllib.error.URLError as exc:
             observation.t_error_ns = time.perf_counter_ns()
             if isinstance(exc.reason, TimeoutError):
                 observation.timed_out = True
+                observation.censored = True
                 observation.error_type = "timeout"
             else:
                 observation.error_type = "url_error"
