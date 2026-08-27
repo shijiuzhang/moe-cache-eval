@@ -140,6 +140,10 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
         for terminal in [row.t_complete_ns or row.t_error_ns]
         if terminal is not None
     ]
+    service_durations_s = [
+        (terminal - submitted) / 1_000_000_000.0
+        for submitted, terminal in intervals
+    ]
 
     def scalar(pairs: list[tuple[RequestObservation, dict[str, object]]], name: str) -> list[float]:
         return [float(value) for _, item in pairs if (value := item[name]) is not None]
@@ -245,6 +249,12 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
             "concurrency_maintenance_window_s": overlap[
                 "concurrency_maintenance_window_s"
             ],
+            "mean_request_service_time_s": (
+                sum(service_durations_s) / len(service_durations_s)
+                if service_durations_s
+                else None
+            ),
+            "service_time_request_count": len(service_durations_s),
             "submission_span_s": submission_span_s,
             "achieved_submission_rate_per_s": (
                 (len(submit_times) - 1) / submission_span_s
@@ -257,6 +267,40 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
 
 def peak_overlap(intervals: list[tuple[int, int]]) -> int:
     return int(overlap_statistics(intervals)["peak_in_flight"])
+
+
+def closed_loop_concurrency_model(
+    load_realization: dict[str, object],
+    active_users: int,
+    think_time_ms: float,
+) -> dict[str, float | str | None]:
+    observed_value = load_realization.get("mean_in_flight_before_final_submission")
+    service_value = load_realization.get("mean_request_service_time_s")
+    observed = float(observed_value) if observed_value is not None else None
+    service_s = float(service_value) if service_value is not None else None
+    think_s = think_time_ms / 1000.0
+    if think_s <= 0:
+        expected = float(active_users)
+        method = "declared_active_users"
+    elif service_s is not None and service_s > 0:
+        expected = active_users * service_s / (service_s + think_s)
+        method = "interactive_response_time_law"
+    else:
+        expected = None
+        method = "interactive_response_time_law_unavailable"
+    ratio = (
+        observed / expected
+        if observed is not None and expected is not None and expected > 0
+        else None
+    )
+    return {
+        "method": method,
+        "observed_mean_in_flight": observed,
+        "expected_mean_in_flight": expected,
+        "mean_request_service_time_s": service_s,
+        "declared_think_time_s": think_s,
+        "realization_ratio": ratio,
+    }
 
 
 def overlap_statistics(intervals: list[tuple[int, int]]) -> dict[str, float | int | None]:

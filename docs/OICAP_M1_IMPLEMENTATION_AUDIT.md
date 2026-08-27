@@ -344,3 +344,165 @@ from `scripts/generate_oicap_ci_bundle.py`. The full suite was re-run
 independently: `72 tests, OK` under `python -m unittest discover -s tests`, and
 the documented quick-start path (`calibrate` → `run` → `verify`) completes with
 `ok: true`.
+
+---
+
+# Re-audit of the remediation — 2026-08-26
+
+Reviewing commit `8756db1` "Resolve OICAP M1 implementation audit" against the
+four blocking and seven non-blocking findings above.
+
+Everything below was established by running the code and reading the artifacts
+it produced, not by reading the remediation note or the test names. Where a fix
+is claimed to be covered by a test, the behaviour was reconstructed
+independently so that a passing test and a working fix are two pieces of
+evidence rather than one.
+
+## Verdict
+
+**All four blocking findings are fixed.** All seven non-blocking findings are
+addressed. Two minor findings are raised below, neither blocking. The
+checkpoint should remain an M1 checkpoint and must not be called v0.1 until AC6
+is demonstrated on hosted runners.
+
+The full repository suite was run here: **81 tests, OK**.
+
+## B1 — closed-loop concurrency decay: fixed, and demonstrated
+
+Static per-worker slices were replaced with a shared `asyncio.Queue`, which
+removes the failure mode by construction: a worker cannot exhaust its private
+slice while others still have work.
+
+More important is that the apparatus can now *detect* the condition, which is
+what AC3 required and what the original audit found missing. Verified by
+building a deliberately over-committed contract — `active_users: 16` against
+`max_in_flight: 4` and eight measurement requests:
+
+```
+requested_active_users            16
+realized_mean_in_flight            3.29
+closed_loop_concurrency_ratio      0.206     (floor 0.60)
+valid                              false
+invalid_reasons                    ["closed_loop_concurrency_not_maintained"]
+oicap run                          refused, exit 2
+```
+
+Calibration marks the apparatus invalid and the run is blocked. On the healthy
+example the same machinery reports `realized_mean_in_flight 1.979` against
+`requested_active_users 2`, ratio `0.989`, `status VALID`.
+
+The `mean_in_flight_before_final_submission` construction is correct: it
+integrates the concurrency function over `[first submission, final submission]`
+and divides by that window, which excludes the unavoidable drain tail without
+excluding a genuine mid-run collapse. On the healthy run the two means differ as
+they should — 1.979 pre-drain against 1.759 full-span.
+
+## B2 — unsigned manifest overclaim: corrected
+
+`verify` now emits a five-field `verification_scope` block, and the three
+claims that cannot be supported are explicitly false:
+
+```
+internal_consistency                     true
+calibration_source_manifest_verified     true   (false + warning when omitted)
+producer_identity_attested               false
+detached_signature_verified              false
+external_timestamp_anchor_verified       false
+```
+
+The accompanying note is the strongest available formulation because it names
+the specific attack rather than gesturing at a limitation: verification "does
+not attest who ran the measurement **or prevent a producer from regenerating
+altered evidence**." That is exactly the property a reader was previously
+invited to infer.
+
+## B3 — failed requests contaminating latency: fixed, verified bit-exactly
+
+Constructed three successful requests, recorded the `end_to_end` mean, then
+added a genuinely timed-out request and re-summarised:
+
+```
+total 4  successful 3  timed_out 1  censored 1
+end_to_end mean with the failure present   25.042 ms
+end_to_end mean of the three successes     25.042 ms   identical
+end_to_end request_count                   3           not 4
+time_to_failure                            1 sample, 51.5 ms
+```
+
+The failure contributes nothing to the success latencies, the population is
+named and sized in the output, and the failure duration is reported separately
+rather than discarded. N2 is confirmed in the same run: `censored` is set on the
+live adapter timeout path, not only in a unit fixture.
+
+## B4 — real-endpoint ITL: made explicit and correct
+
+Under `server_usage` authority against a streaming endpoint:
+
+```
+itl                  count 0   availability unavailable
+                     unavailable_reason no_authoritative_per_token_timestamps
+inter_chunk_latency  populated from content-event timestamps
+```
+
+The distinction is the right one. A chunk is not a token, and the summary now
+says so in machine-readable form instead of publishing a chunk interval under a
+token-interval name.
+
+## Non-blocking findings, spot-checked
+
+- **N1** — removing `model`, `engine` and `hardware` from `sut.yaml` is rejected
+  at `validate` with `"sut.yaml violates published schema at <root>: 'model' is
+  a required property"`. Schemas are enforced, not merely shipped.
+- **N3** — `runner_load.json` carries measurement-window process CPU, system CPU
+  and an independent 1 ms asyncio wake-up-lag probe, and the apparatus compares
+  all three against calibrated limits.
+- **N4** — `verify --calibration-source` sets
+  `calibration_source_manifest_verified`; omitting it yields `false` plus the
+  warning `calibration_source_manifest_not_independently_checked`.
+- **N5** — `environment.json` carries `git_status_entry_count` and
+  `git_status_paths_sha256` only. No path string survives; the bundle contains no
+  occurrence of the developer's home directory.
+- **N6/N7** — bundle listing includes `schemas/` and `runner_load.json`; the
+  workflow runs the full suite on both platforms and exchanges evidence in both
+  directions.
+
+## F1 — the concurrency check is disabled by declared think time (minor)
+
+`evidence.py` skips the closed-loop ratio whenever `think_time_ms > 0`, setting
+`closed_loop_concurrency_check: "not_applicable_declared_think_time"`.
+
+Skipping is defensible: with think time the expected in-flight count is not
+`active_users`, so a naive ratio would fail healthy runs. The state is
+machine-readable rather than silent, and the shared queue removes the structural
+failure mode regardless. Schedule lag and event-loop lag still cover client
+saturation, and `t_scheduled_ns` is taken after the think-time sleep, so a
+congested loop is still visible.
+
+What remains is narrower: **for any scenario declaring think time,
+`capacity_claim_permitted` can be true although the concurrency B1 was about was
+never checked.** A check is constructible — Little's Law gives an expected
+in-flight of `N × S / (S + Z)` from quantities the run already measures — so the
+gap is a deferred implementation rather than an unmeasurable quantity. Worth
+either implementing before any think-time scenario is used for a capacity claim,
+or stating in the documentation that such scenarios carry no concurrency
+verification.
+
+## F2 — `calibrate` prints `ok: true` while writing `valid: false` (minor)
+
+The over-committed contract above produced `{"ok": true}` on stdout from
+`oicap calibrate` while `calibration.json` recorded `valid: false`. The safety
+property holds — `run` refuses with exit 2 — but at the end of a calibration
+command the word `ok` reads as a verdict on the apparatus, which is precisely
+the reading B2 exists to prevent elsewhere. Either surface the validity in the
+command's own output or reserve `ok` for "the command completed".
+
+## Position
+
+The remediation is substantive rather than cosmetic: each blocking finding was
+answered with a change to what the system *measures and refuses*, not only with
+a change to what it says. The AC3 demonstration in particular converts the
+original finding from an argument into a reproducible control.
+
+AC6 remains the outstanding criterion, and one macOS host is not evidence of it.
+Push, observe the hosted Linux and macOS runs including both evidence-exchange
+directions, and only then revisit the version label.

@@ -56,7 +56,19 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "calibrate":
             contracts = load_contracts(args.benchmark)
             output = asyncio.run(calibrate(contracts, args.output))
-            _print({"ok": True, "calibration_bundle": str(output)})
+            record = json.loads((Path(output) / "calibration.json").read_text())
+            valid = bool(record.get("valid"))
+            _print(
+                {
+                    "ok": valid,
+                    "command_completed": True,
+                    "calibration_valid": valid,
+                    "invalid_reasons": record.get("invalid_reasons", []),
+                    "calibration_bundle": str(output),
+                }
+            )
+            if not valid:
+                raise SystemExit(2)
         elif args.command == "run":
             contracts = load_contracts(args.benchmark)
             calibration = load_calibration(args.calibration, contracts.measurement_identity)

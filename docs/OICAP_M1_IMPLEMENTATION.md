@@ -52,6 +52,13 @@ and can block a capacity claim. It is not an SLO verdict. This checkpoint emits 
 `PASS`, `FAIL`, capacity boundary, comparison, recommendation, goodput result or
 HTML report.
 
+Closed-loop concurrency is checked in both session modes. With zero think time, the
+target is the declared active-user count. With declared think time `Z`, the runner
+uses the measured mean request service time `S` and the interactive response-time
+law `N × S / (S + Z)` to derive expected mean in-flight concurrency. The evidence
+records the method, inputs, expectation, observation and realization ratio; a value
+below the registered floor invalidates the apparatus.
+
 A request that reaches `timeout_s` is recorded as both timed out and right-censored:
 its latency is known only to exceed the timeout. With `drain: complete_all`, the
 runner does not terminate outstanding requests at a run boundary, so no separate
@@ -102,6 +109,10 @@ oicap run examples/oicap/basic \
   --output /tmp/oicap-run
 oicap verify /tmp/oicap-run --calibration-source /tmp/oicap-calibration
 ```
+
+`oicap calibrate` reports `command_completed` separately from
+`calibration_valid`. Its top-level `ok` is true only for a valid calibration; an
+invalid calibration bundle remains available for diagnosis but the command exits 2.
 
 The example workload uses the deterministic test protocol. A real endpoint contract
 must replace its test payload and choose `server_usage` or `none` token accounting.

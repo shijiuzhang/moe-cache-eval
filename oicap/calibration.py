@@ -12,7 +12,7 @@ import psutil
 
 from .contracts import ContractSet, canonical_json, file_sha256
 from .evidence import write_bundle
-from .metrics import quantile, summarize
+from .metrics import closed_loop_concurrency_model, quantile, summarize
 from .runner import execute_load_point
 from .runner import RunResult
 from .test_server import DeterministicServer
@@ -155,22 +155,29 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
             if instability[metric] > stability_tolerance:
                 invalid_reasons.append(f"noise_resolution_unstable:{metric}")
     requested_active_users = contracts.scenario["arrival"].get("active_users")
-    repeat_mean_in_flight = [
-        item["load_realization"].get("mean_in_flight_before_final_submission")
-        for item in repeat_summaries
-    ]
-    mean_in_flight_values = [
-        float(value) for value in repeat_mean_in_flight if value is not None
-    ]
-    mean_in_flight = min(mean_in_flight_values) if mean_in_flight_values else None
-    closed_loop_ratio = None
     think_time_ms = float(contracts.scenario.get("session", {}).get("think_time_ms", 0))
-    if requested_active_users and think_time_ms == 0:
-        closed_loop_ratio = (
-            float(mean_in_flight) / float(requested_active_users)
-            if mean_in_flight is not None
-            else None
+    concurrency_model: dict[str, float | str | None] = {
+        "method": "not_applicable_open_loop",
+        "observed_mean_in_flight": None,
+        "expected_mean_in_flight": None,
+        "mean_request_service_time_s": None,
+        "declared_think_time_s": None,
+        "realization_ratio": None,
+    }
+    if requested_active_users:
+        repeat_models = [
+            closed_loop_concurrency_model(
+                item["load_realization"], int(requested_active_users), think_time_ms
+            )
+            for item in repeat_summaries
+        ]
+        unavailable = [item for item in repeat_models if item["realization_ratio"] is None]
+        concurrency_model = (
+            unavailable[0]
+            if unavailable
+            else min(repeat_models, key=lambda item: float(item["realization_ratio"]))
         )
+        closed_loop_ratio = concurrency_model["realization_ratio"]
         if closed_loop_ratio is None or closed_loop_ratio < min_closed_loop_ratio:
             invalid_reasons.append("closed_loop_concurrency_not_maintained")
     calibration_record = {
@@ -195,9 +202,15 @@ async def calibrate(contracts: ContractSet, output: str | Path) -> Path:
         "runner_system_cpu_percent": system_cpu,
         "event_loop_lag_ms": event_loop_lag,
         "realized_peak_in_flight": summary["load_realization"]["peak_in_flight"],
-        "realized_mean_in_flight": mean_in_flight,
-        "mean_in_flight_definition": "minimum repetition mean from first through final submission; drain excluded",
-        "closed_loop_concurrency_ratio": closed_loop_ratio,
+        "realized_mean_in_flight": concurrency_model["observed_mean_in_flight"],
+        "expected_mean_in_flight": concurrency_model["expected_mean_in_flight"],
+        "mean_request_service_time_s": concurrency_model[
+            "mean_request_service_time_s"
+        ],
+        "declared_think_time_s": concurrency_model["declared_think_time_s"],
+        "closed_loop_concurrency_check": concurrency_model["method"],
+        "mean_in_flight_definition": "worst-realization repetition mean from first through final submission; drain excluded",
+        "closed_loop_concurrency_ratio": concurrency_model["realization_ratio"],
         "request_count": len(measured_rows),
         "repetitions": repetition_count,
         "duration_s": duration_s,

@@ -13,7 +13,7 @@ from typing import Any, Iterable
 
 from . import __version__
 from .contracts import ContractSet, canonical_json, file_sha256
-from .metrics import summarize
+from .metrics import closed_loop_concurrency_model, summarize
 from .observations import RequestObservation
 from .runner import RunResult
 
@@ -229,27 +229,28 @@ def apparatus_assessment(
     ):
         reasons.append("event_loop_lag_exceeded")
     requested_active_users = None
-    realized_mean_in_flight = summary["load_realization"].get(
-        "mean_in_flight_before_final_submission"
-    )
+    realized_mean_in_flight = None
+    expected_mean_in_flight = None
+    mean_service_time_s = None
+    declared_think_time_s = None
     closed_loop_ratio = None
     concurrency_check = "not_applicable"
     if scenario["arrival"]["kind"] == "closed_loop":
         requested_active_users = int(scenario["arrival"]["active_users"])
         think_time_ms = float(scenario.get("session", {}).get("think_time_ms", 0))
-        if think_time_ms > 0:
-            concurrency_check = "not_applicable_declared_think_time"
-        else:
-            concurrency_check = "checked"
-            closed_loop_ratio = (
-                float(realized_mean_in_flight) / requested_active_users
-                if realized_mean_in_flight is not None and requested_active_users
-                else None
-            )
-            if closed_loop_ratio is None or closed_loop_ratio < float(
-                limits.get("min_closed_loop_concurrency_ratio", 1.0)
-            ):
-                reasons.append("closed_loop_concurrency_not_maintained")
+        concurrency = closed_loop_concurrency_model(
+            summary["load_realization"], requested_active_users, think_time_ms
+        )
+        concurrency_check = str(concurrency["method"])
+        realized_mean_in_flight = concurrency["observed_mean_in_flight"]
+        expected_mean_in_flight = concurrency["expected_mean_in_flight"]
+        mean_service_time_s = concurrency["mean_request_service_time_s"]
+        declared_think_time_s = concurrency["declared_think_time_s"]
+        closed_loop_ratio = concurrency["realization_ratio"]
+        if closed_loop_ratio is None or closed_loop_ratio < float(
+            limits.get("min_closed_loop_concurrency_ratio", 1.0)
+        ):
+            reasons.append("closed_loop_concurrency_not_maintained")
     return {
         "schema_version": "0.1",
         "status": "CLIENT_SATURATED" if reasons else "VALID",
@@ -264,6 +265,9 @@ def apparatus_assessment(
         "event_loop_lag_p99_ms": event_loop_p99,
         "requested_active_users": requested_active_users,
         "realized_mean_in_flight": realized_mean_in_flight,
+        "expected_mean_in_flight": expected_mean_in_flight,
+        "mean_request_service_time_s": mean_service_time_s,
+        "declared_think_time_s": declared_think_time_s,
         "mean_in_flight_definition": "from first through final request submission; drain excluded",
         "closed_loop_concurrency_ratio": closed_loop_ratio,
         "closed_loop_concurrency_check": concurrency_check,

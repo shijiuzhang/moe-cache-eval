@@ -472,6 +472,28 @@ class EvidenceTests(unittest.TestCase):
                 all(value <= tolerance for value in record["noise_resolution_range_ms"].values())
             )
 
+    def test_think_time_calibration_uses_interactive_response_time_law(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            benchmark = root / "benchmark"
+            benchmark.mkdir()
+            for source in EXAMPLE.iterdir():
+                if source.is_file():
+                    (benchmark / source.name).write_bytes(source.read_bytes())
+            scenario = yaml.safe_load((benchmark / "scenario.yaml").read_text())
+            scenario["session"] = {"think_time_ms": 5}
+            (benchmark / "scenario.yaml").write_text(yaml.safe_dump(scenario))
+            contracts = load_contracts(benchmark)
+            bundle = asyncio.run(calibrate(contracts, root / "calibration"))
+            record = json.loads((bundle / "calibration.json").read_text())
+        self.assertTrue(record["valid"])
+        self.assertEqual(
+            record["closed_loop_concurrency_check"],
+            "interactive_response_time_law",
+        )
+        self.assertIsNotNone(record["expected_mean_in_flight"])
+        self.assertGreater(record["closed_loop_concurrency_ratio"], 0.6)
+
     def test_overloaded_calibration_fixture_is_invalid(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -614,6 +636,64 @@ class EvidenceTests(unittest.TestCase):
         value = apparatus_assessment(scenario, summary, calibration, runner_load)
         self.assertEqual(value["status"], "CLIENT_SATURATED")
         self.assertIn("closed_loop_concurrency_not_maintained", value["reasons"])
+
+    def test_think_time_concurrency_uses_interactive_response_time_law(self) -> None:
+        scenario = {
+            "arrival": {"kind": "closed_loop", "active_users": 10},
+            "session": {"think_time_ms": 100},
+        }
+        summary = {
+            "latency_ms": {"schedule_lag": {"p99": 0}},
+            "load_realization": {
+                "achieved_submission_rate_per_s": None,
+                "mean_in_flight_before_final_submission": 4.5,
+                "mean_request_service_time_s": 0.1,
+            },
+        }
+        calibration = {"record": {"limits": {
+            "max_schedule_lag_p99_ms": 10,
+            "max_runner_process_cpu_percent_one_core": 100,
+            "max_runner_system_cpu_percent": 100,
+            "min_closed_loop_concurrency_ratio": 0.8,
+            "min_arrival_rate_ratio": 0.98,
+        }}}
+        runner_load = {
+            "runner_process_cpu_percent_one_core": 1,
+            "runner_system_cpu_percent": 1,
+        }
+        value = apparatus_assessment(scenario, summary, calibration, runner_load)
+        self.assertEqual(value["status"], "VALID")
+        self.assertEqual(
+            value["closed_loop_concurrency_check"],
+            "interactive_response_time_law",
+        )
+        self.assertAlmostEqual(value["expected_mean_in_flight"], 5.0)
+        self.assertAlmostEqual(value["closed_loop_concurrency_ratio"], 0.9)
+
+        summary["load_realization"]["mean_in_flight_before_final_submission"] = 3.0
+        invalid = apparatus_assessment(scenario, summary, calibration, runner_load)
+        self.assertEqual(invalid["status"], "CLIENT_SATURATED")
+        self.assertIn("closed_loop_concurrency_not_maintained", invalid["reasons"])
+
+    def test_cli_invalid_calibration_is_not_reported_ok(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            benchmark = root / "benchmark"
+            benchmark.mkdir()
+            for source in EXAMPLE.iterdir():
+                if source.is_file():
+                    (benchmark / source.name).write_bytes(source.read_bytes())
+            run = yaml.safe_load((benchmark / "run.yaml").read_text())
+            run["self_calibration"]["max_schedule_lag_p99_ms"] = 0
+            (benchmark / "run.yaml").write_text(yaml.safe_dump(run))
+            output = io.StringIO()
+            with redirect_stdout(output), self.assertRaisesRegex(SystemExit, "2"):
+                cli_main(["calibrate", str(benchmark), "--output", str(root / "cal")])
+            result = json.loads(output.getvalue())
+        self.assertFalse(result["ok"])
+        self.assertTrue(result["command_completed"])
+        self.assertFalse(result["calibration_valid"])
+        self.assertIn("schedule_lag_exceeded", result["invalid_reasons"])
 
     def test_bundle_records_runner_load_without_dirty_path_names(self) -> None:
         contracts = load_contracts(EXAMPLE)

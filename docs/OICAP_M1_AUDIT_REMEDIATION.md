@@ -43,9 +43,23 @@ mechanism and must not be inferred from a green `verify` result.
 
 ## Local evidence at this checkpoint
 
-- targeted OICAP suite: 39 tests, all passing;
-- full repository suite: 81 tests, all passing on the local macOS development host;
+- targeted OICAP suite: 42 tests, all passing;
+- full repository suite: 84 tests, all passing on the local macOS development host;
 - deterministic quick-start: calibration, measurement and verification with an
   independently supplied calibration source complete with `ok: true`, apparatus
   `VALID`, and all five machine-readable verification-scope fields present;
 - hosted cross-platform workflow: not yet observed.
+
+## Re-audit follow-up
+
+The 2026-08-26 re-audit accepted B1–B4 and N1–N7, then raised two minor findings:
+
+- **F1, think-time concurrency:** the former `not_applicable` branch was removed.
+  Think-time sessions now derive expected mean concurrency using the interactive
+  response-time law `N × S / (S + Z)` from declared users and think time plus measured
+  service time. Calibration and run apparatus use the same helper and retain the
+  registered realization-ratio floor. Healthy and deficient positive controls cover
+  the branch.
+- **F2, calibration CLI ambiguity:** `oicap calibrate` now emits separate
+  `command_completed` and `calibration_valid` fields. `ok` equals calibration validity,
+  and an invalid calibration exits 2 while preserving the diagnostic bundle.
