@@ -126,7 +126,16 @@ must replace its test payload and choose `server_usage` or `none` token accounti
 | V01-AC3 load semantics | Shared-queue closed loop implemented; peak, full-span mean and pre-drain mean concurrency are recorded; heterogeneous positive control passes locally |
 | V01-AC4 apparatus calibration | Repeated calibration, overload invalidation and stability controls pass locally |
 | V01-AC5 evidence reproducibility | Unsigned internal-consistency verification implemented; producer attestation is explicitly absent |
-| V01-AC6 cross-platform compatibility | Workflow specifies full Linux/macOS regression and bidirectional evidence exchange; hosted CI results not yet observed |
+| V01-AC6 cross-platform compatibility | Demonstrated by GitHub Actions run `33028822268` at commit `1980feb`: the full 84-test suite passed on Ubuntu 24.04 x86_64 and macOS 14 ARM64, and evidence produced on each platform was verified on the other platform with its external calibration manifest supplied |
 
-The checkpoint MUST NOT be called v0.1 until every row above is demonstrated. In
-particular, one successful macOS run is not evidence of Linux/macOS portability.
+All six rows now have implementation evidence, including hosted cross-platform
+evidence for AC6. This remains an M1 checkpoint until the acceptance evidence is
+reviewed as a whole and an explicit release decision is made; passing CI alone does
+not create or tag a v0.1 release.
+
+The hosted AC6 evidence is GitHub Actions run
+[`33028822268`](https://github.com/shijiuzhang/moe-cache-eval/actions/runs/33028822268)
+for commit `1980feb7cc1e68fd003e720f76fe40a5146b159f`. Its six successful jobs were
+the full regression suite on both operating systems, a portable-evidence producer
+on each, and the two reciprocal verifier jobs (macOS-produced evidence on Linux and
+Linux-produced evidence on macOS).

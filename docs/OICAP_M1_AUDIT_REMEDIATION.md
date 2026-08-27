@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-25  
 **Audit:** `OICAP_M1_IMPLEMENTATION_AUDIT.md`  
-**Status:** implemented locally; hosted Linux/macOS CI evidence still pending
+**Status:** implementation and hosted Linux/macOS evidence complete; release decision pending
 
 This note records how the four blocking and seven non-blocking findings were
 addressed. It does not upgrade the checkpoint to a v0.1 release.
@@ -26,7 +26,7 @@ addressed. It does not upgrade the checkpoint to a v0.1 release.
 | N4 calibration source hash unchecked | `oicap verify --calibration-source PATH` checks the external calibration manifest against the recorded digest. Omitting the source leaves verification successful but emits an explicit warning; mismatch is an error. |
 | N5 dirty paths leaked | Evidence now stores only dirty-entry count and an aggregate SHA-256 over sorted status entries, not path names. |
 | N6 schemas omitted from documentation | The bundle listing now includes `schemas/*.schema.json` and `runner_load.json`. |
-| N7 asymmetric/incomplete CI | The workflow now runs the full repository test suite on both Linux and macOS and exchanges evidence in both macOS→Linux and Linux→macOS directions, including external calibration-manifest checks. AC6 remains pending until hosted runs are observed. |
+| N7 asymmetric/incomplete CI | The workflow runs the full repository test suite on both Linux and macOS and exchanges evidence in both macOS→Linux and Linux→macOS directions, including external calibration-manifest checks. GitHub Actions run `33028822268` demonstrated all six jobs successfully at commit `1980feb`. |
 
 ## Verification boundary
 
@@ -48,7 +48,12 @@ mechanism and must not be inferred from a green `verify` result.
 - deterministic quick-start: calibration, measurement and verification with an
   independently supplied calibration source complete with `ok: true`, apparatus
   `VALID`, and all five machine-readable verification-scope fields present;
-- hosted cross-platform workflow: not yet observed.
+- hosted cross-platform workflow: GitHub Actions run
+  [`33028822268`](https://github.com/shijiuzhang/moe-cache-eval/actions/runs/33028822268)
+  passed all six jobs at commit `1980feb7cc1e68fd003e720f76fe40a5146b159f`:
+  the 84-test full suite on Ubuntu 24.04 x86_64 and macOS 14 ARM64, evidence
+  production on each platform, and reciprocal verification on the other platform
+  with the external calibration manifest supplied.
 
 ## Re-audit follow-up
 
