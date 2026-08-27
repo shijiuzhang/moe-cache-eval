@@ -121,8 +121,11 @@ class ContractTests(unittest.TestCase):
             {"scenario.schema.json", "slo.schema.json", "sut.schema.json", "run.schema.json"},
         )
         for path in schema_root.glob("*.json"):
-            self.assertEqual(json.loads(path.read_text())["$schema"],
+            schema = json.loads(path.read_text())
+            self.assertEqual(schema["$schema"],
                              "https://json-schema.org/draft/2020-12/schema")
+            from jsonschema import Draft202012Validator
+            Draft202012Validator.check_schema(schema)
 
     def test_published_schema_is_enforced_before_semantic_validation(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -136,6 +139,67 @@ class ContractTests(unittest.TestCase):
             (root / "sut.yaml").write_text(yaml.safe_dump(sut))
             with self.assertRaisesRegex(ContractError, "violates published schema"):
                 load_contracts(root)
+
+    def test_session_think_time_is_declared_strict_and_reachable(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            for source in EXAMPLE.iterdir():
+                if source.is_file():
+                    (root / source.name).write_bytes(source.read_bytes())
+            scenario_path = root / "scenario.yaml"
+            scenario = yaml.safe_load(scenario_path.read_text())
+            scenario["session"] = {"think_time_ms": 5}
+            scenario_path.write_text(yaml.safe_dump(scenario))
+            self.assertEqual(load_contracts(root).scenario["session"]["think_time_ms"], 5)
+
+            scenario.pop("session")
+            scenario_path.write_text(yaml.safe_dump(scenario))
+            with self.assertRaisesRegex(ContractError, "violates published schema"):
+                load_contracts(root)
+
+            for misspelled in ("think_time", "think_time_s"):
+                with self.subTest(misspelled=misspelled):
+                    scenario["session"] = {misspelled: 5}
+                    scenario_path.write_text(yaml.safe_dump(scenario))
+                    with self.assertRaisesRegex(ContractError, "violates published schema"):
+                        load_contracts(root)
+
+    def test_session_is_rejected_for_open_loop_where_it_would_be_ignored(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            for source in EXAMPLE.iterdir():
+                if source.is_file():
+                    (root / source.name).write_bytes(source.read_bytes())
+            scenario = yaml.safe_load((root / "scenario.yaml").read_text())
+            scenario["arrival"] = {
+                "kind": "open_loop", "process": "constant", "rate_per_s": 10,
+            }
+            scenario["session"] = {"think_time_ms": 5}
+            (root / "scenario.yaml").write_text(yaml.safe_dump(scenario))
+            with self.assertRaisesRegex(ContractError, "violates published schema"):
+                load_contracts(root)
+
+    def test_fixed_contract_shapes_reject_unknown_keys(self) -> None:
+        mutations = {
+            "scenario.yaml": lambda value: value.__setitem__("sessions", {}),
+            "slo.yaml": lambda value: value.__setitem__("aggregate", {}),
+            "sut.yaml": lambda value: value.__setitem__("service_policy", {}),
+            "run.yaml": lambda value: value["self_calibration"].__setitem__(
+                "max_schedule_lag_ms", 20
+            ),
+        }
+        for filename, mutate in mutations.items():
+            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                for source in EXAMPLE.iterdir():
+                    if source.is_file():
+                        (root / source.name).write_bytes(source.read_bytes())
+                path = root / filename
+                value = yaml.safe_load(path.read_text())
+                mutate(value)
+                path.write_text(yaml.safe_dump(value))
+                with self.assertRaisesRegex(ContractError, "violates published schema"):
+                    load_contracts(root)
 
 
 class TimingTests(unittest.IsolatedAsyncioTestCase):
@@ -506,6 +570,7 @@ class EvidenceTests(unittest.TestCase):
             scenario["arrival"] = {
                 "kind": "open_loop", "process": "constant", "rate_per_s": 1_000_000,
             }
+            scenario.pop("session")
             (benchmark / "scenario.yaml").write_text(yaml.safe_dump(scenario))
             run = yaml.safe_load((benchmark / "run.yaml").read_text())
             run["warmup"]["requests"] = 0

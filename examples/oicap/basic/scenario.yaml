@@ -9,3 +9,5 @@ source:
 arrival:
   kind: closed_loop
   active_users: 2
+session:
+  think_time_ms: 0

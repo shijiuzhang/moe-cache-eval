@@ -3,6 +3,7 @@
   "$id": "https://oicap.dev/schemas/0.1/scenario.schema.json",
   "title": "OICAP scenario contract 0.1",
   "type": "object",
+  "additionalProperties": false,
   "required": ["schema_version", "scenario_id", "workload_classes", "source", "arrival"],
   "properties": {
     "schema_version": {"const": "0.1"},
@@ -11,6 +12,7 @@
       "type": "array", "minItems": 1,
       "items": {
         "type": "object", "required": ["id", "weight"],
+        "additionalProperties": false,
         "properties": {
           "id": {"type": "string", "minLength": 1},
           "weight": {"type": "number", "minimum": 0, "maximum": 1}
@@ -19,6 +21,7 @@
     },
     "source": {
       "type": "object", "required": ["kind", "path"],
+      "additionalProperties": false,
       "properties": {
         "kind": {"const": "local_jsonl"},
         "path": {"type": "string", "minLength": 1},
@@ -27,9 +30,32 @@
     },
     "arrival": {
       "oneOf": [
-        {"type": "object", "required": ["kind", "active_users"], "properties": {"kind": {"const": "closed_loop"}, "active_users": {"type": "integer", "minimum": 1}}},
-        {"type": "object", "required": ["kind", "process", "rate_per_s"], "properties": {"kind": {"const": "open_loop"}, "process": {"const": "constant"}, "rate_per_s": {"type": "number", "exclusiveMinimum": 0}}}
+        {"type": "object", "additionalProperties": false, "required": ["kind", "active_users"], "properties": {"kind": {"const": "closed_loop"}, "active_users": {"type": "integer", "minimum": 1}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "process", "rate_per_s"], "properties": {"kind": {"const": "open_loop"}, "process": {"const": "constant"}, "rate_per_s": {"type": "number", "exclusiveMinimum": 0}}}
       ]
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["think_time_ms"],
+      "properties": {
+        "think_time_ms": {"type": "number", "minimum": 0}
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["arrival"],
+        "properties": {
+          "arrival": {
+            "required": ["kind"],
+            "properties": {"kind": {"const": "closed_loop"}}
+          }
+        }
+      },
+      "then": {"required": ["session"]},
+      "else": {"not": {"required": ["session"]}}
+    }
+  ]
 }

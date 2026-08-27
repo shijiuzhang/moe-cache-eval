@@ -506,3 +506,103 @@ original finding from an argument into a reproducible control.
 AC6 remains the outstanding criterion, and one macOS host is not evidence of it.
 Push, observe the hosted Linux and macOS runs including both evidence-exchange
 directions, and only then revisit the version label.
+
+---
+
+# Re-audit of F1, F2 and AC6 — 2026-08-27
+
+Reviewing `1980feb` "Close OICAP M1 re-audit findings" and `c443b41` "Record
+hosted OICAP cross-platform evidence".
+
+## F1 — closed: and the fix discriminates correctly
+
+The `not_applicable_declared_think_time` branch is gone. Think-time sessions now
+compute an expected concurrency from the interactive response-time law,
+`N × S / (S + Z)`, and apply the same registered realization-ratio floor.
+
+The audit concern was that `S` is measured from the same run, so a saturated
+client might inflate `S`, inflate the expectation, and leave the ratio near one —
+a check that cancels itself. **That concern was wrong, and the reason it is wrong
+is the reason the model is right.** Probed directly with `N = 4`, `Z = 100 ms`:
+
+| Condition | observed | expected | ratio | verdict |
+|---|---:|---:|---:|---|
+| healthy, `S = 100 ms` | 2.0 | 2.0 | 1.00 | pass |
+| **client late, `S = 100 ms`** | 1.0 | 2.0 | **0.50** | **caught** |
+| slow server, `S = 900 ms` | 3.6 | 3.6 | 1.00 | correctly not flagged |
+
+Client lateness occurs *before* `t_submit` — during the think sleep and
+scheduling — so it does not enter `S`. It only depresses observed concurrency,
+and the ratio falls. Server slowness raises `S` and observed concurrency
+together, so the ratio holds at one, which is the correct verdict: the apparatus
+check asks whether the client delivered the intended load, not whether the
+server was fast. The two failure modes are discriminated rather than conflated.
+
+Populations are consistent: `intervals` spans `t_submit` to terminal for **all**
+requests including failures, and both `observed` and `S` derive from it. A failed
+request still occupied a worker slot, so including it is correct.
+
+Reachability confirmed end to end: a scenario carrying `session.think_time_ms:
+50` validates, calibrates, selects `method: interactive_response_time_law` and
+produces `closed_loop_concurrency_ratio: 0.915` against a measured service time
+of 1.05 ms and a declared think time of 50 ms.
+
+## F2 — closed
+
+`oicap calibrate` now separates the two claims and the exit code follows
+validity, not completion:
+
+```
+invalid contract  ->  command_completed true, calibration_valid false, ok false, exit 2
+valid contract    ->  ok true, exit 0
+```
+
+## AC6 — demonstrated on hosted runners
+
+Verified through the GitHub API rather than from the report: run
+`33038054751` at `c443b41`, which is the current `origin/main`, conclusion
+**success**, all six jobs green:
+
+```
+full-regression (ubuntu-latest)          success
+full-regression (macos-14)               success
+portable-evidence-producer-macos         success
+portable-evidence-verifier-linux         success   <- macOS bundle verified on Linux
+portable-evidence-producer-linux         success
+portable-evidence-verifier-macos         success   <- Linux bundle verified on macOS
+```
+
+Both exchange directions complete on machines the author does not control, which
+is what makes this evidence rather than assertion. The full repository suite runs
+on both platforms in the same workflow. Local re-run here: **84 tests, OK**.
+
+## F3 — `session.think_time_ms` is load-bearing but undeclared (minor, new)
+
+`session` does not appear in `scenario.schema.json`, and no contract schema sets
+`additionalProperties: false`, so the block is accepted without validation.
+
+The field now selects the concurrency model and drives the runner's sleep. A
+misspelling — `think_time`, `think_time_s` — is silently ignored.
+
+Severity is limited by two things. The runner, calibration and apparatus all read
+the identical key, so a typo removes think time everywhere at once; the run then
+has no think time, and the apparatus correctly assesses it against
+`declared_active_users`. The result stays internally consistent and correctly
+judged. And `runner.py` rejects a negative value at runtime.
+
+What is lost is narrower: **the operator asked for a think-time scenario, did not
+get one, and nothing said so.** Declaring `session` in the schema — and, more
+generally, deciding whether contract schemas should close to unknown keys — would
+convert a silent no-op into a rejected contract. Worth doing before think-time
+scenarios are used for anything published, and it is the same class of gap that
+N1 was raised about.
+
+## Verdict on the version label
+
+All six acceptance criteria now have evidence, and AC6's evidence is external.
+Nothing found in this pass blocks a v0.1 tag.
+
+Recommendation: **close F3 first, then tag.** It is a schema addition, it is
+cheap, and tagging a release whose contract schema silently accepts an
+undeclared field that changes the apparatus verdict is the kind of detail this
+project has repeatedly paid for later.

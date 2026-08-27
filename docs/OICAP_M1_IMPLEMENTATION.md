@@ -33,6 +33,12 @@ The public JSON Schema documents under `oicap/schemas/0.1/` are enforced when
 contracts are loaded and checked again from the bundled schema copies during
 verification. Runtime semantic checks in `oicap/contracts.py` additionally enforce
 cross-document constraints such as class coverage and weights summing to one.
+Contract roots and every fixed structure interpreted by M1 reject unknown keys.
+The deliberately extensible SLO metric maps and SUT `model`, `engine`, and `hardware`
+description objects remain open. A closed-loop scenario must explicitly declare
+`session.think_time_ms` as a non-negative number; an open-loop scenario rejects the
+unused `session` block. Misspellings therefore fail validation instead of silently
+selecting a different load model.
 
 ## Deliberate limitations
 

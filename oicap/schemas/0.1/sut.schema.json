@@ -3,6 +3,7 @@
   "$id": "https://oicap.dev/schemas/0.1/sut.schema.json",
   "title": "OICAP system-under-test contract 0.1",
   "type": "object",
+  "additionalProperties": false,
   "required": ["schema_version", "sut_id", "model", "engine", "hardware", "service_discipline"],
   "properties": {
     "schema_version": {"const": "0.1"},
@@ -12,6 +13,7 @@
     "hardware": {"type": "object"},
     "service_discipline": {
       "type": "object", "required": ["batching", "admission", "preemption"],
+      "additionalProperties": false,
       "properties": {
         "batching": {"type": "string"},
         "admission": {"type": "string"},

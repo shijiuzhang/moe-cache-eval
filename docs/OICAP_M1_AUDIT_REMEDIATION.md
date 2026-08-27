@@ -43,8 +43,8 @@ mechanism and must not be inferred from a green `verify` result.
 
 ## Local evidence at this checkpoint
 
-- targeted OICAP suite: 42 tests, all passing;
-- full repository suite: 84 tests, all passing on the local macOS development host;
+- targeted OICAP suite: 45 tests, all passing;
+- full repository suite: 87 tests, all passing on the local macOS development host;
 - deterministic quick-start: calibration, measurement and verification with an
   independently supplied calibration source complete with `ok: true`, apparatus
   `VALID`, and all five machine-readable verification-scope fields present;
@@ -68,3 +68,9 @@ The 2026-08-26 re-audit accepted B1–B4 and N1–N7, then raised two minor find
 - **F2, calibration CLI ambiguity:** `oicap calibrate` now emits separate
   `command_completed` and `calibration_valid` fields. `ok` equals calibration validity,
   and an invalid calibration exits 2 while preserving the diagnostic bundle.
+- **F3, undeclared think-time contract:** all four contract roots and all fixed M1
+  structures now reject unknown keys. Closed-loop scenarios explicitly require a
+  non-negative `session.think_time_ms`; open-loop scenarios reject the unused block.
+  Intentionally extensible SLO metric maps and SUT description objects remain open.
+  Positive controls cover valid think time, missing session, two misspellings,
+  open-loop misuse, and unknown keys across all four contract documents.
