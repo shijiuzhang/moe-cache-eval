@@ -60,7 +60,7 @@ deployments. The draft product contract is available for independent audit:
 - [`docs/PLATFORM_SPEC_V0_1_AUDIT.md`](docs/PLATFORM_SPEC_V0_1_AUDIT.md)
 - [`docs/PLATFORM_SPEC_V0_1_AUDIT_DISPOSITION.md`](docs/PLATFORM_SPEC_V0_1_AUDIT_DISPOSITION.md)
 
-The schema-0.1 checkpoint is deliberately smaller: a self-calibrating black-box
+The OICAP v0.1 release is deliberately small: a self-calibrating black-box
 runner that records one honest load point and emits a recomputable, unsigned private
 evidence bundle. Verification establishes internal consistency; it does not attest
 producer identity or prevent a producer from regenerating altered evidence.
@@ -68,10 +68,11 @@ SLO adjudication, sweeps, comparison and reports begin in v0.2. Engine-specific
 MoE telemetry is a later diagnostic extension; the specification deliberately
 excludes a universal score and unmeasured hardware claims.
 
-The M1 implementation is now under local audit. Its exact implemented boundary,
-evidence layout and still-pending acceptance controls are recorded in
-[`docs/OICAP_M1_IMPLEMENTATION.md`](docs/OICAP_M1_IMPLEMENTATION.md). It is an
-implementation checkpoint, not yet a v0.1 release.
+The independently audited M1 implementation is released as OICAP v0.1. Its exact
+implemented boundary, evidence layout and acceptance evidence are recorded in
+[`docs/OICAP_M1_IMPLEMENTATION.md`](docs/OICAP_M1_IMPLEMENTATION.md); the claims and
+non-claims of the release are frozen in
+[`docs/OICAP_V0_1_RELEASE_NOTES.md`](docs/OICAP_V0_1_RELEASE_NOTES.md).
 
 ## Quick checks
 

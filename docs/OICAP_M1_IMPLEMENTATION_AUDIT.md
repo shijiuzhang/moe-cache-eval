@@ -606,3 +606,93 @@ Recommendation: **close F3 first, then tag.** It is a schema addition, it is
 cheap, and tagging a release whose contract schema silently accepts an
 undeclared field that changes the apparatus verdict is the kind of detail this
 project has repeatedly paid for later.
+
+---
+
+# F3 close-out — 2026-08-27
+
+Reviewing `f9a6745` "Reject undeclared OICAP contract fields".
+
+## Closed
+
+`session` is now declared, required for closed-loop and forbidden otherwise, and
+all four contracts reject unknown top-level keys. Verified by construction rather
+than from the test names:
+
+| Case | Expected | Result |
+|---|---|---|
+| baseline example | accept | accept |
+| `session: {think_time: 50}` | reject | reject — `at session: Additional properties are not allowed` |
+| `session: {think_time_s: 0.05}` | reject | reject — same |
+| closed-loop with `session` absent | reject | reject — `'session' is a required property` |
+| `think_time_ms: -1` | reject | reject — `is less than the minimum` |
+| unknown key in scenario / run / sut / slo | reject | reject, all four |
+| open-loop **with** `session` | reject | reject |
+| open-loop without `session` | accept | accept |
+
+The silent no-op is gone: the two misspellings that previously disabled think
+time without comment are now contract errors naming the offending key.
+
+## Not over-tightened
+
+Closing a schema can substitute one defect for another, so the extension points
+were checked in the opposite direction:
+
+| Case | Expected | Result |
+|---|---|---|
+| extra field inside `sut.model` | accept | accept |
+| extra field inside `sut.engine` | accept | accept |
+| extra field inside `sut.hardware` | accept | accept |
+| new SLO target group | accept | accept |
+| new metric inside an existing SLO group | accept | accept |
+
+The fixed M1 structures are closed and the declared extension points remain
+open, which is the correct division.
+
+Two apparent failures in the first pass of this check were errors in the audit's
+own fixtures — an open-loop arrival missing `process: constant`, and an SLO
+target written as a scalar where the schema requires an object. Both were
+corrected before drawing any conclusion. Recorded because a schema audit that
+reports its own malformed fixtures as findings is worse than no audit.
+
+## Independent evidence
+
+- Full repository suite here: **87 tests, OK**.
+- The four schemas as **packaged in the built wheel** exist, are valid
+  Draft 2020-12, and carry `additionalProperties: false` at the top level — the
+  shipped artifact, not the source tree.
+- CI run `33046848920` at `f9a6745`, which equals the local and remote HEAD:
+  conclusion **success**, all six jobs green, both evidence-exchange directions
+  included.
+- End-to-end after the tightening: calibrate, run and verify all exit 0,
+  apparatus `VALID`, and `verification_scope` still reports the three
+  unsupportable attestations as false.
+
+## Verdict
+
+**F3 is closed. No finding remains open against the OICAP M1 checkpoint.**
+
+Across three passes the four blocking and seven non-blocking findings, plus
+three raised during re-audit, have each been answered with a change to what the
+system measures or refuses. Every claim in this document was re-derived from the
+running code and its artifacts; where the audit's own reasoning was wrong — the
+concern that the think-time model would cancel itself, and the two malformed
+fixtures above — that is recorded alongside the findings.
+
+The checkpoint is ready to be tagged v0.1 on the evidence available.
+
+## What a v0.1 tag does and does not assert
+
+Worth stating plainly at the moment the label is applied, because the label will
+outlive the memory of this audit:
+
+- it asserts that the six V01 acceptance criteria have demonstrated evidence,
+  including cross-platform evidence produced on machines the author does not
+  control;
+- it does **not** assert tamper evidence. `verify` establishes unsigned internal
+  consistency. Producer identity, detached signatures and external timestamp
+  anchoring are all reported false and remain post-M1 work;
+- it does **not** assert that the measurement kernel has been exercised against a
+  real inference engine under real load. Everything demonstrated here runs
+  against the deterministic test protocol. That is the honest boundary of M1 and
+  the first thing M2 should cross.

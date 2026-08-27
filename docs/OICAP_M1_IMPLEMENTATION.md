@@ -1,14 +1,13 @@
-# OICAP M1 implementation checkpoint
+# OICAP v0.1 implementation record
 
 **Date:** 2026-08-25
 
 **Specification:** `PLATFORM_PRODUCT_SPECIFICATION_V0_1.md`
 
-**Status:** implementation checkpoint; not yet a v0.1 release
+**Status:** accepted and released as v0.1 on 2026-08-27
 
-This document maps the current code to the reviewed M1 contract. It is deliberately
-not a product announcement and does not claim that all V01 acceptance criteria have
-passed.
+This document maps the released code to the reviewed M1 contract and its acceptance
+evidence. The release claim remains limited to the boundary stated below.
 
 ## Implemented boundary
 
@@ -123,9 +122,9 @@ invalid calibration bundle remains available for diagnosis but the command exits
 The example workload uses the deterministic test protocol. A real endpoint contract
 must replace its test payload and choose `server_usage` or `none` token accounting.
 
-## Acceptance status
+## Acceptance status at release
 
-| Criterion | Current checkpoint |
+| Criterion | v0.1 evidence |
 |---|---|
 | V01-AC1 contracts | Implemented; local controls pass |
 | V01-AC2 timing anchors | Implemented; deterministic controls pass |
@@ -134,10 +133,10 @@ must replace its test payload and choose `server_usage` or `none` token accounti
 | V01-AC5 evidence reproducibility | Unsigned internal-consistency verification implemented; producer attestation is explicitly absent |
 | V01-AC6 cross-platform compatibility | Demonstrated by GitHub Actions run `33028822268` at commit `1980feb`: the full 84-test suite passed on Ubuntu 24.04 x86_64 and macOS 14 ARM64, and evidence produced on each platform was verified on the other platform with its external calibration manifest supplied |
 
-All six rows now have implementation evidence, including hosted cross-platform
-evidence for AC6. This remains an M1 checkpoint until the acceptance evidence is
-reviewed as a whole and an explicit release decision is made; passing CI alone does
-not create or tag a v0.1 release.
+All six rows have implementation evidence, including hosted cross-platform evidence
+for AC6. The independent re-audit closed every recorded finding before the explicit
+v0.1 release decision. Passing CI is evidence for the release; it is not by itself
+the decision or the definition of the product boundary.
 
 The hosted AC6 evidence is GitHub Actions run
 [`33028822268`](https://github.com/shijiuzhang/moe-cache-eval/actions/runs/33028822268)

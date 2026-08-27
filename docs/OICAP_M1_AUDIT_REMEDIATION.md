@@ -2,10 +2,10 @@
 
 **Date:** 2026-08-25  
 **Audit:** `OICAP_M1_IMPLEMENTATION_AUDIT.md`  
-**Status:** implementation and hosted Linux/macOS evidence complete; release decision pending
+**Status:** all findings closed; accepted for v0.1 release
 
-This note records how the four blocking and seven non-blocking findings were
-addressed. It does not upgrade the checkpoint to a v0.1 release.
+This note records how the four blocking, seven non-blocking and three re-audit
+findings were addressed before the independent audit approved the v0.1 release.
 
 ## Blocking findings
 
@@ -43,8 +43,8 @@ mechanism and must not be inferred from a green `verify` result.
 
 ## Local evidence at this checkpoint
 
-- targeted OICAP suite: 45 tests, all passing;
-- full repository suite: 87 tests, all passing on the local macOS development host;
+- targeted OICAP suite: 46 tests, all passing;
+- full repository suite: 88 tests, all passing on the local macOS development host;
 - deterministic quick-start: calibration, measurement and verification with an
   independently supplied calibration source complete with `ok: true`, apparatus
   `VALID`, and all five machine-readable verification-scope fields present;

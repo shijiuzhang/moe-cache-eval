@@ -7,6 +7,7 @@ import json
 import os
 import tempfile
 import time
+import tomllib
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -16,6 +17,7 @@ import yaml
 from oicap.calibration import calibrate, load_calibration
 from oicap.cli import main as cli_main
 from oicap.contracts import ContractError, canonical_sha256, load_contracts
+from oicap import __version__
 from oicap.evidence import apparatus_assessment, verify_bundle, write_bundle
 from oicap.metrics import observation_metrics, summarize
 from oicap.observations import ChunkObservation, RequestObservation
@@ -36,6 +38,10 @@ EXAMPLE = ROOT / "examples" / "oicap" / "basic"
 
 
 class ContractTests(unittest.TestCase):
+    def test_runtime_and_package_versions_match(self) -> None:
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text())
+        self.assertEqual(__version__, project["project"]["version"])
+
     def test_example_contract_is_valid_and_hash_stable(self) -> None:
         contracts = load_contracts(EXAMPLE)
         reordered = {key: contracts.scenario[key] for key in reversed(contracts.scenario)}
