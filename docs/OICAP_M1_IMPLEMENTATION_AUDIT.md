@@ -696,3 +696,87 @@ outlive the memory of this audit:
   real inference engine under real load. Everything demonstrated here runs
   against the deterministic test protocol. That is the honest boundary of M1 and
   the first thing M2 should cross.
+
+---
+
+# v0.1 release verification — 2026-08-28
+
+Verifying the published release rather than the report of it.
+
+## The tagged code is the audited code
+
+`git diff f9a6745..e62fed3` — the last commit this audit examined against the
+tagged commit — touches nine files and **no measurement-kernel logic**:
+
+```
+oicap/__init__.py       0.1.0.dev0 -> 0.1.0
+pyproject.toml          0.1.0.dev0 -> 0.1.0
+tests/test_oicap.py     + a test asserting the two version strings agree
+README.md, docs/, uv.lock
+```
+
+This matters more than any other check here. A release is only as good as the
+correspondence between what was audited and what was tagged, and that
+correspondence is exact. The added test is the right kind: it prevents the two
+version declarations from drifting apart later, which is a failure that would
+otherwise surface only as a confusing bug report.
+
+## The published artifact, verified from GitHub
+
+Downloaded independently rather than compared against a local build:
+
+| Check | Result |
+|---|---|
+| Release state | published, `draft: false`, `prerelease: false` |
+| Tag `v0.1` | annotated, dereferences to `e62fed3` |
+| Asset | `moe_cache_eval-0.1.0-py3-none-any.whl`, 53,256 bytes |
+| SHA-256 of the downloaded file | `05ba5fe96900fee571b9fee2bbe92d3ff85710e3ac16bbacbe71d0a3a63632af` — matches |
+| Wheel metadata | `Version: 0.1.0`, `Requires-Python: >=3.12,<3.13`, three runtime deps |
+| `__version__` inside the wheel | `0.1.0` |
+| Schemas inside the wheel | all four present |
+| CI run `33053496626` | at `e62fed3`, conclusion success, six jobs green, both exchange directions |
+| Local full suite | 88 tests, OK |
+
+## The released wheel was run, not only inspected
+
+Everything to this point had been tested from the source tree. The artifact a
+user actually downloads had not been. Installed the downloaded wheel into a
+clean virtual environment with no repository on the path and ran the full
+pipeline from it:
+
+```
+validate   exit 0
+calibrate  exit 0
+run        exit 0
+verify     exit 0   ok: true
+apparatus  VALID     closed_loop_concurrency_ratio 0.9868
+verification_scope   internal_consistency true,
+                     calibration_source_manifest_verified true,
+                     producer_identity_attested false,
+                     detached_signature_verified false,
+                     external_timestamp_anchor_verified false
+```
+
+The console script resolves, the packaged schemas load through
+`importlib.resources` from the installed location, and the honest scope block
+survives into the distributed artifact rather than existing only in the
+development tree.
+
+## The release notes state the boundary
+
+`OICAP_V0_1_RELEASE_NOTES.md` says in its own voice what this audit asked to be
+said at the moment the label is applied: no tamper or producer attestation, no
+validation against a real inference engine, no SLO or procurement verdict, and
+"a measurement foundation, not a capacity recommendation product."
+
+That the limits are published alongside the release, rather than recoverable
+only from an audit trail, is what makes the label safe to apply.
+
+## Verdict
+
+**v0.1 is verified. No finding is open.**
+
+The remaining honest gap is the one the release notes name themselves: every
+result demonstrated here was produced against the deterministic test protocol.
+Crossing that is M2's first job, and until it is crossed the platform's claims
+about real serving behaviour are untested rather than wrong.
