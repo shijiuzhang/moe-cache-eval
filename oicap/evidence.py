@@ -353,8 +353,12 @@ def verify_bundle(
         errors.append("workload_hash_mismatch")
     try:
         observations = load_observations(bundle / "observations.jsonl")
-        recomputed = summarize(row for row in observations if row.phase == "measurement")
         stored = json.loads((bundle / "summary.json").read_text(encoding="utf-8"))
+        metrics_version = str(stored.get("metrics_version", "0.1"))
+        recomputed = summarize(
+            (row for row in observations if row.phase == "measurement"),
+            metrics_version=metrics_version,
+        )
         if canonical_json(recomputed) != canonical_json(stored):
             errors.append("summary_mismatch")
     except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:

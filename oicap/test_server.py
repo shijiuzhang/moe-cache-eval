@@ -79,6 +79,10 @@ class _Handler(BaseHTTPRequestHandler):
             if config.get("leading_empty", True):
                 self._event({"choices": [{"delta": {"role": "assistant", "content": ""}}]})
             _delay_ms(config.get("ttft_ms", 0))
+            for reasoning in config.get("reasoning_tokens", []):
+                self._event(
+                    {"choices": [{"delta": {"reasoning_content": str(reasoning)}}]}
+                )
             tokens = config.get("tokens", ["hello", " world"])
             token_delay_ms = float(config.get("token_delay_ms", 0))
             for index, token in enumerate(tokens):

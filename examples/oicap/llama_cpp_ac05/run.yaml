@@ -1,0 +1,36 @@
+schema_version: "0.1"
+run_id: llama-cpp-cpu-ac05-content-and-usage
+seed: 20260831
+setup:
+  endpoint_health: none
+  tokenizer_check: none
+client:
+  transport: python_urllib
+  connection_pooling: none
+  streaming: true
+warmup:
+  requests: 1
+measurement:
+  requests: 4
+max_in_flight: 2
+timeout_s: 60
+retry_policy:
+  max_attempts: 1
+  backoff_ms: 0
+  retry_on: [timeout, http_429, http_502, http_503, http_504]
+drain:
+  policy: complete_all
+token_accounting:
+  authority: server_usage
+validator:
+  mode: none
+self_calibration:
+  profile: local_zero_delay_stream_v1
+  repetitions: 2
+  max_schedule_lag_p99_ms: 20
+  max_event_loop_lag_p99_ms: 20
+  max_runner_process_cpu_percent_one_core: 10000
+  max_runner_system_cpu_percent: 100
+  min_closed_loop_concurrency_ratio: 0.60
+  min_arrival_rate_ratio: 0.98
+  noise_stability_tolerance_ms: 20

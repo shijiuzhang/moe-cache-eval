@@ -1,0 +1,20 @@
+schema_version: "0.1"
+sut_id: local-llama-cpp-cpu-ac05
+model:
+  id: local-gguf
+  revision: sha256:1278394b693672ac2799eadc9a83fd98259a6a88a40acfb1dcaa6c6fc895a606
+  parameter_count: 11907350576
+  quantization: Q4_K_M
+engine:
+  name: llama.cpp
+  version: "10210 (000547513)"
+hardware:
+  accelerator: cpu
+  count: 1
+  cpu: Apple M4 Pro
+  memory_bytes: 25769803776
+service_discipline:
+  batching: llama.cpp-continuous
+  admission: llama.cpp-default
+  preemption: unknown
+  fairness_bound_ms: null

@@ -117,7 +117,7 @@ class OpenAIAdapter:
                     except json.JSONDecodeError as exc:
                         raise ValueError(f"Malformed SSE JSON: {data[:120]}") from exc
                     content = _content_from_event(event)
-                    kind = "content" if content else "metadata"
+                    kind = _event_kind(event, content)
                     observation.chunks.append(
                         ChunkObservation(received_ns=received_ns, kind=kind, content=content)
                     )
@@ -191,6 +191,49 @@ def _content_from_event(event: Any) -> str:
         return value if isinstance(value, str) else ""
     value = choice.get("text")
     return value if isinstance(value, str) else ""
+
+
+def _has_reasoning_content(event: Any) -> bool:
+    """Identify hidden reasoning events without retaining their sensitive text."""
+    if not isinstance(event, dict):
+        return False
+    choices = event.get("choices")
+    if not isinstance(choices, list) or not choices:
+        return False
+    choice = choices[0]
+    if not isinstance(choice, dict):
+        return False
+    delta = choice.get("delta")
+    if not isinstance(delta, dict):
+        return False
+    value = delta.get("reasoning_content")
+    return isinstance(value, str) and bool(value)
+
+
+def _event_kind(event: Any, content: str) -> str:
+    if content:
+        return "content"
+    if not isinstance(event, dict):
+        return "metadata"
+    choices = event.get("choices")
+    if not isinstance(choices, list) or not choices:
+        return "metadata"
+    choice = choices[0]
+    if not isinstance(choice, dict):
+        return "metadata"
+    delta = choice.get("delta")
+    if not isinstance(delta, dict):
+        return "metadata"
+    # llama.cpp begins a stream with role=assistant and null content. Keeping the
+    # combined shape makes the AC05 role-only/empty-content control observable.
+    delta_content = delta.get("content")
+    if "role" in delta and (delta_content is None or delta_content == ""):
+        return "role_empty"
+    if _has_reasoning_content(event):
+        return "reasoning"
+    if "content" in delta and (delta_content is None or delta_content == ""):
+        return "empty"
+    return "metadata"
 
 
 def _optional_int(value: Any) -> int | None:

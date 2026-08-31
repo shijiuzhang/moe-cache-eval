@@ -8,7 +8,7 @@ from typing import Iterable
 from .observations import RequestObservation
 
 
-METRICS_VERSION = "0.1"
+METRICS_VERSION = "0.2-dev1"
 
 
 def _ms(delta_ns: int) -> float:
@@ -43,7 +43,9 @@ def distribution(values: Iterable[float]) -> dict[str, float | int | None]:
     }
 
 
-def observation_metrics(obs: RequestObservation) -> dict[str, object]:
+def observation_metrics(
+    obs: RequestObservation, metrics_version: str = METRICS_VERSION
+) -> dict[str, object]:
     schedule_lag = _ms(obs.t_submit_ns - obs.t_scheduled_ns)
     ttft = (
         _ms(obs.t_first_token_ns - obs.t_submit_ns)
@@ -73,15 +75,30 @@ def observation_metrics(obs: RequestObservation) -> dict[str, object]:
         _ms(right - left)
         for left, right in zip(content_timestamps, content_timestamps[1:])
     ]
-    generated = obs.output_tokens
     tpot = None
-    if (
-        generated is not None
-        and generated >= 2
-        and obs.t_first_token_ns is not None
-        and obs.t_complete_ns is not None
-    ):
-        tpot = _ms(obs.t_complete_ns - obs.t_first_token_ns) / (generated - 1)
+    if metrics_version == "0.1":
+        # Frozen legacy behavior. Retained solely so newer verifiers can reproduce
+        # evidence emitted by the v0.1 release.
+        generated = obs.output_tokens
+        if (
+            generated is not None
+            and generated >= 2
+            and obs.t_first_token_ns is not None
+            and obs.t_complete_ns is not None
+        ):
+            tpot = _ms(obs.t_complete_ns - obs.t_first_token_ns) / (generated - 1)
+    elif metrics_version == METRICS_VERSION:
+        # Server usage is authoritative for aggregate token counts, but it does not
+        # establish which counted token corresponds to the first user-visible content
+        # event. Reasoning models can count many hidden reasoning tokens before that
+        # event. TPOT therefore requires authoritative per-token timestamps rather
+        # than combining a visible-content anchor with an unaligned aggregate count.
+        if len(obs.token_timestamps_ns) >= 2:
+            tpot = _ms(obs.token_timestamps_ns[-1] - obs.token_timestamps_ns[0]) / (
+                len(obs.token_timestamps_ns) - 1
+            )
+    else:
+        raise ValueError(f"Unsupported metrics_version {metrics_version!r}.")
     return {
         "schedule_lag_ms": schedule_lag,
         "ttft_ms": ttft,
@@ -93,12 +110,16 @@ def observation_metrics(obs: RequestObservation) -> dict[str, object]:
     }
 
 
-def summarize(observations: Iterable[RequestObservation]) -> dict[str, object]:
+def summarize(
+    observations: Iterable[RequestObservation], metrics_version: str = METRICS_VERSION
+) -> dict[str, object]:
     rows = list(observations)
-    summary = _summarize_rows(rows)
+    summary = _summarize_rows(rows, metrics_version)
     classes = sorted({row.workload_class for row in rows})
     summary["by_workload_class"] = {
-        class_id: _summarize_rows([row for row in rows if row.workload_class == class_id])
+        class_id: _summarize_rows(
+            [row for row in rows if row.workload_class == class_id], metrics_version
+        )
         for class_id in classes
     }
     summary["realized_workload_mix"] = {
@@ -108,8 +129,10 @@ def summarize(observations: Iterable[RequestObservation]) -> dict[str, object]:
     return summary
 
 
-def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
-    measured = [(row, observation_metrics(row)) for row in rows]
+def _summarize_rows(
+    rows: list[RequestObservation], metrics_version: str
+) -> dict[str, object]:
+    measured = [(row, observation_metrics(row, metrics_version)) for row in rows]
     successful_rows = [row for row in rows if row.success]
     successful = [(row, values) for row, values in measured if row.success]
     measured_start = min((row.t_submit_ns for row in rows), default=None)
@@ -175,6 +198,29 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
     itl_distribution["unavailable_reason"] = (
         None if token_timing_available else "no_authoritative_per_token_timestamps"
     )
+    if metrics_version == "0.1":
+        tpot_distribution = populated(
+            scalar(successful, "tpot_ms"),
+            "successful_requests_with_at_least_two_authoritative_output_tokens",
+            len(successful_rows),
+        )
+    else:
+        tpot_available = bool(successful_rows) and all(
+            len(row.token_timestamps_ns) >= 2 for row in successful_rows
+        )
+        tpot_distribution = populated(
+            scalar(successful, "tpot_ms"),
+            "successful_requests_with_authoritative_first_to_last_token_timestamps",
+            len(successful_rows),
+        )
+        tpot_distribution["availability"] = (
+            "available" if tpot_available else "unavailable"
+        )
+        tpot_distribution["unavailable_reason"] = (
+            None
+            if tpot_available
+            else "no_authoritative_first_to_last_token_timestamps"
+        )
     failure_times = [
         (terminal - row.t_submit_ns) / 1_000_000.0
         for row in rows
@@ -185,7 +231,7 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
     overlap = overlap_statistics(intervals)
     return {
         "schema_version": "0.1",
-        "metrics_version": METRICS_VERSION,
+        "metrics_version": metrics_version,
         "requests": {
             "total": len(rows),
             "successful": len(successful_rows),
@@ -220,11 +266,7 @@ def _summarize_rows(rows: list[RequestObservation]) -> dict[str, object]:
                 len(successful_rows),
             ),
             "itl": itl_distribution,
-            "tpot": populated(
-                scalar(successful, "tpot_ms"),
-                "successful_requests_with_at_least_two_authoritative_output_tokens",
-                len(successful_rows),
-            ),
+            "tpot": tpot_distribution,
             "time_to_failure": populated(
                 failure_times, "failed_requests_with_observed_terminal_time", len(rows) - len(successful_rows)
             ),

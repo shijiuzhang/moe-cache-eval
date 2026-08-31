@@ -223,6 +223,7 @@ class TimingTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(row.success)
         self.assertIsNotNone(row.t_first_chunk_ns)
         self.assertIsNotNone(row.t_first_token_ns)
+        self.assertEqual(row.chunks[0].kind, "role_empty")
         self.assertGreaterEqual((row.t_first_token_ns - row.t_first_chunk_ns) / 1e6, 20)
 
     async def test_single_token_tpot_is_undefined(self) -> None:
@@ -236,6 +237,28 @@ class TimingTests(unittest.IsolatedAsyncioTestCase):
                 "synthetic_one_token_per_content_event",
             )
         self.assertIsNone(observation_metrics(row)["tpot_ms"])
+
+    def test_legacy_metrics_remain_recomputable(self) -> None:
+        now = time.perf_counter_ns()
+        row = RequestObservation(
+            request_id="legacy",
+            workload_class="x",
+            phase="measurement",
+            t_scheduled_ns=now,
+            t_submit_ns=now,
+            t_first_token_ns=now + 10_000_000,
+            t_complete_ns=now + 40_000_000,
+            success=True,
+            output_tokens=4,
+            token_timing_authority="server_usage",
+        )
+        legacy = summarize([row], metrics_version="0.1")
+        current = summarize([row])
+        self.assertEqual(legacy["metrics_version"], "0.1")
+        self.assertEqual(legacy["latency_ms"]["tpot"]["mean"], 10.0)
+        self.assertNotIn("availability", legacy["latency_ms"]["tpot"])
+        self.assertEqual(current["latency_ms"]["tpot"]["availability"], "unavailable")
+        self.assertIsNone(current["latency_ms"]["tpot"]["mean"])
 
     async def test_injected_delays_are_visible(self) -> None:
         with DeterministicServer() as server:
@@ -294,6 +317,26 @@ class TimingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(summary["latency_ms"]["itl"]["availability"], "unavailable")
         self.assertEqual(summary["latency_ms"]["itl"]["count"], 0)
         self.assertEqual(summary["latency_ms"]["inter_chunk_latency"]["count"], 2)
+        self.assertEqual(summary["latency_ms"]["tpot"]["availability"], "unavailable")
+        self.assertEqual(summary["latency_ms"]["tpot"]["count"], 0)
+        self.assertEqual(
+            summary["latency_ms"]["tpot"]["unavailable_reason"],
+            "no_authoritative_first_to_last_token_timestamps",
+        )
+
+    async def test_reasoning_events_are_named_without_retaining_reasoning_text(self) -> None:
+        with DeterministicServer() as server:
+            row = await OpenAIAdapter(server.endpoint).execute(
+                "r", "x",
+                {"model": "x", "oicap_test": {
+                    "reasoning_tokens": ["private ", "reasoning"],
+                    "tokens": ["OK"],
+                }},
+                time.perf_counter_ns(), 2, "server_usage",
+            )
+        self.assertTrue(row.success)
+        self.assertEqual([chunk.kind for chunk in row.chunks].count("reasoning"), 2)
+        self.assertNotIn("private", "".join(chunk.content for chunk in row.chunks))
 
     async def test_timeout_is_recorded_as_right_censored(self) -> None:
         with DeterministicServer() as server:
