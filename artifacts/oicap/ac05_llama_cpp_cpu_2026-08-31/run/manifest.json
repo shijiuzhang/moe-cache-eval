@@ -1,0 +1,57 @@
+{
+  "calibration_present": true,
+  "calibration_required": true,
+  "contract_hashes": {
+    "run": "441fed47b97258dc911f8ce0423d9f42bcf5b3a8382acc58de9f68877fabec1e",
+    "scenario": "cb3cbb538977a01a61375a33d007b7562af1ca5e7756958c2eed80066e8d329f",
+    "slo": "c7f101d3b4ff2f36628f7d4ce266529f9b1d38391300bc7250dc8d8c566fba02",
+    "sut": "73bb4171a3a979fb0380e524530d157c41c19bb76d6f8a11b738854c49b18c38"
+  },
+  "contract_identity": "bfd8ce978197c95cd40c7430e963e568fdb91145a76540843532ce8466dd3c7a",
+  "created_at": "2026-08-31T15:05:09.440012+00:00",
+  "endpoint": "http://127.0.0.1:18080/v1/chat/completions",
+  "excluded": [
+    "API keys and authorization headers",
+    "working-tree path names (only count and aggregate hash recorded)"
+  ],
+  "files": {
+    "apparatus.json": "75630990e06224cc4339fa8848a0293b3b0bccd310f64874a001dcf0c1b8812a",
+    "calibration_ref.json": "4bc15f54449b588e11b7b40eafb555dcde4594affb45328a3ba6be43079998b4",
+    "contracts/run.json": "2c7631af951a0c98338c091816769b3ac093c01338fe2306b33cd64ed2c3c447",
+    "contracts/scenario.json": "d6651a6af58fdb87db677663e667d5ac674534a0700445a780a9af01afd77a00",
+    "contracts/slo.json": "086d8bb39129edfb309d2979a649bffb0a77412640b3a35ad2d1bd858f895963",
+    "contracts/sut.json": "3e41b2f88ec2289d2042815b5a9e9008672fe55f36c984d7a6b9c7f499417ba5",
+    "environment.json": "5b5fdd0839937f7e8cfb8156d7307ca7ac1887ad8aacea6ae3bdffc40051818a",
+    "inputs/workload.jsonl": "f138ed42de8c9a3fd44c9ce0b28657c2cc4083750b7fea58479167e1dddc218e",
+    "observations.jsonl": "b6fdafe81c7fbc816ab303652b242cad806e7a126d29752e7e59d8b11702bd6b",
+    "runner_load.json": "e18bc8d2dfecebaa8ae53f683607d175611fb6a26a7fc19a84a706b9c851272f",
+    "schemas/run.schema.json": "554c596e5c34a38475ca5f9ae7c13f1292597d2db79e9ff7ac836abf8cbdc0a8",
+    "schemas/scenario.schema.json": "2b8b56700dab4030a39b95f1ffbfe449c75796fb0042070fb1124b50587c6c53",
+    "schemas/slo.schema.json": "93075a89be7758869eca5ba4a0c577a45525b61dff6bdd5a3826b8d9bb5daf78",
+    "schemas/sut.schema.json": "dab6280c10d67ff840c15be6d88dfe6aa95d6e4e3903b91e4de83a74d0b977f6",
+    "summary.json": "fdca6c1c2ef339c68c0b350c5ff9496c19b662a191de365d4cd0787fe421a78d"
+  },
+  "invocation": [
+    "oicap",
+    "run",
+    "<benchmark>",
+    "--endpoint",
+    "http://127.0.0.1:18080/v1/chat/completions",
+    "--calibration",
+    "<calibration-bundle>",
+    "--output",
+    "<output-bundle>"
+  ],
+  "measurement_identity": "a48b75a9a88c4a625b71791974970a4678625e02bd76a479672673273a067ded",
+  "profile": "private-full",
+  "run": {
+    "finished_ns": 135492202547500,
+    "started_ns": 135478737502333
+  },
+  "schema_version": "0.1",
+  "tool": {
+    "name": "oicap",
+    "version": "0.2.0.dev0"
+  },
+  "workload_sha256": "f138ed42de8c9a3fd44c9ce0b28657c2cc4083750b7fea58479167e1dddc218e"
+}

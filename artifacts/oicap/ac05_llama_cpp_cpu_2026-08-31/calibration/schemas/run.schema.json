@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oicap.dev/schemas/0.1/run.schema.json",
+  "title": "OICAP run contract 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "setup", "client", "measurement", "max_in_flight", "timeout_s", "retry_policy", "drain", "token_accounting", "validator", "self_calibration"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "seed": {"type": "integer"},
+    "setup": {"type": "object", "additionalProperties": false, "required": ["endpoint_health", "tokenizer_check"], "properties": {"endpoint_health": {"const": "none"}, "tokenizer_check": {"const": "none"}}},
+    "client": {"type": "object", "additionalProperties": false, "required": ["transport", "connection_pooling", "streaming"], "properties": {"transport": {"const": "python_urllib"}, "connection_pooling": {"const": "none"}, "streaming": {"const": true}}},
+    "warmup": {"type": "object", "additionalProperties": false, "properties": {"requests": {"type": "integer", "minimum": 0}}},
+    "measurement": {"type": "object", "additionalProperties": false, "required": ["requests"], "properties": {"requests": {"type": "integer", "minimum": 1}}},
+    "max_in_flight": {"type": "integer", "minimum": 1},
+    "timeout_s": {"type": "number", "exclusiveMinimum": 0},
+    "retry_policy": {
+      "type": "object", "required": ["max_attempts", "backoff_ms", "retry_on"],
+      "additionalProperties": false,
+      "properties": {
+        "max_attempts": {"type": "integer", "minimum": 1},
+        "backoff_ms": {"type": "number", "minimum": 0},
+        "retry_on": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "drain": {"type": "object", "additionalProperties": false, "required": ["policy"], "properties": {"policy": {"const": "complete_all"}}},
+    "token_accounting": {"type": "object", "additionalProperties": false, "required": ["authority"], "properties": {"authority": {"enum": ["none", "server_usage", "synthetic_one_token_per_content_event"]}}},
+    "validator": {"type": "object", "additionalProperties": false, "required": ["mode"], "properties": {"mode": {"const": "none"}}},
+    "self_calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "repetitions", "max_schedule_lag_p99_ms", "max_event_loop_lag_p99_ms", "max_runner_process_cpu_percent_one_core", "max_runner_system_cpu_percent", "min_closed_loop_concurrency_ratio", "min_arrival_rate_ratio", "noise_stability_tolerance_ms"],
+      "properties": {
+        "profile": {"const": "local_zero_delay_stream_v1"},
+        "repetitions": {"type": "integer", "minimum": 2},
+        "max_schedule_lag_p99_ms": {"type": "number", "minimum": 0},
+        "max_event_loop_lag_p99_ms": {"type": "number", "minimum": 0},
+        "max_runner_process_cpu_percent_one_core": {"type": "number", "exclusiveMinimum": 0},
+        "max_runner_system_cpu_percent": {"type": "number", "exclusiveMinimum": 0, "maximum": 100},
+        "min_closed_loop_concurrency_ratio": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "min_arrival_rate_ratio": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "noise_stability_tolerance_ms": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

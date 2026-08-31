@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "targets": {
+    "substantive-short-answer": {
+      "ttft_ms": {
+        "p95_lte": 30000
+      }
+    }
+  }
+}

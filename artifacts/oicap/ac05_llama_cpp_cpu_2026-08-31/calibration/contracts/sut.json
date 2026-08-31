@@ -1,0 +1,26 @@
+{
+  "engine": {
+    "name": "llama.cpp",
+    "version": "10210 (000547513)"
+  },
+  "hardware": {
+    "accelerator": "cpu",
+    "count": 1,
+    "cpu": "Apple M4 Pro",
+    "memory_bytes": 25769803776
+  },
+  "model": {
+    "id": "local-gguf",
+    "parameter_count": 11907350576,
+    "quantization": "Q4_K_M",
+    "revision": "sha256:1278394b693672ac2799eadc9a83fd98259a6a88a40acfb1dcaa6c6fc895a606"
+  },
+  "schema_version": "0.1",
+  "service_discipline": {
+    "admission": "llama.cpp-default",
+    "batching": "llama.cpp-continuous",
+    "fairness_bound_ms": null,
+    "preemption": "unknown"
+  },
+  "sut_id": "local-llama-cpp-cpu-ac05"
+}

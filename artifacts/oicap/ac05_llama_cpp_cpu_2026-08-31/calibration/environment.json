@@ -1,0 +1,29 @@
+{
+  "client": {
+    "connection_pooling": "none",
+    "streaming_parser": "oicap-sse-0.1",
+    "transport": "python_urllib"
+  },
+  "code": {
+    "git_commit": "80bd203b64ba9b097ca2dda4cf3391c0a94bba53",
+    "git_dirty": false,
+    "git_status_entry_count": 0,
+    "git_status_paths_sha256": null
+  },
+  "implementation": "CPython",
+  "machine": "arm64",
+  "monotonic_clock": {
+    "adjustable": false,
+    "implementation": "mach_absolute_time()",
+    "monotonic": true,
+    "resolution_s": 4.166666666666667e-08
+  },
+  "packages": {
+    "PyYAML": "6.0.3",
+    "jsonschema": "4.26.0",
+    "psutil": "7.2.2"
+  },
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "processor": "arm",
+  "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 21.0.0 (clang-2100.0.123.102)]"
+}

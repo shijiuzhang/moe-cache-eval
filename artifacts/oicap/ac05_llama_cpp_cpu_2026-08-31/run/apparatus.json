@@ -1,0 +1,22 @@
+{
+  "achieved_submission_rate_per_s": 0.34822538875333076,
+  "arrival_rate_ratio": null,
+  "capacity_claim_permitted": true,
+  "closed_loop_concurrency_check": "declared_active_users",
+  "closed_loop_concurrency_ratio": 0.9999700549380698,
+  "declared_think_time_s": 0.0,
+  "event_loop_lag_p99_ms": 0.5860750089050287,
+  "expected_mean_in_flight": 2.0,
+  "mean_in_flight_definition": "from first through final request submission; drain excluded",
+  "mean_request_service_time_s": 6.0184222915,
+  "note": "This is apparatus validity, not an SLO verdict.",
+  "realized_mean_in_flight": 1.9999401098761396,
+  "reasons": [],
+  "requested_active_users": 2,
+  "requested_arrival_rate_per_s": null,
+  "runner_process_cpu_percent_one_core": 4.483057641522846,
+  "runner_system_cpu_percent": 73.3,
+  "schedule_lag_p99_ms": 0.18737748999999998,
+  "schema_version": "0.1",
+  "status": "VALID"
+}

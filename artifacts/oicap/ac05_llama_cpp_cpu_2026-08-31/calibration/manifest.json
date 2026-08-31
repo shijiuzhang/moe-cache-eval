@@ -1,0 +1,50 @@
+{
+  "calibration_present": false,
+  "calibration_required": false,
+  "contract_hashes": {
+    "run": "441fed47b97258dc911f8ce0423d9f42bcf5b3a8382acc58de9f68877fabec1e",
+    "scenario": "cb3cbb538977a01a61375a33d007b7562af1ca5e7756958c2eed80066e8d329f",
+    "slo": "c7f101d3b4ff2f36628f7d4ce266529f9b1d38391300bc7250dc8d8c566fba02",
+    "sut": "73bb4171a3a979fb0380e524530d157c41c19bb76d6f8a11b738854c49b18c38"
+  },
+  "contract_identity": "bfd8ce978197c95cd40c7430e963e568fdb91145a76540843532ce8466dd3c7a",
+  "created_at": "2026-08-31T15:03:13.014475+00:00",
+  "endpoint": "local://deterministic-null",
+  "excluded": [
+    "API keys and authorization headers",
+    "working-tree path names (only count and aggregate hash recorded)"
+  ],
+  "files": {
+    "apparatus.json": "d3951d87802ddb9449492e9e5f5b93138f677e893dcab453c4e7c0fb5d0aa41c",
+    "calibration.json": "82cce12989db1f14e0a3f0a16e53c4842bff460f8ae6bbf435b61911bb03e58b",
+    "contracts/run.json": "2c7631af951a0c98338c091816769b3ac093c01338fe2306b33cd64ed2c3c447",
+    "contracts/scenario.json": "d6651a6af58fdb87db677663e667d5ac674534a0700445a780a9af01afd77a00",
+    "contracts/slo.json": "086d8bb39129edfb309d2979a649bffb0a77412640b3a35ad2d1bd858f895963",
+    "contracts/sut.json": "3e41b2f88ec2289d2042815b5a9e9008672fe55f36c984d7a6b9c7f499417ba5",
+    "environment.json": "5b5fdd0839937f7e8cfb8156d7307ca7ac1887ad8aacea6ae3bdffc40051818a",
+    "inputs/workload.jsonl": "f138ed42de8c9a3fd44c9ce0b28657c2cc4083750b7fea58479167e1dddc218e",
+    "observations.jsonl": "88c39c9006a3bd51ad5bdb78b79f67be16d3bd1d10d06a4e990573f4ab5a8833",
+    "runner_load.json": "f42b46bcad4844aef2f23ab341b23c18e1aac2cf986779fa74617bf4431d37e7",
+    "schemas/run.schema.json": "554c596e5c34a38475ca5f9ae7c13f1292597d2db79e9ff7ac836abf8cbdc0a8",
+    "schemas/scenario.schema.json": "2b8b56700dab4030a39b95f1ffbfe449c75796fb0042070fb1124b50587c6c53",
+    "schemas/slo.schema.json": "93075a89be7758869eca5ba4a0c577a45525b61dff6bdd5a3826b8d9bb5daf78",
+    "schemas/sut.schema.json": "dab6280c10d67ff840c15be6d88dfe6aa95d6e4e3903b91e4de83a74d0b977f6",
+    "summary.json": "ae2d92f81a5d7ab133e2c9ad8fefbf151833b461e5ac9f2ce045b7a68fbd75bf"
+  },
+  "invocation": [
+    "oicap",
+    "calibrate"
+  ],
+  "measurement_identity": "a48b75a9a88c4a625b71791974970a4678625e02bd76a479672673273a067ded",
+  "profile": "private-full",
+  "run": {
+    "finished_ns": 135375264952375,
+    "started_ns": 135375251303000
+  },
+  "schema_version": "0.1",
+  "tool": {
+    "name": "oicap",
+    "version": "0.2.0.dev0"
+  },
+  "workload_sha256": "f138ed42de8c9a3fd44c9ce0b28657c2cc4083750b7fea58479167e1dddc218e"
+}

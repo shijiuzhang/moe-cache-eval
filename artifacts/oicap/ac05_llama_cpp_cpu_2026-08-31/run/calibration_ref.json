@@ -1,0 +1,93 @@
+{
+  "calibration_record_sha256": "9da396b4474cf9c9a3e029863df5ce546a7750f72790e67f0488b031f89e7e61",
+  "record": {
+    "achieved_arrival_rate_per_s": 2579.8129635601417,
+    "arrival_kind": "closed_loop",
+    "arrival_rate_ratio": null,
+    "calibration_version": "0.1",
+    "client_schedule_lag_ms": {
+      "count": 8,
+      "max": 0.182958,
+      "mean": 0.07680725,
+      "p50": 0.057958499999999996,
+      "p95": 0.16630394999999998,
+      "p99": 0.17962719,
+      "population": "all_requests",
+      "request_count": 8
+    },
+    "closed_loop_concurrency_check": "declared_active_users",
+    "closed_loop_concurrency_ratio": 0.7406393636461357,
+    "declared_think_time_s": 0.0,
+    "duration_s": 0.518950042,
+    "event_loop_lag_ms": {
+      "definition": "periodic_asyncio_wakeup_lateness",
+      "interval_ms": 1.0,
+      "max": 0.2649170346558094,
+      "p99": 0.2649170346558094,
+      "sample_count": 2
+    },
+    "expected_mean_in_flight": 2.0,
+    "invalid_reasons": [],
+    "limits": {
+      "max_event_loop_lag_p99_ms": 20.0,
+      "max_runner_process_cpu_percent_one_core": 10000.0,
+      "max_runner_system_cpu_percent": 100.0,
+      "max_schedule_lag_p99_ms": 20.0,
+      "min_arrival_rate_ratio": 0.98,
+      "min_closed_loop_concurrency_ratio": 0.6,
+      "noise_stability_tolerance_ms": 20.0
+    },
+    "mean_in_flight_definition": "worst-realization repetition mean from first through final submission; drain excluded",
+    "mean_request_service_time_s": 0.00077977075,
+    "measurement_identity": "a48b75a9a88c4a625b71791974970a4678625e02bd76a479672673273a067ded",
+    "noise_resolution": {
+      "end_to_end_ms": 0.86961273,
+      "inter_chunk_latency_ms": 0.00410376,
+      "itl_ms": null,
+      "tpot_ms": null,
+      "ttft_ms": 0.81816322
+    },
+    "noise_resolution_by_repetition": [
+      {
+        "end_to_end_ms": 0.86961273,
+        "inter_chunk_latency_ms": 0.00345428,
+        "itl_ms": null,
+        "tpot_ms": null,
+        "ttft_ms": 0.81816322
+      },
+      {
+        "end_to_end_ms": 0.75648873,
+        "inter_chunk_latency_ms": 0.00410376,
+        "itl_ms": null,
+        "tpot_ms": null,
+        "ttft_ms": 0.64607823
+      }
+    ],
+    "noise_resolution_range_ms": {
+      "end_to_end_ms": 0.11312399999999989,
+      "inter_chunk_latency_ms": 0.0006494799999999996,
+      "ttft_ms": 0.17208499
+    },
+    "profile": "local_zero_delay_stream_v1",
+    "realized_mean_in_flight": 1.4812787272922714,
+    "realized_peak_in_flight": 2,
+    "repetitions": 2,
+    "request_count": 8,
+    "request_payload_bytes": {
+      "max": 262,
+      "min": 177
+    },
+    "requested_active_users": 2,
+    "requested_arrival_rate_per_s": null,
+    "response_shape": {
+      "completion_tokens": 2,
+      "leading_empty_delta": true,
+      "substantive_content_events": 2
+    },
+    "runner_process_cpu_percent_one_core": 2.5699969015514603,
+    "runner_system_cpu_percent": 0.0,
+    "schema_version": "0.1",
+    "valid": true
+  },
+  "source_bundle_manifest_sha256": "484c61034b639a4d78f7ea17bcfb72713d86772c4317283f28986bd7312d60fd"
+}

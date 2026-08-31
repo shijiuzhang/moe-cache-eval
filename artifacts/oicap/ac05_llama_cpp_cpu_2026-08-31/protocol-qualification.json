@@ -1,0 +1,144 @@
+{
+  "cases": {
+    "http_200_no_substantive_content": {
+      "censored": false,
+      "chunk_count": 3,
+      "chunk_kinds": {
+        "done": 1,
+        "metadata": 1,
+        "role_empty": 1
+      },
+      "error_type": "empty_or_non_substantive_response",
+      "input_tokens": null,
+      "output_tokens": null,
+      "response_nonblank": false,
+      "response_sha256": null,
+      "status_code": 200,
+      "success": false,
+      "timed_out": false
+    },
+    "http_error": {
+      "censored": false,
+      "chunk_count": 0,
+      "chunk_kinds": {},
+      "error_type": "http_error",
+      "input_tokens": null,
+      "output_tokens": null,
+      "response_nonblank": false,
+      "response_sha256": null,
+      "status_code": 404,
+      "success": false,
+      "timed_out": false
+    },
+    "non_streaming": {
+      "content_nonblank": true,
+      "content_sha256": "e35499ab2137b09619e24c8865c2c2d68bfe80ca84cafed515634c39c4d4eb44",
+      "elapsed_ms": 658.090917,
+      "status_code": 200,
+      "usage_present": true
+    },
+    "stream_usage_absent": {
+      "censored": false,
+      "chunk_count": 11,
+      "chunk_kinds": {
+        "content": 8,
+        "done": 1,
+        "metadata": 1,
+        "role_empty": 1
+      },
+      "error_type": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "response_nonblank": true,
+      "response_sha256": "e35499ab2137b09619e24c8865c2c2d68bfe80ca84cafed515634c39c4d4eb44",
+      "status_code": 200,
+      "success": true,
+      "timed_out": false
+    },
+    "stream_usage_present": {
+      "censored": false,
+      "chunk_count": 12,
+      "chunk_kinds": {
+        "content": 8,
+        "done": 1,
+        "metadata": 2,
+        "role_empty": 1
+      },
+      "error_type": null,
+      "input_tokens": 24,
+      "output_tokens": 9,
+      "response_nonblank": true,
+      "response_sha256": "e35499ab2137b09619e24c8865c2c2d68bfe80ca84cafed515634c39c4d4eb44",
+      "status_code": 200,
+      "success": true,
+      "timed_out": false
+    },
+    "timeout_right_censored": {
+      "censored": true,
+      "chunk_count": 0,
+      "chunk_kinds": {},
+      "error_type": "timeout",
+      "input_tokens": null,
+      "output_tokens": null,
+      "response_nonblank": false,
+      "response_sha256": null,
+      "status_code": null,
+      "success": false,
+      "timed_out": true
+    }
+  },
+  "criterion": "V02-AC05",
+  "endpoint": "http://127.0.0.1:18080/v1/chat/completions",
+  "generated_at": "2026-08-31T15:05:46.093494+00:00",
+  "oicap_version": "0.2.0.dev0",
+  "positive_controls": {
+    "chunk_intervals_never_labelled_token_intervals": {
+      "inter_chunk_latency": {
+        "count": 7,
+        "max": 49.046083,
+        "mean": 48.381476142857146,
+        "p50": 48.353459,
+        "p95": 48.9306331,
+        "p99": 49.02299302000001,
+        "population": "content_chunk_intervals_from_successful_requests",
+        "request_count": 1
+      },
+      "itl": {
+        "availability": "unavailable",
+        "count": 0,
+        "max": null,
+        "mean": null,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "population": "authoritative_token_intervals_from_successful_requests",
+        "request_count": 1,
+        "unavailable_reason": "no_authoritative_per_token_timestamps"
+      },
+      "passed": true,
+      "tpot": {
+        "availability": "unavailable",
+        "count": 0,
+        "max": null,
+        "mean": null,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "population": "successful_requests_with_authoritative_first_to_last_token_timestamps",
+        "request_count": 1,
+        "unavailable_reason": "no_authoritative_first_to_last_token_timestamps"
+      }
+    },
+    "empty_response_excluded_from_success_latency": {
+      "mixed_errors": {
+        "empty_or_non_substantive_response": 1
+      },
+      "passed": true
+    },
+    "timeout_excluded_from_success_latency_and_in_failure_time": {
+      "passed": true
+    }
+  },
+  "qualification_passed": true,
+  "schema_version": "0.1"
+}
