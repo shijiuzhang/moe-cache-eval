@@ -52,9 +52,20 @@ redistributing data-derived material.
 
 ## Platform roadmap
 
-The next phase turns the paper's reporting contract into a vendor-neutral,
-open-source capacity-planning and acceptance platform for private model
-deployments. The draft product contract is available for independent audit:
+OICAP is an independent product line, not an evaluation of the paper and not a
+paper-dependent derivative. Its sole core use case is buyer-controlled technical
+acceptance of privately deployed model-serving infrastructure: the buyer freezes a
+procurement SLA, receives an executable test pack, runs it after supplier delivery,
+and obtains a neutral service-SLA and deployment-conformance result.
+
+The accepted v0.2 product baseline and its audit record are:
+
+- [`docs/OICAP_PRODUCT_CHARTER.md`](docs/OICAP_PRODUCT_CHARTER.md)
+- [`docs/PLATFORM_PRODUCT_SPECIFICATION_V0_2.md`](docs/PLATFORM_PRODUCT_SPECIFICATION_V0_2.md)
+- [`docs/OICAP_V0_2_ACCEPTANCE_CRITERIA.md`](docs/OICAP_V0_2_ACCEPTANCE_CRITERIA.md)
+- [`docs/OICAP_V0_2_SPEC_AUDIT.md`](docs/OICAP_V0_2_SPEC_AUDIT.md)
+
+The frozen v0.1 design history remains available separately:
 
 - [`docs/PLATFORM_PRODUCT_SPECIFICATION_V0_1.md`](docs/PLATFORM_PRODUCT_SPECIFICATION_V0_1.md)
 - [`docs/PLATFORM_SPEC_V0_1_AUDIT.md`](docs/PLATFORM_SPEC_V0_1_AUDIT.md)
@@ -65,14 +76,20 @@ runner that records one honest load point and emits a recomputable, unsigned pri
 evidence bundle. Verification establishes internal consistency; it does not attest
 producer identity or prevent a producer from regenerating altered evidence.
 SLO adjudication, sweeps, comparison and reports begin in v0.2. Engine-specific
-MoE telemetry is a later diagnostic extension; the specification deliberately
-excludes a universal score and unmeasured hardware claims.
+telemetry may be a later diagnostic extension; the core product deliberately
+excludes rankings, a universal score, cost recommendations and unmeasured hardware
+claims.
 
 The independently audited M1 implementation is released as OICAP v0.1. Its exact
 implemented boundary, evidence layout and acceptance evidence are recorded in
 [`docs/OICAP_M1_IMPLEMENTATION.md`](docs/OICAP_M1_IMPLEMENTATION.md); the claims and
 non-claims of the release are frozen in
 [`docs/OICAP_V0_1_RELEASE_NOTES.md`](docs/OICAP_V0_1_RELEASE_NOTES.md).
+
+The first browser-local procurement authoring surface is under
+[`web/intake-prototype/`](web/intake-prototype/). It is an AC04 workflow-rehearsal
+prototype—not the hosted adjudication service—and exports only drafts for human
+review.
 
 ## Quick checks
 
@@ -105,6 +122,7 @@ analysis/          selected aggregate and decision-level result artifacts
 paper/             manuscript, figures, references, and licence audit
 plans/             frozen preregistrations and experiment designs
 artifacts/         redistribution boundary notes
+web/               browser-local OICAP procurement workflow prototypes
 ```
 
 ## Licence

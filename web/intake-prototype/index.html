@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>OICAP 采购验收编排器 · AC04 原型</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#project" aria-label="OICAP 首页">
+      <span class="brand-mark" aria-hidden="true">OI</span>
+      <span><strong>OICAP</strong><small>采购验收编排器</small></span>
+    </a>
+    <div class="prototype-badge">AC04 本地原型 · 非正式裁决</div>
+  </header>
+
+  <main class="shell">
+    <aside class="rail" aria-label="编排步骤">
+      <p class="eyebrow">招标前冻结</p>
+      <nav id="step-nav"></nav>
+      <div class="privacy-note">
+        <strong>数据留在此浏览器</strong>
+        <p>页面没有上传功能，也不会自动保存。请勿在公开仓库保存标书原文、供应商名称、价格或内网信息。</p>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <div class="intro">
+        <div>
+          <p class="eyebrow">Buyer-controlled acceptance</p>
+          <h1>把采购承诺变成可执行的验收意图</h1>
+          <p>先明确“测什么、对谁统计、何时算达标”，再生成测试包。此页用于发现歧义，不替你猜测合同事实。</p>
+        </div>
+        <div class="progress-card" aria-live="polite">
+          <span id="progress-label">第 1 / 6 步</span>
+          <div class="progress-track"><i id="progress-bar"></i></div>
+          <strong id="readiness-label">尚未检查</strong>
+        </div>
+      </div>
+
+      <form id="intake-form" novalidate>
+        <section class="step" data-step="project" aria-labelledby="project-title">
+          <div class="section-head">
+            <div><p class="step-number">01</p><h2 id="project-title">项目与测量边界</h2></div>
+            <p>只录入结构化代号与角色。真实项目名称和供应商身份不属于公开演练数据。</p>
+          </div>
+          <div class="field-grid two">
+            <label>演练代号<span>必填</span><input name="project_id" placeholder="例如：pilot-acceptance-01" autocomplete="off"></label>
+            <label>部署形态<select name="deployment_mode"><option value="private_on_prem">企业本地私有化</option><option value="private_cloud">企业私有云</option><option value="other">其他受控环境</option></select></label>
+            <label>甲方验收负责人角色<span>必填</span><input name="buyer_role" placeholder="例如：采购验收负责人"></label>
+            <label>技术见证角色<span>必填</span><input name="technical_role" placeholder="例如：基础设施运维"></label>
+          </div>
+          <fieldset>
+            <legend>冻结的 SUT 测量边界<span>必填</span></legend>
+            <p class="hint">明确网络、入口和负载均衡属于被测系统还是甲方器具。现场同路径标定会以此为准。</p>
+            <textarea name="measurement_boundary" rows="4" placeholder="例：从甲方压测机网卡发出请求开始，经过现场交换网络、交付方负载均衡和 API 入口，直至流式响应返回；上述网络与入口计入 SUT。"></textarea>
+          </fieldset>
+        </section>
+
+        <section class="step" data-step="sla" aria-labelledby="sla-title" hidden>
+          <div class="section-head">
+            <div><p class="step-number">02</p><h2 id="sla-title">SLA 门槛</h2></div>
+            <p>每条门槛都必须说清指标、总体、统计量、比较符和最低证据量。不存在不加定义的“TPS”。</p>
+          </div>
+          <div class="callout warning"><strong>先翻译合同语言</strong><span>“50 并发、20 TPS、2 秒响应”还不是可执行 SLA。下面每一列都是为了消除一种争议。</span></div>
+          <div id="gate-list" class="card-list"></div>
+          <button class="secondary" type="button" id="add-gate">＋ 添加 SLA 门槛</button>
+        </section>
+
+        <section class="step" data-step="workload" aria-labelledby="workload-title" hidden>
+          <div class="section-head">
+            <div><p class="step-number">03</p><h2 id="workload-title">业务负载画像</h2></div>
+            <p>并发用户只是外壳。输入长度、输出长度、会话节奏和业务类别共同决定实际压力。</p>
+          </div>
+          <div id="workload-list" class="card-list"></div>
+          <button class="secondary" type="button" id="add-workload">＋ 添加业务类别</button>
+        </section>
+
+        <section class="step" data-step="deployment" aria-labelledby="deployment-title" hidden>
+          <div class="section-head">
+            <div><p class="step-number">04</p><h2 id="deployment-title">交付配置要求</h2></div>
+            <p>14 项必须逐项表态。没有填写不等于“不要求”；故意排除必须明确选择。</p>
+          </div>
+          <div class="legend-row"><span><i class="dot required"></i>required 精确要求</span><span><i class="dot allowed"></i>allowed_set 有界集合</span><span><i class="dot optional"></i>informational 只记录</span><span><i class="dot none"></i>not_required 明确排除</span></div>
+          <div id="deployment-list" class="requirement-list"></div>
+          <div id="memory-envelope-warning" class="callout warning" hidden></div>
+        </section>
+
+        <section class="step" data-step="execution" aria-labelledby="execution-title" hidden>
+          <div class="section-head">
+            <div><p class="step-number">05</p><h2 id="execution-title">执行、预算与重测</h2></div>
+            <p>现场时间不是无限的。测试点、重复次数和硬上限必须在看到结果前冻结。</p>
+          </div>
+          <div class="field-grid three">
+            <label>负载语义<select name="load_semantics"><option value="closed_loop">闭环并发用户</option><option value="open_loop">开放环到达率</option></select></label>
+            <label>最大计划负载<span>必填</span><input name="max_load" type="number" min="1" step="1" placeholder="500"></label>
+            <label>独立重复次数<span>必填</span><input name="repeats" type="number" min="2" step="1" value="3"></label>
+            <label>现场窗口（分钟）<span>必填</span><input name="site_window_minutes" type="number" min="1" step="1" placeholder="480"></label>
+            <label>单点最低时长（秒）<span>必填</span><input name="min_point_duration_s" type="number" min="1" step="1" value="60"></label>
+            <label>单点最低成功样本<span>必填</span><input name="min_point_samples" type="number" min="1" step="1" value="100"></label>
+          </div>
+          <fieldset>
+            <legend>负载点</legend>
+            <input name="load_points" placeholder="例如：50, 100, 200, 300, 500">
+            <p class="hint">完整向量会被报告。最高通过点不能掩盖更低负载曾经失败。</p>
+          </fieldset>
+          <div class="field-grid two">
+            <label>重测上限<select name="max_retests"><option value="0">不允许</option><option value="1" selected>最多 1 次</option><option value="2">最多 2 次</option></select></label>
+            <label>重测可变配置<input name="mutable_paths" placeholder="例如：仅 batching 参数；不得换模型或硬件"></label>
+          </div>
+          <fieldset>
+            <legend>出发前客户端自检</legend>
+            <div class="check-grid">
+              <label><input type="checkbox" name="preflight_max_load">按最大负载持续配速，而非瞬时峰值</label>
+              <label><input type="checkbox" name="preflight_resource_record">记录 CPU、内存、描述符和网络</label>
+              <label><input type="checkbox" name="onsite_same_path_calibration">现场真实路径重新标定</label>
+              <label><input type="checkbox" name="buyer_controls_responder">甲方控制并校验标定应答器</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="step" data-step="review" aria-labelledby="review-title" hidden>
+          <div class="section-head">
+            <div><p class="step-number">06</p><h2 id="review-title">检查与导出</h2></div>
+            <p>这里检查能否进入人工评审，不代表合同已经冻结，也不代表系统能达到 SLA。</p>
+          </div>
+          <div id="validation-summary" class="validation-summary"></div>
+          <div class="review-grid">
+            <div>
+              <h3>演练草案</h3>
+              <p class="hint">导出的 JSON 不含正式 pack、密封实例或裁决签名。</p>
+            </div>
+            <div class="review-actions">
+              <button type="button" class="secondary" id="copy-json">复制 JSON</button>
+              <button type="button" class="primary" id="download-json">下载草案</button>
+            </div>
+          </div>
+          <pre id="json-preview" tabindex="0"></pre>
+        </section>
+
+        <footer class="form-footer">
+          <button type="button" class="secondary" id="previous-step">上一步</button>
+          <div class="footer-note"><span id="local-status">未自动保存</span><button type="button" class="text-button" id="clear-form">清空本次演练</button></div>
+          <button type="button" class="primary" id="next-step">下一步</button>
+        </footer>
+      </form>
+    </section>
+  </main>
+
+  <template id="gate-template">
+    <article class="form-card gate-card">
+      <div class="card-head"><strong>SLA 门槛 <span class="item-index"></span></strong><button type="button" class="icon-button remove-item" aria-label="删除此门槛">删除</button></div>
+      <div class="field-grid four">
+        <label>指标<select data-field="metric"><option value="">请选择</option><option value="ttft_ms">TTFT（首个有效字符）</option><option value="end_to_end_ms">端到端时延</option><option value="aggregate_output_tokens_per_second">聚合输出 token/s</option><option value="per_request_decode_tokens_per_second">单请求解码 token/s</option><option value="itl_ms">逐 token 间隔</option><option value="qualified_requests_per_second">合格请求/s</option><option value="success_rate">成功率</option><option value="quality_score">质量得分</option></select></label>
+        <label>业务类别<input data-field="workload_class" placeholder="例如：knowledge_qa"></label>
+        <label>统计量<select data-field="statistic"><option value="p95">p95</option><option value="p99">p99</option><option value="mean">mean</option><option value="aggregate">aggregate</option><option value="minimum">minimum</option></select></label>
+        <label>比较条件<div class="inline-fields"><select data-field="comparator"><option value="lte">≤</option><option value="gte">≥</option></select><input data-field="threshold" type="number" min="0" step="any" placeholder="阈值"></div></label>
+        <label>单位<input data-field="unit" placeholder="ms / token/s / ratio"></label>
+        <label>统计总体<input data-field="population" placeholder="例如：成功且质量合格的请求"></label>
+        <label>最低样本数<input data-field="min_samples" type="number" min="1" step="1" value="100"></label>
+        <label>最低时长（秒）<input data-field="min_duration_s" type="number" min="1" step="1" value="60"></label>
+      </div>
+      <div class="check-grid compact">
+        <label><input type="checkbox" data-field="quality_eligible">仅质量合格请求计入</label>
+        <label>证据权威<select data-field="authority"><option value="client_observed">甲方客户端观测</option><option value="server_usage">服务端 usage 聚合</option><option value="quality_hook">锁定质量校验器</option><option value="authoritative_token_timestamps">权威逐 token 时间戳</option></select></label>
+      </div>
+    </article>
+  </template>
+
+  <template id="workload-template">
+    <article class="form-card workload-card">
+      <div class="card-head"><strong>业务类别 <span class="item-index"></span></strong><button type="button" class="icon-button remove-item" aria-label="删除此业务类别">删除</button></div>
+      <div class="field-grid four">
+        <label>类别代号<input data-field="class_id" placeholder="例如：knowledge_qa"></label>
+        <label>占比（%）<input data-field="weight_percent" type="number" min="0" max="100" step="any" placeholder="100"></label>
+        <label>输入 token 范围<input data-field="input_tokens" placeholder="例如：500–4000"></label>
+        <label>请求输出 token 范围<input data-field="output_tokens" placeholder="例如：100–800"></label>
+        <label>来源<select data-field="source_policy"><option value="oicap_standard">OICAP 标准包</option><option value="buyer_local">甲方本地数据</option><option value="distribution_matched_synthetic">分布匹配合成</option></select></label>
+        <label>会话<select data-field="session_semantics"><option value="single_turn">单轮</option><option value="multi_turn">多轮</option></select></label>
+        <label>思考间隔（毫秒）<input data-field="think_time_ms" type="number" min="0" step="any" value="0"></label>
+        <label>响应<select data-field="streaming"><option value="required">必须流式</option><option value="forbidden">必须非流式</option><option value="either">均可</option></select></label>
+      </div>
+      <label>质量规则<textarea data-field="quality_rule" rows="2" placeholder="描述合格输出的判据和可用的参考证据；没有规则不能靠速度替代质量。"></textarea></label>
+    </article>
+  </template>
+
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>
