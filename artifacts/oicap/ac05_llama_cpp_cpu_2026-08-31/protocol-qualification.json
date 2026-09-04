@@ -15,7 +15,8 @@
       "response_sha256": null,
       "status_code": 200,
       "success": false,
-      "timed_out": false
+      "timed_out": false,
+      "token_timing_authority": "server_usage"
     },
     "http_error": {
       "censored": false,
@@ -28,12 +29,13 @@
       "response_sha256": null,
       "status_code": 404,
       "success": false,
-      "timed_out": false
+      "timed_out": false,
+      "token_timing_authority": "server_usage"
     },
     "non_streaming": {
       "content_nonblank": true,
       "content_sha256": "e35499ab2137b09619e24c8865c2c2d68bfe80ca84cafed515634c39c4d4eb44",
-      "elapsed_ms": 658.090917,
+      "elapsed_ms": 687.477208,
       "status_code": 200,
       "usage_present": true
     },
@@ -53,7 +55,8 @@
       "response_sha256": "e35499ab2137b09619e24c8865c2c2d68bfe80ca84cafed515634c39c4d4eb44",
       "status_code": 200,
       "success": true,
-      "timed_out": false
+      "timed_out": false,
+      "token_timing_authority": "server_usage"
     },
     "stream_usage_present": {
       "censored": false,
@@ -71,7 +74,8 @@
       "response_sha256": "e35499ab2137b09619e24c8865c2c2d68bfe80ca84cafed515634c39c4d4eb44",
       "status_code": 200,
       "success": true,
-      "timed_out": false
+      "timed_out": false,
+      "token_timing_authority": "server_usage"
     },
     "timeout_right_censored": {
       "censored": true,
@@ -84,22 +88,23 @@
       "response_sha256": null,
       "status_code": null,
       "success": false,
-      "timed_out": true
+      "timed_out": true,
+      "token_timing_authority": "server_usage"
     }
   },
   "criterion": "V02-AC05",
   "endpoint": "http://127.0.0.1:18080/v1/chat/completions",
-  "generated_at": "2026-08-31T15:05:46.093494+00:00",
+  "generated_at": "2026-09-04T10:57:58.469119+00:00",
   "oicap_version": "0.2.0.dev0",
   "positive_controls": {
     "chunk_intervals_never_labelled_token_intervals": {
       "inter_chunk_latency": {
         "count": 7,
-        "max": 49.046083,
-        "mean": 48.381476142857146,
-        "p50": 48.353459,
-        "p95": 48.9306331,
-        "p99": 49.02299302000001,
+        "max": 51.223875,
+        "mean": 50.00591071428572,
+        "p50": 50.569833,
+        "p95": 51.1525752,
+        "p99": 51.20961504,
         "population": "content_chunk_intervals_from_successful_requests",
         "request_count": 1
       },

@@ -2,16 +2,16 @@
   "event_loop_lag_ms": {
     "definition": "periodic_asyncio_wakeup_lateness",
     "interval_ms": 1.0,
-    "max": 5.240916012553498,
-    "p99": 0.5860750089050287,
-    "sample_count": 10798
+    "max": 1.7467920552007854,
+    "p99": 0.26637670118361706,
+    "sample_count": 13397
   },
-  "measurement_duration_s": 12.87795175,
+  "measurement_duration_s": 15.8577275,
   "request_schedule_lag_ms": {
     "definition": "request_submit_minus_scheduled_time",
-    "max": 0.19075,
-    "p99": 0.18737748999999998
+    "max": 0.231167,
+    "p99": 0.22675822999999998
   },
-  "runner_process_cpu_percent_one_core": 4.483057641522846,
-  "runner_system_cpu_percent": 73.3
+  "runner_process_cpu_percent_one_core": 4.721660149602142,
+  "runner_system_cpu_percent": 72.8
 }

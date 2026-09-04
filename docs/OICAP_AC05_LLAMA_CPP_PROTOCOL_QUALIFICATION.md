@@ -1,10 +1,12 @@
 # OICAP V02-AC05 llama.cpp CPU protocol qualification
 
 **Status:** PASS for V02-AC05  
-**Date:** 2026-08-31  
-**Runner commit:** `80bd203b64ba9b097ca2dda4cf3391c0a94bba53` (clean tree)  
+**Date:** 2026-09-04
+
+**Runner commit:** `68c0e8d8957ad487112f0fa353ab42748dd73288` (clean tree)
+
 **OICAP version:** `0.2.0.dev0`  
-**Metrics version:** `0.2-dev1`
+**Metrics version:** `0.2-dev2`
 
 This record qualifies the measurement kernel against one real CPU-hosted
 OpenAI-compatible inference service. It unlocks v0.2 software work and pilot use.
@@ -30,9 +32,9 @@ The evidence is under
 
 | Record | SHA-256 |
 |---|---|
-| `calibration/manifest.json` | `484c61034b639a4d78f7ea17bcfb72713d86772c4317283f28986bd7312d60fd` |
-| `run/manifest.json` | `ca59913d3db94675b36c8f903b1973c2cfb96597b42f096be0e1b641731fee22` |
-| `protocol-qualification.json` | `5cc278cf5dfed6420856e21af15074cccbc154835c305e4fd5155bb4993e2584` |
+| `calibration/manifest.json` | `9886904562b85a7253989c9186ea75f7467eb42c5b7a0ea90647be39fa929863` |
+| `run/manifest.json` | `e22d8e4ab98bca43df0f7ad4ff176bdb8bd82a8eb28ba52f94200ab8904013e3` |
+| `protocol-qualification.json` | `0b9e96f1130697a109f1c2c5ce1e9497cfdee94548600a6a7f4dfe52d1982414` |
 
 `oicap verify` passes with the external calibration manifest supplied. The run
 bundle records `git_dirty: false` and the exact runner commit above. Verification
@@ -50,10 +52,11 @@ not producer identity, detached signature or external timestamp anchoring.
 | Connection or HTTP error | Invalid route returns HTTP 404 and `error_type: http_error`. | PASS |
 | HTTP 200 without substantive content | One-token reasoning-only response returns HTTP 200 but is classified `empty_or_non_substantive_response`, not success. | PASS |
 | Multiple chunks and unavailable authoritative ITL | Seven content inter-chunk intervals are reported; ITL remains unavailable with `no_authoritative_per_token_timestamps`. | PASS |
-| Repeated real requests have non-zero variance | Four measured TTFTs are 8519.208, 332.642, 10031.478 and 4211.588 ms. | PASS |
+| Repeated real requests have non-zero variance | Four requests yield a TTFT range from below the 6247.889 ms mean to a 10470.698 ms maximum. | PASS |
+| Token-timing authority is visible | Every protocol observation records `server_usage`; the summary reports the homogeneous authority set and marks per-token adjudication ineligible. | PASS |
 
 The normal evidence run completed four of four measured requests, maintained
-`1.999940 / 2.0` mean in-flight requests before final submission, and reports the
+`1.999942 / 2.0` mean in-flight requests before final submission, and reports the
 apparatus `VALID`. Those numbers establish protocol execution and load realization
 for this fixture only; they are not a capacity verdict.
 
@@ -87,11 +90,19 @@ The fix is deliberately conservative:
 - server-usage-only runs report TPOT unavailable instead of manufacturing a value;
 - `inter_chunk_latency` remains distinct from ITL;
 - the verifier dispatches by stored `metrics_version`, so v0.2 still reproduces
-  frozen v0.1 evidence exactly rather than retroactively changing it.
+  frozen v0.1 evidence exactly rather than retroactively changing it;
+- the verifier explicitly names the applied ruleset, warns on superseded
+  semantics, and prevents legacy per-token metrics from becoming v0.2 evidence;
+- synthetic token timing requires a response-side marker from the registered
+  deterministic test protocol; a request field alone cannot authorize it;
+- current summaries carry the observed token-timing authority, and synthetic
+  timing is qualified as `synthetic_available`, never bare `available`.
 
-The full repository suite passes 90 tests, including a regression for v0.1 metric
-recomputation and positive controls for reasoning-event handling and TPOT
-unavailability.
+The full repository suite passes 93 tests. A genuine evidence bundle produced by
+the tagged v0.1 release is frozen under `tests/fixtures/`; the current verifier
+recomputes it exactly while reporting `superseded_metrics_ruleset:0.1` and
+`adjudication_eligible: false`. Positive controls also cover response-side
+protocol identity, reasoning-event handling and TPOT unavailability.
 
 ## 6. Remaining boundary
 

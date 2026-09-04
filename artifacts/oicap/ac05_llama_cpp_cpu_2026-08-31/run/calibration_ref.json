@@ -1,29 +1,29 @@
 {
-  "calibration_record_sha256": "9da396b4474cf9c9a3e029863df5ce546a7750f72790e67f0488b031f89e7e61",
+  "calibration_record_sha256": "33afc2ab666535d5bd91e4d8f6bb29d5a013e9fd666e0dc0d3bb5da9e63da456",
   "record": {
-    "achieved_arrival_rate_per_s": 2579.8129635601417,
+    "achieved_arrival_rate_per_s": 2755.6635775677964,
     "arrival_kind": "closed_loop",
     "arrival_rate_ratio": null,
     "calibration_version": "0.1",
     "client_schedule_lag_ms": {
       "count": 8,
-      "max": 0.182958,
-      "mean": 0.07680725,
-      "p50": 0.057958499999999996,
-      "p95": 0.16630394999999998,
-      "p99": 0.17962719,
+      "max": 0.177667,
+      "mean": 0.05395325,
+      "p50": 0.0409585,
+      "p95": 0.13502509999999993,
+      "p99": 0.16913861999999996,
       "population": "all_requests",
       "request_count": 8
     },
     "closed_loop_concurrency_check": "declared_active_users",
-    "closed_loop_concurrency_ratio": 0.7406393636461357,
+    "closed_loop_concurrency_ratio": 0.8010369562042388,
     "declared_think_time_s": 0.0,
-    "duration_s": 0.518950042,
+    "duration_s": 0.526760584,
     "event_loop_lag_ms": {
       "definition": "periodic_asyncio_wakeup_lateness",
       "interval_ms": 1.0,
-      "max": 0.2649170346558094,
-      "p99": 0.2649170346558094,
+      "max": 0.1602920237928629,
+      "p99": 0.1602920237928629,
       "sample_count": 2
     },
     "expected_mean_in_flight": 2.0,
@@ -38,38 +38,38 @@
       "noise_stability_tolerance_ms": 20.0
     },
     "mean_in_flight_definition": "worst-realization repetition mean from first through final submission; drain excluded",
-    "mean_request_service_time_s": 0.00077977075,
+    "mean_request_service_time_s": 0.00069919775,
     "measurement_identity": "a48b75a9a88c4a625b71791974970a4678625e02bd76a479672673273a067ded",
     "noise_resolution": {
-      "end_to_end_ms": 0.86961273,
-      "inter_chunk_latency_ms": 0.00410376,
+      "end_to_end_ms": 0.9390149799999999,
+      "inter_chunk_latency_ms": 0.07095249999999999,
       "itl_ms": null,
       "tpot_ms": null,
-      "ttft_ms": 0.81816322
+      "ttft_ms": 0.88805323
     },
     "noise_resolution_by_repetition": [
       {
-        "end_to_end_ms": 0.86961273,
-        "inter_chunk_latency_ms": 0.00345428,
+        "end_to_end_ms": 0.9390149799999999,
+        "inter_chunk_latency_ms": 0.07095249999999999,
         "itl_ms": null,
         "tpot_ms": null,
-        "ttft_ms": 0.81816322
+        "ttft_ms": 0.88805323
       },
       {
-        "end_to_end_ms": 0.75648873,
-        "inter_chunk_latency_ms": 0.00410376,
+        "end_to_end_ms": 0.58078948,
+        "inter_chunk_latency_ms": 0.00316322,
         "itl_ms": null,
         "tpot_ms": null,
-        "ttft_ms": 0.64607823
+        "ttft_ms": 0.53924949
       }
     ],
     "noise_resolution_range_ms": {
-      "end_to_end_ms": 0.11312399999999989,
-      "inter_chunk_latency_ms": 0.0006494799999999996,
-      "ttft_ms": 0.17208499
+      "end_to_end_ms": 0.3582255,
+      "inter_chunk_latency_ms": 0.06778928,
+      "ttft_ms": 0.34880374000000003
     },
     "profile": "local_zero_delay_stream_v1",
-    "realized_mean_in_flight": 1.4812787272922714,
+    "realized_mean_in_flight": 1.6020739124084775,
     "realized_peak_in_flight": 2,
     "repetitions": 2,
     "request_count": 8,
@@ -84,10 +84,10 @@
       "leading_empty_delta": true,
       "substantive_content_events": 2
     },
-    "runner_process_cpu_percent_one_core": 2.5699969015514603,
+    "runner_process_cpu_percent_one_core": 2.5527726273460125,
     "runner_system_cpu_percent": 0.0,
     "schema_version": "0.1",
     "valid": true
   },
-  "source_bundle_manifest_sha256": "484c61034b639a4d78f7ea17bcfb72713d86772c4317283f28986bd7312d60fd"
+  "source_bundle_manifest_sha256": "9886904562b85a7253989c9186ea75f7467eb42c5b7a0ea90647be39fa929863"
 }
