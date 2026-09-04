@@ -348,7 +348,7 @@ class TimingTests(unittest.IsolatedAsyncioTestCase):
                 "synthetic_one_token_per_content_event",
             )
         self.assertFalse(row.success)
-        self.assertEqual(row.error_type, "ValueError")
+        self.assertEqual(row.error_type, "deterministic_protocol_marker_absent")
         self.assertEqual(row.token_timestamps_ns, [])
 
     async def test_synthetic_timing_is_explicitly_non_adjudicable(self) -> None:

@@ -127,14 +127,17 @@
             <p>这里检查能否进入人工评审，不代表合同已经冻结，也不代表系统能达到 SLA。</p>
           </div>
           <div id="validation-summary" class="validation-summary"></div>
+          <div class="callout warning">
+            <strong>下载位置也属于保密边界</strong>
+            <span>浏览器通常保存到 Downloads，该目录可能被系统或云服务同步。下载后请立即移入买方批准的私有位置；不要提交到公开仓库。</span>
+          </div>
           <div class="review-grid">
             <div>
               <h3>演练草案</h3>
               <p class="hint">导出的 JSON 不含正式 pack、密封实例或裁决签名。</p>
             </div>
             <div class="review-actions">
-              <button type="button" class="secondary" id="copy-json">复制 JSON</button>
-              <button type="button" class="primary" id="download-json">下载草案</button>
+              <button type="button" class="primary" id="download-json">下载 PRIVATE 草案</button>
             </div>
           </div>
           <pre id="json-preview" tabindex="0"></pre>
@@ -142,7 +145,7 @@
 
         <footer class="form-footer">
           <button type="button" class="secondary" id="previous-step">上一步</button>
-          <div class="footer-note"><span id="local-status">未自动保存</span><button type="button" class="text-button" id="clear-form">清空本次演练</button></div>
+          <div class="footer-note"><span id="local-status">未自动保存；浏览器下载目录可能被系统同步</span><button type="button" class="text-button" id="clear-form">清空本次演练</button></div>
           <button type="button" class="primary" id="next-step">下一步</button>
         </footer>
       </form>

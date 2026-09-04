@@ -124,4 +124,7 @@ test("the page has no remote scripts, styles or automatic persistence", async ()
   assert.doesNotMatch(html, /(?:src|href)=["']https?:/i);
   assert.doesNotMatch(app, /fetch\s*\(/);
   assert.doesNotMatch(app, /localStorage|sessionStorage/);
+  assert.doesNotMatch(app, /clipboard/);
+  assert.doesNotMatch(html, /copy-json/);
+  assert.match(app, /PRIVATE-oicap-ac04-/);
 });

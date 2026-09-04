@@ -13,6 +13,14 @@ from .observations import ChunkObservation, RequestObservation
 from .protocol import DETERMINISTIC_PROTOCOL_HEADER, DETERMINISTIC_PROTOCOL_ID
 
 
+class _ObservationFailure(Exception):
+    """A stable evidence failure whose public identity is not a Python class name."""
+
+    def __init__(self, reason_code: str, message: str) -> None:
+        super().__init__(message)
+        self.reason_code = reason_code
+
+
 @dataclass(frozen=True)
 class OpenAIAdapter:
     endpoint: str
@@ -88,9 +96,10 @@ class OpenAIAdapter:
                     and response.headers.get(DETERMINISTIC_PROTOCOL_HEADER)
                     != DETERMINISTIC_PROTOCOL_ID
                 ):
-                    raise ValueError(
+                    raise _ObservationFailure(
+                        "deterministic_protocol_marker_absent",
                         "synthetic_one_token_per_content_event requires an endpoint "
-                        "authenticated by the deterministic OICAP test protocol marker."
+                        "authenticated by the deterministic OICAP test protocol marker.",
                     )
                 substantive_started = False
                 content_event_count = 0
@@ -159,6 +168,10 @@ class OpenAIAdapter:
             )
             if not observation.success:
                 observation.error_type = "empty_or_non_substantive_response"
+        except _ObservationFailure as exc:
+            observation.t_error_ns = time.perf_counter_ns()
+            observation.error_type = exc.reason_code
+            observation.error_message = _safe_error_message(str(exc), self.endpoint)
         except urllib.error.HTTPError as exc:
             observation.status_code = int(exc.code)
             observation.t_error_ns = time.perf_counter_ns()

@@ -238,10 +238,10 @@ function downloadDraft() {
   const anchor = document.createElement("a");
   const id = draft.project.project_id.replace(/[^a-zA-Z0-9_-]+/g, "-") || "untitled";
   anchor.href = url;
-  anchor.download = `oicap-ac04-${id}.json`;
+  anchor.download = `PRIVATE-oicap-ac04-${id}.json`;
   anchor.click();
   URL.revokeObjectURL(url);
-  document.querySelector("#local-status").textContent = "草案已下载；页面未上传数据";
+  document.querySelector("#local-status").textContent = "PRIVATE 草案已进入浏览器下载目录；请立即移至买方批准的私有位置";
 }
 
 function initialize() {
@@ -257,11 +257,6 @@ function initialize() {
   document.querySelector("#previous-step").addEventListener("click", () => showStep(currentStep - 1));
   document.querySelector("#next-step").addEventListener("click", () => showStep(currentStep === STEPS.length - 1 ? currentStep : currentStep + 1));
   document.querySelector("#download-json").addEventListener("click", downloadDraft);
-  document.querySelector("#copy-json").addEventListener("click", async () => {
-    const draft = renderReview();
-    await navigator.clipboard.writeText(JSON.stringify(draft, null, 2));
-    document.querySelector("#local-status").textContent = "草案 JSON 已复制";
-  });
   document.querySelector("#clear-form").addEventListener("click", () => {
     if (!window.confirm("清空当前浏览器中的本次演练？页面没有自动保存，清空后无法恢复。")) return;
     window.location.reload();
