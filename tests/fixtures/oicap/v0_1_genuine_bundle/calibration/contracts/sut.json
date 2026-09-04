@@ -1,0 +1,22 @@
+{
+  "engine": {
+    "name": "openai-compatible",
+    "version": "unknown"
+  },
+  "hardware": {
+    "accelerator": "unknown",
+    "count": "unknown"
+  },
+  "model": {
+    "id": "example-model",
+    "revision": "unknown"
+  },
+  "schema_version": "0.1",
+  "service_discipline": {
+    "admission": "unknown",
+    "batching": "unknown",
+    "fairness_bound_ms": null,
+    "preemption": "unknown"
+  },
+  "sut_id": "local-example"
+}

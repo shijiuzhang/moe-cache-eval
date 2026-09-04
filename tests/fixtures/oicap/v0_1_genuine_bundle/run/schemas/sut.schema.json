@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oicap.dev/schemas/0.1/sut.schema.json",
+  "title": "OICAP system-under-test contract 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sut_id", "model", "engine", "hardware", "service_discipline"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "sut_id": {"type": "string", "minLength": 1},
+    "model": {"type": "object"},
+    "engine": {"type": "object"},
+    "hardware": {"type": "object"},
+    "service_discipline": {
+      "type": "object", "required": ["batching", "admission", "preemption"],
+      "additionalProperties": false,
+      "properties": {
+        "batching": {"type": "string"},
+        "admission": {"type": "string"},
+        "preemption": {"type": "string"},
+        "fairness_bound_ms": {"type": ["number", "null"]}
+      }
+    }
+  }
+}

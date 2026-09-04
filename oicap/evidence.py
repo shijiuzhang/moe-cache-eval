@@ -13,7 +13,7 @@ from typing import Any, Iterable
 
 from . import __version__
 from .contracts import ContractSet, canonical_json, file_sha256
-from .metrics import closed_loop_concurrency_model, summarize
+from .metrics import METRICS_VERSION, closed_loop_concurrency_model, summarize
 from .observations import RequestObservation
 from .runner import RunResult
 
@@ -290,6 +290,8 @@ def verify_bundle(
     calibration_ref = bundle / "calibration_ref.json"
     errors: list[str] = []
     warnings: list[str] = []
+    declared_metrics_version: str | None = None
+    applied_metrics_version: str | None = None
     calibration_source_verified = False
     manifest_files = manifest.get("files")
     if not isinstance(manifest_files, dict):
@@ -354,10 +356,18 @@ def verify_bundle(
     try:
         observations = load_observations(bundle / "observations.jsonl")
         stored = json.loads((bundle / "summary.json").read_text(encoding="utf-8"))
-        metrics_version = str(stored.get("metrics_version", "0.1"))
+        raw_metrics_version = stored.get("metrics_version")
+        declared_metrics_version = (
+            str(raw_metrics_version) if raw_metrics_version is not None else None
+        )
+        applied_metrics_version = declared_metrics_version or "0.1"
+        if declared_metrics_version is None:
+            warnings.append("missing_metrics_ruleset_assumed_legacy:0.1")
+        if applied_metrics_version != METRICS_VERSION:
+            warnings.append(f"superseded_metrics_ruleset:{applied_metrics_version}")
         recomputed = summarize(
             (row for row in observations if row.phase == "measurement"),
-            metrics_version=metrics_version,
+            metrics_version=applied_metrics_version,
         )
         if canonical_json(recomputed) != canonical_json(stored):
             errors.append("summary_mismatch")
@@ -423,12 +433,20 @@ def verify_bundle(
         "errors": errors,
         "warnings": warnings,
         "recomputed_summary": recomputed,
+        "metrics_ruleset": {
+            "declared": declared_metrics_version,
+            "applied_for_recomputation": applied_metrics_version,
+            "current": METRICS_VERSION,
+            "current_semantics": applied_metrics_version == METRICS_VERSION,
+            "adjudication_eligible": applied_metrics_version == METRICS_VERSION,
+        },
         "verification_scope": {
             "internal_consistency": internal_consistency_ok,
             "producer_identity_attested": False,
             "detached_signature_verified": False,
             "external_timestamp_anchor_verified": False,
             "calibration_source_manifest_verified": calibration_source_verified,
+            "current_metrics_semantics": applied_metrics_version == METRICS_VERSION,
         },
         "note": (
             "Unsigned schema-0.1 verification establishes internal consistency and detects "

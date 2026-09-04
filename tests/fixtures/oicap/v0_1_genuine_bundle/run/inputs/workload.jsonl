@@ -1,0 +1,2 @@
+{"id":"hello-1","workload_class":"interactive","body":{"model":"example-model","messages":[{"role":"user","content":"Say hello."}],"oicap_test":{"leading_empty":true,"ttft_ms":5,"token_delay_ms":2,"tokens":["hello"," world"]}}}
+{"id":"hello-2","workload_class":"interactive","body":{"model":"example-model","messages":[{"role":"user","content":"Say goodbye."}],"oicap_test":{"leading_empty":true,"ttft_ms":3,"token_delay_ms":1,"tokens":["goodbye"," now"]}}}

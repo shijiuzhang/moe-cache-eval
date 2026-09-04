@@ -1,0 +1,241 @@
+{
+  "by_workload_class": {
+    "interactive": {
+      "latency_ms": {
+        "end_to_end": {
+          "count": 8,
+          "max": 9.219375,
+          "mean": 7.1500625,
+          "p50": 7.0769165,
+          "p95": 9.20205,
+          "p99": 9.21591,
+          "population": "successful_requests",
+          "request_count": 8
+        },
+        "first_chunk_to_token": {
+          "count": 8,
+          "max": 6.291791,
+          "mean": 4.827312375,
+          "p50": 4.613729,
+          "p95": 6.28853915,
+          "p99": 6.29114063,
+          "population": "successful_requests",
+          "request_count": 8
+        },
+        "inter_chunk_latency": {
+          "count": 8,
+          "max": 2.533208,
+          "mean": 1.902328125,
+          "p50": 1.9006249999999998,
+          "p95": 2.5293436500000004,
+          "p99": 2.53243513,
+          "population": "content_chunk_intervals_from_successful_requests",
+          "request_count": 8
+        },
+        "itl": {
+          "availability": "available",
+          "count": 8,
+          "max": 2.533208,
+          "mean": 1.902328125,
+          "p50": 1.9006249999999998,
+          "p95": 2.5293436500000004,
+          "p99": 2.53243513,
+          "population": "authoritative_token_intervals_from_successful_requests",
+          "request_count": 8,
+          "unavailable_reason": null
+        },
+        "schedule_lag": {
+          "count": 8,
+          "max": 0.081042,
+          "mean": 0.02661975,
+          "p50": 0.0194165,
+          "p95": 0.062258549999999975,
+          "p99": 0.07728530999999998,
+          "population": "all_requests",
+          "request_count": 8
+        },
+        "time_to_failure": {
+          "count": 0,
+          "max": null,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "population": "failed_requests_with_observed_terminal_time",
+          "request_count": 0
+        },
+        "tpot": {
+          "count": 8,
+          "max": 2.552666,
+          "mean": 1.923598875,
+          "p50": 1.927187,
+          "p95": 2.54757665,
+          "p99": 2.5516481300000002,
+          "population": "successful_requests_with_at_least_two_authoritative_output_tokens",
+          "request_count": 8
+        },
+        "ttft": {
+          "count": 8,
+          "max": 6.666709,
+          "mean": 5.226463625,
+          "p50": 5.160354,
+          "p95": 6.65447335,
+          "p99": 6.66426187,
+          "population": "successful_requests",
+          "request_count": 8
+        }
+      },
+      "load_realization": {
+        "achieved_submission_rate_per_s": 301.73714384240697,
+        "concurrency_maintenance_window_s": 0.023199,
+        "mean_in_flight": 1.7673112260079944,
+        "mean_in_flight_before_final_submission": 1.980273977326609,
+        "mean_request_service_time_s": 0.0071500625,
+        "overlap_window_s": 0.032365833,
+        "peak_in_flight": 2,
+        "service_time_request_count": 8,
+        "submission_span_s": 0.023199
+      },
+      "metrics_version": "0.1",
+      "requests": {
+        "attempts_total": 8,
+        "censored": 0,
+        "errors_by_type": {},
+        "retried": 0,
+        "success_rate": 1.0,
+        "successful": 8,
+        "successful_after_retry": 0,
+        "timed_out": 0,
+        "total": 8
+      },
+      "schema_version": "0.1",
+      "throughput": {
+        "completed_requests_per_s": 247.17423463193427,
+        "input_plus_output_tokens_per_s": 741.5227038958028,
+        "input_tokens": 8,
+        "measurement_duration_s": 0.032365833,
+        "output_tokens": 16,
+        "output_tokens_per_s": 494.34846926386854
+      }
+    }
+  },
+  "latency_ms": {
+    "end_to_end": {
+      "count": 8,
+      "max": 9.219375,
+      "mean": 7.1500625,
+      "p50": 7.0769165,
+      "p95": 9.20205,
+      "p99": 9.21591,
+      "population": "successful_requests",
+      "request_count": 8
+    },
+    "first_chunk_to_token": {
+      "count": 8,
+      "max": 6.291791,
+      "mean": 4.827312375,
+      "p50": 4.613729,
+      "p95": 6.28853915,
+      "p99": 6.29114063,
+      "population": "successful_requests",
+      "request_count": 8
+    },
+    "inter_chunk_latency": {
+      "count": 8,
+      "max": 2.533208,
+      "mean": 1.902328125,
+      "p50": 1.9006249999999998,
+      "p95": 2.5293436500000004,
+      "p99": 2.53243513,
+      "population": "content_chunk_intervals_from_successful_requests",
+      "request_count": 8
+    },
+    "itl": {
+      "availability": "available",
+      "count": 8,
+      "max": 2.533208,
+      "mean": 1.902328125,
+      "p50": 1.9006249999999998,
+      "p95": 2.5293436500000004,
+      "p99": 2.53243513,
+      "population": "authoritative_token_intervals_from_successful_requests",
+      "request_count": 8,
+      "unavailable_reason": null
+    },
+    "schedule_lag": {
+      "count": 8,
+      "max": 0.081042,
+      "mean": 0.02661975,
+      "p50": 0.0194165,
+      "p95": 0.062258549999999975,
+      "p99": 0.07728530999999998,
+      "population": "all_requests",
+      "request_count": 8
+    },
+    "time_to_failure": {
+      "count": 0,
+      "max": null,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "population": "failed_requests_with_observed_terminal_time",
+      "request_count": 0
+    },
+    "tpot": {
+      "count": 8,
+      "max": 2.552666,
+      "mean": 1.923598875,
+      "p50": 1.927187,
+      "p95": 2.54757665,
+      "p99": 2.5516481300000002,
+      "population": "successful_requests_with_at_least_two_authoritative_output_tokens",
+      "request_count": 8
+    },
+    "ttft": {
+      "count": 8,
+      "max": 6.666709,
+      "mean": 5.226463625,
+      "p50": 5.160354,
+      "p95": 6.65447335,
+      "p99": 6.66426187,
+      "population": "successful_requests",
+      "request_count": 8
+    }
+  },
+  "load_realization": {
+    "achieved_submission_rate_per_s": 301.73714384240697,
+    "concurrency_maintenance_window_s": 0.023199,
+    "mean_in_flight": 1.7673112260079944,
+    "mean_in_flight_before_final_submission": 1.980273977326609,
+    "mean_request_service_time_s": 0.0071500625,
+    "overlap_window_s": 0.032365833,
+    "peak_in_flight": 2,
+    "service_time_request_count": 8,
+    "submission_span_s": 0.023199
+  },
+  "metrics_version": "0.1",
+  "realized_workload_mix": {
+    "interactive": 1.0
+  },
+  "requests": {
+    "attempts_total": 8,
+    "censored": 0,
+    "errors_by_type": {},
+    "retried": 0,
+    "success_rate": 1.0,
+    "successful": 8,
+    "successful_after_retry": 0,
+    "timed_out": 0,
+    "total": 8
+  },
+  "schema_version": "0.1",
+  "throughput": {
+    "completed_requests_per_s": 247.17423463193427,
+    "input_plus_output_tokens_per_s": 741.5227038958028,
+    "input_tokens": 8,
+    "measurement_duration_s": 0.032365833,
+    "output_tokens": 16,
+    "output_tokens_per_s": 494.34846926386854
+  }
+}

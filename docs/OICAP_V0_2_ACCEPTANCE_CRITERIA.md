@@ -581,7 +581,11 @@ the supported workflow in a clean environment.
 - clean-install execution completes validate, compile, preflight, run, upload to a
   test service, verify and adjudicate;
 - Linux and macOS supported paths exchange and verify evidence in both directions;
-- a v0.1 bundle follows the documented compatibility path without semantic upgrade.
+- a v0.1 bundle follows the documented compatibility path without semantic upgrade;
+- a genuine v0.1 bundle verifies under its declared legacy ruleset with an explicit
+  superseded-ruleset warning, while any attempted v0.2 TPOT or ITL gate returns
+  `INSUFFICIENT_EVIDENCE` with `SUPERSEDED_METRIC_SEMANTICS` rather than consuming
+  the populated legacy value.
 
 An independent auditor downloads the release artifact from its public release
 location and repeats the workflow outside the source tree.

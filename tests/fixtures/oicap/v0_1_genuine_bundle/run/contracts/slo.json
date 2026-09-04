@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "targets": {
+    "interactive": {
+      "ttft_ms": {
+        "p95_lte": 2000
+      }
+    }
+  }
+}

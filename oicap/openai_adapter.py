@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from .observations import ChunkObservation, RequestObservation
+from .protocol import DETERMINISTIC_PROTOCOL_HEADER, DETERMINISTIC_PROTOCOL_ID
 
 
 @dataclass(frozen=True)
@@ -82,6 +83,15 @@ class OpenAIAdapter:
         try:
             with urllib.request.urlopen(request, timeout=timeout_s) as response:
                 observation.status_code = int(response.status)
+                if (
+                    token_authority == "synthetic_one_token_per_content_event"
+                    and response.headers.get(DETERMINISTIC_PROTOCOL_HEADER)
+                    != DETERMINISTIC_PROTOCOL_ID
+                ):
+                    raise ValueError(
+                        "synthetic_one_token_per_content_event requires an endpoint "
+                        "authenticated by the deterministic OICAP test protocol marker."
+                    )
                 substantive_started = False
                 content_event_count = 0
                 first_byte = response.read(1)

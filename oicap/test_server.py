@@ -7,6 +7,8 @@ from contextlib import AbstractContextManager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
+from .protocol import DETERMINISTIC_PROTOCOL_HEADER, DETERMINISTIC_PROTOCOL_ID
+
 
 class DeterministicServer(AbstractContextManager["DeterministicServer"]):
     def __init__(
@@ -15,9 +17,11 @@ class DeterministicServer(AbstractContextManager["DeterministicServer"]):
         port: int = 0,
         *,
         force_zero_delay: bool = False,
+        protocol_marker: bool = True,
     ) -> None:
         self.server = ThreadingHTTPServer((host, port), _Handler)
         self.server.force_zero_delay = force_zero_delay  # type: ignore[attr-defined]
+        self.server.protocol_marker = protocol_marker  # type: ignore[attr-defined]
         self.server.attempt_counts = {}  # type: ignore[attr-defined]
         self.server.attempt_lock = threading.Lock()  # type: ignore[attr-defined]
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
@@ -74,6 +78,8 @@ class _Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "text/event-stream")
         self.send_header("Cache-Control", "no-cache")
         self.send_header("Connection", "close")
+        if getattr(self.server, "protocol_marker", False):
+            self.send_header(DETERMINISTIC_PROTOCOL_HEADER, DETERMINISTIC_PROTOCOL_ID)
         self.end_headers()
         try:
             if config.get("leading_empty", True):

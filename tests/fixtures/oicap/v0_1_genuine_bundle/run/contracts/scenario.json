@@ -1,0 +1,21 @@
+{
+  "arrival": {
+    "active_users": 2,
+    "kind": "closed_loop"
+  },
+  "scenario_id": "basic-closed-loop-v1",
+  "schema_version": "0.1",
+  "session": {
+    "think_time_ms": 0
+  },
+  "source": {
+    "kind": "local_jsonl",
+    "path": "workload.jsonl"
+  },
+  "workload_classes": [
+    {
+      "id": "interactive",
+      "weight": 1.0
+    }
+  ]
+}

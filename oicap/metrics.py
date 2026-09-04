@@ -8,7 +8,8 @@ from typing import Iterable
 from .observations import RequestObservation
 
 
-METRICS_VERSION = "0.2-dev1"
+METRICS_VERSION = "0.2-dev2"
+SUPPORTED_METRICS_VERSIONS = {"0.1", "0.2-dev1", METRICS_VERSION}
 
 
 def _ms(delta_ns: int) -> float:
@@ -87,7 +88,7 @@ def observation_metrics(
             and obs.t_complete_ns is not None
         ):
             tpot = _ms(obs.t_complete_ns - obs.t_first_token_ns) / (generated - 1)
-    elif metrics_version == METRICS_VERSION:
+    elif metrics_version in {"0.2-dev1", METRICS_VERSION}:
         # Server usage is authoritative for aggregate token counts, but it does not
         # establish which counted token corresponds to the first user-visible content
         # event. Reasoning models can count many hidden reasoning tokens before that
@@ -185,18 +186,31 @@ def _summarize_rows(
         for _, item in successful
         for value in item["inter_chunk_latency_ms"]
     ]
-    token_timing_available = bool(successful_rows) and all(
+    synthetic_token_timing = bool(successful_rows) and all(
         row.token_timing_authority == "synthetic_one_token_per_content_event"
         for row in successful_rows
     )
+    declared_timing_authorities = sorted(
+        {row.token_timing_authority or "unspecified" for row in rows}
+    )
     itl_distribution = populated(
         itl_samples,
-        "authoritative_token_intervals_from_successful_requests",
+        (
+            "synthetic_content_event_intervals_from_test_protocol"
+            if synthetic_token_timing and metrics_version == METRICS_VERSION
+            else "authoritative_token_intervals_from_successful_requests"
+        ),
         len(successful_rows),
     )
-    itl_distribution["availability"] = "available" if token_timing_available else "unavailable"
+    itl_distribution["availability"] = (
+        "synthetic_available"
+        if synthetic_token_timing and metrics_version == METRICS_VERSION
+        else "available"
+        if synthetic_token_timing
+        else "unavailable"
+    )
     itl_distribution["unavailable_reason"] = (
-        None if token_timing_available else "no_authoritative_per_token_timestamps"
+        None if synthetic_token_timing else "no_authoritative_per_token_timestamps"
     )
     if metrics_version == "0.1":
         tpot_distribution = populated(
@@ -210,11 +224,19 @@ def _summarize_rows(
         )
         tpot_distribution = populated(
             scalar(successful, "tpot_ms"),
-            "successful_requests_with_authoritative_first_to_last_token_timestamps",
+            (
+                "successful_test_protocol_requests_with_synthetic_content_event_timing"
+                if tpot_available and metrics_version == METRICS_VERSION
+                else "successful_requests_with_authoritative_first_to_last_token_timestamps"
+            ),
             len(successful_rows),
         )
         tpot_distribution["availability"] = (
-            "available" if tpot_available else "unavailable"
+            "synthetic_available"
+            if tpot_available and metrics_version == METRICS_VERSION
+            else "available"
+            if tpot_available
+            else "unavailable"
         )
         tpot_distribution["unavailable_reason"] = (
             None
@@ -229,7 +251,7 @@ def _summarize_rows(
         if terminal is not None
     ]
     overlap = overlap_statistics(intervals)
-    return {
+    result = {
         "schema_version": "0.1",
         "metrics_version": metrics_version,
         "requests": {
@@ -305,6 +327,24 @@ def _summarize_rows(
             ),
         },
     }
+    if metrics_version == METRICS_VERSION:
+        result["token_timing"] = {
+            "declared_authorities": declared_timing_authorities,
+            "homogeneous": len(declared_timing_authorities) == 1,
+            "per_token_timestamp_status": (
+                "synthetic_test_protocol"
+                if synthetic_token_timing
+                else "unavailable"
+            ),
+            "per_token_latency_adjudication_eligible": False,
+            "note": (
+                "Synthetic test-protocol timing cannot satisfy a production "
+                "inter-token or TPOT gate."
+                if synthetic_token_timing
+                else "No authoritative per-token timestamps were observed."
+            ),
+        }
+    return result
 
 
 def peak_overlap(intervals: list[tuple[int, int]]) -> int:

@@ -1,0 +1,16 @@
+{
+  "event_loop_lag_ms": {
+    "definition": "periodic_asyncio_wakeup_lateness",
+    "interval_ms": 1.0,
+    "max": 0.550209020730108,
+    "p99": 0.5482369306264445,
+    "sample_count": 4
+  },
+  "measurement_duration_s": 0.521129,
+  "request_schedule_lag_ms": {
+    "max": 0.065375,
+    "p99": 0.06253745
+  },
+  "runner_process_cpu_percent_one_core": 4.612293693116292,
+  "runner_system_cpu_percent": 0.0
+}

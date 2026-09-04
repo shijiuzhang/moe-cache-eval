@@ -1,0 +1,91 @@
+{
+  "achieved_arrival_rate_per_s": 2986.1888764464356,
+  "arrival_kind": "closed_loop",
+  "arrival_rate_ratio": null,
+  "calibration_version": "0.1",
+  "client_schedule_lag_ms": {
+    "count": 16,
+    "max": 0.065375,
+    "mean": 0.028476500000000002,
+    "p50": 0.0281455,
+    "p95": 0.051187250000000004,
+    "p99": 0.06253745,
+    "population": "all_requests",
+    "request_count": 16
+  },
+  "closed_loop_concurrency_check": "declared_active_users",
+  "closed_loop_concurrency_ratio": 0.8299828294139604,
+  "declared_think_time_s": 0.0,
+  "duration_s": 0.521129,
+  "event_loop_lag_ms": {
+    "definition": "periodic_asyncio_wakeup_lateness",
+    "interval_ms": 1.0,
+    "max": 0.550209020730108,
+    "p99": 0.5482369306264445,
+    "sample_count": 4
+  },
+  "expected_mean_in_flight": 2.0,
+  "invalid_reasons": [],
+  "limits": {
+    "max_event_loop_lag_p99_ms": 20.0,
+    "max_runner_process_cpu_percent_one_core": 10000.0,
+    "max_runner_system_cpu_percent": 100.0,
+    "max_schedule_lag_p99_ms": 20.0,
+    "min_arrival_rate_ratio": 0.98,
+    "min_closed_loop_concurrency_ratio": 0.6,
+    "noise_stability_tolerance_ms": 20.0
+  },
+  "mean_in_flight_definition": "worst-realization repetition mean from first through final submission; drain excluded",
+  "mean_request_service_time_s": 0.000580937625,
+  "measurement_identity": "43c9011d3e878e355d1bf43ec0a3e19bd2dcb1a1e1f5faa37267faa1bc9eaf2b",
+  "noise_resolution": {
+    "end_to_end_ms": 0.9674846899999999,
+    "inter_chunk_latency_ms": 0.21735005999999998,
+    "itl_ms": 0.21735005999999998,
+    "tpot_ms": 0.23861787,
+    "ttft_ms": 0.91744594
+  },
+  "noise_resolution_by_repetition": [
+    {
+      "end_to_end_ms": 0.7934296299999999,
+      "inter_chunk_latency_ms": 0.05543968999999998,
+      "itl_ms": 0.05543968999999998,
+      "tpot_ms": 0.14255306999999998,
+      "ttft_ms": 0.6931974399999999
+    },
+    {
+      "end_to_end_ms": 0.9674846899999999,
+      "inter_chunk_latency_ms": 0.21735005999999998,
+      "itl_ms": 0.21735005999999998,
+      "tpot_ms": 0.23861787,
+      "ttft_ms": 0.91744594
+    }
+  ],
+  "noise_resolution_range_ms": {
+    "end_to_end_ms": 0.17405506000000004,
+    "inter_chunk_latency_ms": 0.16191037,
+    "itl_ms": 0.16191037,
+    "tpot_ms": 0.09606480000000003,
+    "ttft_ms": 0.22424850000000007
+  },
+  "profile": "local_zero_delay_stream_v1",
+  "realized_mean_in_flight": 1.6599656588279208,
+  "realized_peak_in_flight": 2,
+  "repetitions": 2,
+  "request_count": 16,
+  "request_payload_bytes": {
+    "max": 174,
+    "min": 172
+  },
+  "requested_active_users": 2,
+  "requested_arrival_rate_per_s": null,
+  "response_shape": {
+    "completion_tokens": 2,
+    "leading_empty_delta": true,
+    "substantive_content_events": 2
+  },
+  "runner_process_cpu_percent_one_core": 4.612293693116292,
+  "runner_system_cpu_percent": 0.0,
+  "schema_version": "0.1",
+  "valid": true
+}

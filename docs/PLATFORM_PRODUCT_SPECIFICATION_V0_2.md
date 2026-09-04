@@ -1067,8 +1067,16 @@ v0.2 does not:
 
 - v0.1 bundles remain verifiable by the v0.1 verifier and may be imported as
   measurement evidence only.
+- Compatibility verification and adjudication eligibility are separate. Every
+  verification result MUST name the metrics ruleset declared by the bundle, the
+  ruleset actually applied for recomputation, and the current ruleset, and MUST warn
+  when recomputation used a non-current or inferred legacy ruleset.
 - Importing v0.1 evidence MUST NOT manufacture a v0.2 SLA or conformance verdict when
-  required fields are absent.
+  required fields are absent or when a populated metric uses semantics superseded by
+  the current adjudicator. In particular, v0.1 TPOT and ITL are inadmissible for
+  v0.2 gates and yield `INSUFFICIENT_EVIDENCE` with reason
+  `SUPERSEDED_METRIC_SEMANTICS`; successful legacy recomputation does not upgrade
+  their meaning.
 - Schemas, compiler, runner, workload recipe, concrete instance and adjudicator are
   versioned independently and bound by hash.
 - Any change to metric population, threshold semantics or verdict logic requires a

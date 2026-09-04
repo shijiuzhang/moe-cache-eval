@@ -77,6 +77,7 @@ def _row_profile(row: RequestObservation) -> dict[str, Any]:
         "timed_out": row.timed_out,
         "censored": row.censored,
         "error_type": row.error_type,
+        "token_timing_authority": row.token_timing_authority,
         "input_tokens": row.input_tokens,
         "output_tokens": row.output_tokens,
         "response_nonblank": bool(row.response_text.strip()),

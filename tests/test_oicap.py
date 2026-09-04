@@ -35,6 +35,7 @@ from oicap.workloads import WorkloadItem, deterministic_sequence
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE = ROOT / "examples" / "oicap" / "basic"
+GENUINE_V01 = ROOT / "tests" / "fixtures" / "oicap" / "v0_1_genuine_bundle"
 
 
 class ContractTests(unittest.TestCase):
@@ -338,6 +339,41 @@ class TimingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([chunk.kind for chunk in row.chunks].count("reasoning"), 2)
         self.assertNotIn("private", "".join(chunk.content for chunk in row.chunks))
 
+    async def test_synthetic_timing_requires_endpoint_protocol_identity(self) -> None:
+        with DeterministicServer(protocol_marker=False) as server:
+            row = await OpenAIAdapter(server.endpoint).execute(
+                "r", "x",
+                {"model": "x", "oicap_test": {"tokens": ["a", "b"]}},
+                time.perf_counter_ns(), 2,
+                "synthetic_one_token_per_content_event",
+            )
+        self.assertFalse(row.success)
+        self.assertEqual(row.error_type, "ValueError")
+        self.assertEqual(row.token_timestamps_ns, [])
+
+    async def test_synthetic_timing_is_explicitly_non_adjudicable(self) -> None:
+        with DeterministicServer() as server:
+            row = await OpenAIAdapter(server.endpoint).execute(
+                "r", "x",
+                {"model": "x", "oicap_test": {"tokens": ["a", "b", "c"]}},
+                time.perf_counter_ns(), 2,
+                "synthetic_one_token_per_content_event",
+            )
+        summary = summarize([row])
+        self.assertEqual(
+            summary["latency_ms"]["itl"]["availability"], "synthetic_available"
+        )
+        self.assertEqual(
+            summary["latency_ms"]["tpot"]["availability"], "synthetic_available"
+        )
+        self.assertEqual(
+            summary["token_timing"]["declared_authorities"],
+            ["synthetic_one_token_per_content_event"],
+        )
+        self.assertFalse(
+            summary["token_timing"]["per_token_latency_adjudication_eligible"]
+        )
+
     async def test_timeout_is_recorded_as_right_censored(self) -> None:
         with DeterministicServer() as server:
             row = await OpenAIAdapter(server.endpoint).execute(
@@ -478,6 +514,20 @@ class LoadSemanticsTests(unittest.IsolatedAsyncioTestCase):
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_genuine_v01_bundle_verifies_with_superseded_ruleset_warning(self) -> None:
+        result = verify_bundle(
+            GENUINE_V01 / "run", calibration_source=GENUINE_V01 / "calibration"
+        )
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["errors"], [])
+        self.assertIn("superseded_metrics_ruleset:0.1", result["warnings"])
+        self.assertEqual(result["metrics_ruleset"]["declared"], "0.1")
+        self.assertEqual(
+            result["metrics_ruleset"]["applied_for_recomputation"], "0.1"
+        )
+        self.assertFalse(result["metrics_ruleset"]["current_semantics"])
+        self.assertFalse(result["metrics_ruleset"]["adjudication_eligible"])
+
     def test_calibrated_run_verifies_and_tamper_is_detected(self) -> None:
         contracts = load_contracts(EXAMPLE)
         with tempfile.TemporaryDirectory() as raw:
