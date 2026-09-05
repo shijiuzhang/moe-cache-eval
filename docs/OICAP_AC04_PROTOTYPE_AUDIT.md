@@ -183,3 +183,28 @@ work. H3 and H4 can follow at any time.
 
 **AC04 may begin.** The remaining prerequisite was never software — it was an
 authorized case and a participant who knows procurement, and both now exist.
+
+---
+
+# Confirming pass — 2026-09-04
+
+Commit `1cebe44`; working tree clean; 8 commits ahead of the remote, unpushed.
+`v0.1` tag unmoved.
+
+| Finding | Verification | Result |
+|---|---|---|
+| H1 | grep for `clipboard` / `copy-json` / `copyJson` across the prototype | no occurrence in code; only a README line explaining the deliberate absence |
+| H2 | `app.mjs:241`, `index.html:132` and `:148` | filename is `PRIVATE-oicap-ac04-<id>.json`; the page itself states Downloads may be synced by the OS or a cloud service and must be moved immediately |
+| H3 | rogue-endpoint probe re-run | `error_type: deterministic_protocol_marker_absent`, `success: False`, zero token timestamps |
+| H4 | `web/intake-prototype/README.md` §Draft-to-contract map | seven-row table, including the `pack-recipe.yaml` row with no draft source, plus an explicit statement that the `validation`/`derived` blocks are advisory and must not be copied into canonical contracts |
+| Regression | all four resources re-served | 200 / 200 / 200 / 200 |
+| Regression | 7/7 rule tests, 93/93 Python | pass |
+
+**Wiring regression check.** Removing a button is the kind of edit that leaves a
+listener bound to a deleted element, in which case `initialize()` throws on load and
+the entire form silently stops working — and neither test suite would catch it,
+because both exercise `model.mjs` rather than the DOM wiring. Extracted all 18
+`querySelector("#…")` targets from `app.mjs` and checked each against the ids present
+in `index.html`: **all 18 resolve, none dangling.**
+
+H1–H4 are closed. No new findings. AC04 has no remaining technical prerequisite.
