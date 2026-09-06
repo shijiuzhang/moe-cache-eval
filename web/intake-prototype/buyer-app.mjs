@@ -32,7 +32,7 @@ function renderReview() {
   const box = document.querySelector("#buyer-validation-summary"); box.replaceChildren();
   if (!draft.validation.errors.length) box.innerHTML = `<div class="validation-item success"><strong>采购信息已可交给技术人员转换。</strong> 当前产生 ${draft.technical_translation_tasks.length} 项显式确认任务；它们不会被静默默认。</div>`;
   for (const item of draft.validation.errors) { const node = document.createElement("div"); node.className = "validation-item error"; node.textContent = `需要补充 · ${item.message}`; box.append(node); }
-  for (const item of draft.technical_translation_tasks) { const node = document.createElement("div"); node.className = "validation-item warning"; node.textContent = `${item.owner} · ${item.message}${item.blocks_freeze ? "（冻结前必须解决）" : ""}`; box.append(node); }
+  for (const item of draft.technical_translation_tasks) { const node = document.createElement("div"); node.className = "validation-item warning"; node.textContent = `${item.buyer_emphasis ? "买方重点 · " : ""}${item.owner} · ${item.message}${item.blocks_freeze ? "（冻结前必须解决）" : ""}`; box.append(node); }
   document.querySelector("#buyer-json-preview").textContent = JSON.stringify(draft, null, 2); return draft;
 }
 

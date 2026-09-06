@@ -208,3 +208,99 @@ because both exercise `model.mjs` rather than the DOM wiring. Extracted all 18
 in `index.html`: **all 18 resolve, none dangling.**
 
 H1–H4 are closed. No new findings. AC04 has no remaining technical prerequisite.
+
+---
+
+# Buyer/expert split audit — 2026-09-06
+
+**Commit:** `20a4799` "Split buyer intake from expert contract authoring". The
+hand-off message degenerated while trying to state this hash; it was resolved from
+`git log`. Working tree clean, 10 commits ahead of the remote, `v0.1` tag unmoved.
+
+## 24. Verified
+
+| Claim | Method | Result |
+|---|---|---|
+| 16/16 rule and wiring tests | `node --test` on both suites | 16 pass, 0 fail |
+| 93/93 measurement kernel | `python -m unittest discover -s tests` | OK |
+| Privacy preserved on **both** pages | grep for `clipboard`/`fetch`/`XHR`/`WebSocket`/`sendBeacon`/`localStorage`/`sessionStorage`/`indexedDB`/`cookie`/any absolute URL across all `.mjs`, `.html`, `.css` | **no occurrence of any** |
+| H2 preserved on the new page | `buyer-app.mjs:58` | `PRIVATE-oicap-buyer-intake-<id>.json` |
+| DOM wiring intact after the split | extracted every `querySelector("#…")` per page and matched against that page's ids | `buyer-app.mjs`→`index.html` 12/12; `app.mjs`→`expert.html` 18/18; none dangling |
+| Public summary de-identified | scanned the draft for organization, supplier, model, hardware, price, date, IP and parameter-count patterns | zero hits; header states omissions and marks itself pending confidentiality review |
+| No silent technical defaults | read `buyer-model.mjs` in full | the model never writes a percentile, population, concurrency figure, token authority or scan point; every unknown produces a named task with an owner and a `blocks_freeze` flag |
+| Honest handoff | `finalizeBuyerIntake` | best status is `READY_FOR_TECHNICAL_TRANSLATION`; `technical_contract_frozen`, `test_pack_compiled` and `verdict_available` are all hard-coded `false` |
+
+The baseline documents were amended, which is what AC04 exists to cause. The changes
+reviewed as sound: Charter §3.1.1 introduces a technical contract translator whose
+every translation records source intent and reviewer; invariant 12 — "No forced expert
+authorship" — generalizes the rehearsal finding rather than patching the form; and
+AC03 gains four controls, of which two (a supplier-environment report cannot create a
+buyer-site `PASS`; a black-box timeout without bound system/process evidence cannot be
+labelled proven `OUT_OF_MEMORY`) come directly from what the rehearsal exposed.
+
+## 25. Finding
+
+### J1 — test-plan tasks are keyed to the buyer's stated worry, not to the buyer's stated requirement (OPEN)
+
+**Where:** `web/intake-prototype/buyer-model.mjs:47-48`.
+
+```js
+if (draft.experience?.risks?.includes("concurrency")) task("oicap_compiler", "CONCURRENCY_SWEEP_REQUIRED", …);
+if (draft.experience?.risks?.includes("stability"))  task("oicap_compiler", "SOAK_PLAN_REQUIRED", …);
+```
+
+`risks` is the answer to "what worries you most". `peak_users`, `interaction_pattern`
+and `stability_hours` are the answers to what the contract actually requires. Plan
+generation is driven by the former.
+
+Probed with a buyer who declares **500 peak concurrent users** and a **720-hour
+stability requirement**, whose single ticked worry is OOM:
+
+```
+status = READY_FOR_TECHNICAL_TRANSLATION
+declared peak_users    = 500
+declared stability_hrs = 720
+tasks: OOM_EVIDENCE_PLAN_REQUIRED, SUPPLIER_REPORT_PROVENANCE_ONLY
+CONCURRENCY_SWEEP_REQUIRED present?  false
+SOAK_PLAN_REQUIRED present?          false
+```
+
+Both requirements are captured as data and neither becomes an obligation. The task
+list is the translator's work list, so a requirement that generates no task is a
+requirement nobody is assigned to compile.
+
+This matters because of what the same commit just added to AC03: "a sustained-
+stability promise compiles to a named soak phase and cannot be satisfied by a short
+capacity point." The intake that feeds the translator can now record a 720-hour
+promise and emit nothing that requires a soak phase to exist. The failure direction is
+**under-scoping**: a delivered system passes a plan that never tested what the contract
+promised.
+
+Note that the model already mixes two kinds of task. Ambiguity tasks
+(`PEAK_USERS_UNRESOLVED`, `INPUT_DISTRIBUTION_UNRESOLVED`) correctly fire on missing or
+unclear input and block freeze. Plan-generation tasks (`CONCURRENCY_SWEEP_REQUIRED`,
+`SOAK_PLAN_REQUIRED`, owner `oicap_compiler`, non-blocking) are a different kind, and
+it is only these that are wired to the wrong field.
+
+Required:
+
+1. derive plan-generation tasks from the declared requirements — a resolved
+   `peak_users` or `interaction_pattern` requires a concurrency/arrival plan; a
+   positive `stability_hours` requires a soak phase; a stated `recovery_expectation`
+   requires a restart/recovery observation plan;
+2. keep `risks` as priority and emphasis input, not as the trigger;
+3. add a rule test for exactly the probed case: a stated requirement with the matching
+   worry unticked still produces its plan task.
+
+## 26. Disposition
+
+The split is the right product decision and the rehearsal earned it: the first
+version required a procurement officer to author percentiles and scan geometry, and
+the rehearsal proved they cannot and should not. The rewrite preserves every privacy
+and honesty property established in earlier rounds, and adds no new claim it has not
+earned.
+
+J1 is the single open finding. It is confined to two lines plus a test, does not
+affect the privacy properties, and does not block the re-run of the rehearsal on the
+new buyer page — but it should be fixed before any translated contract is produced
+from an intake draft, because it determines what the translator is told to build.

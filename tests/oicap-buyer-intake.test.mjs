@@ -44,7 +44,35 @@ test("OOM concern requires confirming evidence and is not inferred from black-bo
   const result = validateBuyerIntake(completeBuyerIntake());
   const task = result.tasks.find(item => item.code === "OOM_EVIDENCE_PLAN_REQUIRED");
   assert(task?.blocks_freeze);
+  assert.equal(task?.buyer_emphasis, true);
   assert.match(task.message, /只有.*证据能确认 OOM/);
+});
+
+test("declared load and stability requirements create plans even when only OOM is a stated worry", () => {
+  const draft = completeBuyerIntake();
+  draft.peak_use.peak_users = 500;
+  draft.experience.stability_hours = 720;
+  draft.experience.risks = ["oom"];
+
+  const result = finalizeBuyerIntake(draft);
+  const byCode = new Map(result.technical_translation_tasks.map(item => [item.code, item]));
+
+  assert.equal(result.status, "READY_FOR_TECHNICAL_TRANSLATION");
+  assert(byCode.has("CONCURRENCY_SWEEP_REQUIRED"));
+  assert(byCode.has("SOAK_PLAN_REQUIRED"));
+  assert(byCode.has("RECOVERY_OBSERVATION_PLAN_REQUIRED"));
+  assert.equal(byCode.get("CONCURRENCY_SWEEP_REQUIRED").buyer_emphasis, false);
+  assert.equal(byCode.get("SOAK_PLAN_REQUIRED").buyer_emphasis, false);
+  assert.equal(byCode.get("OOM_EVIDENCE_PLAN_REQUIRED").buyer_emphasis, true);
+});
+
+test("buyer worries raise plan emphasis without determining whether the plan exists", () => {
+  const draft = completeBuyerIntake();
+  draft.experience.risks = ["concurrency", "stability"];
+  const result = validateBuyerIntake(draft);
+  const byCode = new Map(result.tasks.map(item => [item.code, item]));
+  assert.equal(byCode.get("CONCURRENCY_SWEEP_REQUIRED").buyer_emphasis, true);
+  assert.equal(byCode.get("SOAK_PLAN_REQUIRED").buyer_emphasis, true);
 });
 
 test("post-failure renegotiation is exposed as a freeze-blocking procurement task", () => {

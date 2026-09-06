@@ -2,7 +2,7 @@
 
 **Audit source:** `docs/OICAP_AC04_PROTOTYPE_AUDIT.md`
 
-**Disposition:** H1–H4 addressed before entering private AC04 data
+**Disposition:** H1–H4 and J1 addressed before translating an intake draft
 
 ## H1 — clipboard egress
 
@@ -43,11 +43,35 @@ prototype. It explicitly forbids Slice B from treating the draft shape as the fr
 contract API and identifies `validation`/`derived` as advisory rather than canonical
 adjudication.
 
+## J1 — requirement-derived test-plan obligations
+
+Plan-generation tasks no longer depend on which concern boxes the buyer selects.
+They are derived from the recorded requirements:
+
+- a resolved peak-user count or interaction pattern creates a concurrency or
+  arrival-rate plan task;
+- a positive continuous-stability duration creates a soak-plan task;
+- a stated recovery expectation creates a recovery-observation task, while an
+  unclear expectation also creates a freeze-blocking clarification task.
+
+The concern list is retained as `buyer_emphasis` on the corresponding task and is
+shown as “买方重点” in the review page. It can prioritize the translator's work but
+cannot add or remove a contractual test obligation. The OOM concern continues to
+create a separate evidence-planning task; it is not used to decide whether load,
+stability, or recovery requirements are tested.
+
+The regression suite includes the audit counterexample verbatim in substance: 500
+declared peak users, 720 declared stability hours, and only OOM selected as a concern.
+The finalized draft still contains `CONCURRENCY_SWEEP_REQUIRED`,
+`SOAK_PLAN_REQUIRED`, and `RECOVERY_OBSERVATION_PLAN_REQUIRED`.
+
 ## Verification commands
 
 ```sh
 node --check web/intake-prototype/app.mjs
 node --check web/intake-prototype/model.mjs
-node --test tests/oicap-intake-prototype.test.mjs
+node --check web/intake-prototype/buyer-app.mjs
+node --check web/intake-prototype/buyer-model.mjs
+node --test tests/oicap-intake-prototype.test.mjs tests/oicap-buyer-intake.test.mjs
 uv run --no-default-groups python -m unittest discover -s tests -p 'test*.py'
 ```

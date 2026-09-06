@@ -69,6 +69,9 @@ analytics or API calls. The operator must store an exported draft under the igno
   `UNAVAILABLE_BY_CONTRACT`, never `PASS`;
 - per-token latency/rate gates require authoritative per-token timestamps;
 - the minimum load-point measurement time is checked against the site window;
+- declared peak-use, stability and recovery requirements always create named
+  compilation tasks; the buyer's selected concerns change task emphasis but never
+  decide whether a contractual test exists;
 - sustained maximum-load preflight, resource capture, on-site same-path calibration
   and buyer-controlled responder checks are explicit;
 - the export status is at most `READY_FOR_HUMAN_REVIEW`.
@@ -91,11 +94,12 @@ upload time. Calling that value an expected duration would be false precision.
 Run:
 
 ```sh
-node --test tests/oicap-intake-prototype.test.mjs
+node --test tests/oicap-intake-prototype.test.mjs tests/oicap-buyer-intake.test.mjs
 python3 -m http.server 8765 --directory web/intake-prototype
 ```
 
 The automated controls cover both role surfaces. Buyer tests exercise unknown usage,
+requirement-derived load/stability/recovery plans, concern-derived emphasis,
 supplier-report provenance, runtime binding, OOM evidence, post-FAIL renegotiation,
 the absence of expert terminology from the default page and DOM wiring. Expert tests
 cover ambiguous TPS, catalogue silence, physical-memory prerequisite loss, workload
