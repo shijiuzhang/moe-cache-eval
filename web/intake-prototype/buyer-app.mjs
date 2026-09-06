@@ -17,6 +17,18 @@ function collect() {
   };
 }
 
+function syncFirstResponseFields() {
+  const enabled = value("first_response_required") === "yes";
+  const seconds = form.elements.namedItem("first_response_seconds");
+  const reliability = form.elements.namedItem("first_response_reliability");
+  if (!enabled) {
+    seconds.value = "";
+    reliability.value = "";
+  }
+  seconds.disabled = !enabled;
+  reliability.disabled = !enabled;
+}
+
 function renderNav() {
   nav.replaceChildren();
   BUYER_STEPS.forEach(([key, label], index) => {
@@ -63,4 +75,6 @@ document.querySelector("#buyer-previous-step").addEventListener("click", () => s
 document.querySelector("#buyer-next-step").addEventListener("click", () => show(currentStep === BUYER_STEPS.length - 1 ? currentStep : currentStep + 1));
 document.querySelector("#buyer-download-json").addEventListener("click", download);
 document.querySelector("#buyer-clear-form").addEventListener("click", () => { if (window.confirm("清空本次采购需求录入？页面没有自动保存。")) window.location.reload(); });
-form.addEventListener("input", refresh); form.addEventListener("change", refresh); show(0); refresh();
+form.addEventListener("input", refresh);
+form.addEventListener("change", event => { if (event.target.name === "first_response_required") syncFirstResponseFields(); refresh(); });
+syncFirstResponseFields(); show(0); refresh();

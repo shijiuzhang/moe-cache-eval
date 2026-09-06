@@ -2,7 +2,7 @@
 
 **Audit source:** `docs/OICAP_AC04_PROTOTYPE_AUDIT.md`
 
-**Disposition:** H1–H4 and J1 addressed before translating an intake draft
+**Disposition:** H1–H4, J1 and the post-rehearsal cross-field consistency finding addressed before translating an intake draft
 
 ## H1 — clipboard egress
 
@@ -64,6 +64,30 @@ The regression suite includes the audit counterexample verbatim in substance: 50
 declared peak users, 720 declared stability hours, and only OOM selected as a concern.
 The finalized draft still contains `CONCURRENCY_SWEEP_REQUIRED`,
 `SOAK_PLAN_REQUIRED`, and `RECOVERY_OBSERVATION_PLAN_REQUIRED`.
+
+## Cross-field consistency — governing answers and the site window
+
+Buyer validation now has an explicit cross-field pass after the individual field
+checks. It enforces two relationships exposed by the first buyer rehearsal:
+
+- when `first_response_required` is `no` or `unclear`, retained response-time seconds
+  or reliability values are rejected as
+  `FIRST_RESPONSE_SUBORDINATE_FIELDS_NOT_ALLOWED`; a declined promise cannot create a
+  latency-translation task;
+- when the declared continuous-stability duration exceeds the declared on-site
+  window, the intake emits the existing AC10 code
+  `SITE_WINDOW_BELOW_MEASUREMENT_FLOOR` as a freeze-blocking procurement task. The
+  task requires a deliberate staged observation profile or a changed requirement;
+  it does not silently shorten the soak.
+
+The browser disables and clears the two first-response subordinate controls unless
+the governing answer is `yes`. Imported or hand-edited JSON still goes through the
+model-level rejection, so the UI is not the enforcement boundary.
+
+The original private `test case 1` file remains byte-for-byte unchanged. It is a
+primary rehearsal observation, not a draft to repair in place. Revalidation under the
+new rules exposes the stale subordinate fields and site-window conflict without
+rewriting the source file.
 
 ## Verification commands
 

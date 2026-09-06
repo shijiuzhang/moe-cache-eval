@@ -96,6 +96,10 @@ this as a later human warning; it does not pretend to predict supplier capabilit
 8. distinguish observed OOM evidence from black-box symptoms;
 9. require a technical retest/mutability policy before freeze while leaving commercial
    consequences to the procurement contract.
+10. validate relationships across buyer answers: a declined governing promise cannot
+    retain active target fields, and requested coverage that exceeds the appointment
+    window must be surfaced before technical compilation rather than silently
+    shortened on site.
 
 ## Confidentiality review checklist
 

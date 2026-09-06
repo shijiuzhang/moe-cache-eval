@@ -69,6 +69,9 @@ analytics or API calls. The operator must store an exported draft under the igno
   `UNAVAILABLE_BY_CONTRACT`, never `PASS`;
 - per-token latency/rate gates require authoritative per-token timestamps;
 - the minimum load-point measurement time is checked against the site window;
+- a declined or unresolved first-response promise cannot retain subordinate target
+  fields, and declared stability coverage beyond the site window creates the same
+  freeze-blocking AC10 reason used by the compiler;
 - declared peak-use, stability and recovery requirements always create named
   compilation tasks; the buyer's selected concerns change task emphasis but never
   decide whether a contractual test exists;

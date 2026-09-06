@@ -75,6 +75,44 @@ test("buyer worries raise plan emphasis without determining whether the plan exi
   assert.equal(byCode.get("SOAK_PLAN_REQUIRED").buyer_emphasis, true);
 });
 
+test("declined first-response promise rejects stale subordinate values without creating a latency task", () => {
+  const draft = completeBuyerIntake();
+  draft.experience.first_response_required = "no";
+  draft.experience.first_response_seconds = 10;
+  draft.experience.first_response_reliability = "unclear";
+  const result = validateBuyerIntake(draft);
+  assert(result.errors.some(item => item.code === "FIRST_RESPONSE_SUBORDINATE_FIELDS_NOT_ALLOWED"));
+  assert(!result.tasks.some(item => item.code === "LATENCY_RELIABILITY_TRANSLATION"));
+});
+
+test("declined first-response promise with empty subordinate values is consistent", () => {
+  const draft = completeBuyerIntake();
+  draft.experience.first_response_required = "no";
+  draft.experience.first_response_seconds = null;
+  draft.experience.first_response_reliability = "";
+  const result = validateBuyerIntake(draft);
+  assert(!result.errors.some(item => item.code === "FIRST_RESPONSE_SUBORDINATE_FIELDS_NOT_ALLOWED"));
+  assert(!result.tasks.some(item => item.code === "LATENCY_RELIABILITY_TRANSLATION"));
+});
+
+test("stability requirement beyond the site window creates the AC10 blocking task", () => {
+  const draft = completeBuyerIntake();
+  draft.experience.stability_hours = 1000;
+  draft.evidence_and_process.site_window_hours = 8;
+  const result = validateBuyerIntake(draft);
+  const task = result.tasks.find(item => item.code === "SITE_WINDOW_BELOW_MEASUREMENT_FLOOR");
+  assert(task?.blocks_freeze);
+  assert.match(task.message, /分阶段观察方案|修改要求/);
+});
+
+test("stability requirement fitting the site window creates no AC10 conflict task", () => {
+  const draft = completeBuyerIntake();
+  draft.experience.stability_hours = 8;
+  draft.evidence_and_process.site_window_hours = 8;
+  const result = validateBuyerIntake(draft);
+  assert(!result.tasks.some(item => item.code === "SITE_WINDOW_BELOW_MEASUREMENT_FLOOR"));
+});
+
 test("post-failure renegotiation is exposed as a freeze-blocking procurement task", () => {
   const draft = completeBuyerIntake();
   draft.evidence_and_process.fail_transition = "renegotiate";

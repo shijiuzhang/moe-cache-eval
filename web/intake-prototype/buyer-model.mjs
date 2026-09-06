@@ -17,6 +17,33 @@ export function emptyBuyerIntake() {
 
 const positive = value => typeof value === "number" && Number.isFinite(value) && value > 0;
 
+function validateCrossFieldConsistency(draft, { error, task }) {
+  const firstResponseRequired = draft.experience?.first_response_required;
+  const hasFirstResponseSeconds = draft.experience?.first_response_seconds !== null
+    && draft.experience?.first_response_seconds !== undefined;
+  const hasFirstResponseReliability = Boolean(draft.experience?.first_response_reliability);
+
+  if (["no", "unclear"].includes(firstResponseRequired)
+      && (hasFirstResponseSeconds || hasFirstResponseReliability)) {
+    error(
+      "experience",
+      "FIRST_RESPONSE_SUBORDINATE_FIELDS_NOT_ALLOWED",
+      "已选择合同不承诺或尚不清楚开始显示回答时间，不能同时保留秒数或达标频率；请先确认主答案。",
+    );
+  }
+
+  const stabilityHours = draft.experience?.stability_hours;
+  const siteWindowHours = draft.evidence_and_process?.site_window_hours;
+  if (positive(stabilityHours) && positive(siteWindowHours) && stabilityHours > siteWindowHours) {
+    task(
+      "procurement",
+      "SITE_WINDOW_BELOW_MEASUREMENT_FLOOR",
+      `已声明的 ${stabilityHours} 小时连续稳定性要求超过 ${siteWindowHours} 小时现场窗口；冻结前必须选择分阶段观察方案或修改要求，不能在现场静默删减覆盖。`,
+      true,
+    );
+  }
+}
+
 export function validateBuyerIntake(draft) {
   const errors = [];
   const tasks = [];
@@ -40,7 +67,7 @@ export function validateBuyerIntake(draft) {
   if (!draft.experience?.first_response_required) error("experience", "FIRST_RESPONSE_REQUIREMENT_REQUIRED", "请选择合同是否承诺开始显示回答的时间。");
   if (draft.experience?.first_response_required === "yes" && !positive(draft.experience.first_response_seconds)) error("experience", "FIRST_RESPONSE_TARGET_REQUIRED", "已要求快速开始回答，请填写可接受的秒数。");
   if (draft.experience?.first_response_required === "yes" && !draft.experience.first_response_reliability) error("experience", "FIRST_RESPONSE_RELIABILITY_REQUIRED", "请选择该体验要求允许多大偶发波动。");
-  if (draft.experience?.first_response_reliability === "unclear") task("procurement", "LATENCY_RELIABILITY_TRANSLATION", "合同没有说明体验要求适用于每次、大多数还是几乎所有请求。", true);
+  if (draft.experience?.first_response_required === "yes" && draft.experience?.first_response_reliability === "unclear") task("procurement", "LATENCY_RELIABILITY_TRANSLATION", "合同没有说明体验要求适用于每次、大多数还是几乎所有请求。", true);
   if (draft.experience?.first_response_required === "unclear") task("procurement", "FIRST_RESPONSE_PROMISE_UNRESOLVED", "需要确认合同是否包含开始显示回答的体验承诺。", true);
   if (!positive(draft.experience?.stability_hours)) error("experience", "STABILITY_WINDOW_REQUIRED", "请填写至少连续稳定运行的小时数。");
   if (!draft.experience?.recovery_expectation) error("experience", "RECOVERY_EXPECTATION_REQUIRED", "请选择服务中断后的恢复要求。");
@@ -84,6 +111,8 @@ export function validateBuyerIntake(draft) {
   if (["renegotiate", "unknown"].includes(draft.evidence_and_process?.fail_transition)) task("procurement", "FAIL_TRANSITION_UNRESOLVED", "正式采购前需要在合同中预先确定整改、重测或拒收的技术状态转换。", true);
   if (!positive(draft.evidence_and_process?.site_window_hours)) error("evidence", "SITE_WINDOW_REQUIRED", "请填写现场可用于验收的时间。");
   if (!draft.evidence_and_process?.retest_changes || draft.evidence_and_process.retest_changes === "unspecified") task("procurement", "RETEST_MUTABILITY_UNRESOLVED", "必须在看到测试结果前冻结重测允许改变的配置。", true);
+
+  validateCrossFieldConsistency(draft, { error, task });
 
   return { errors, tasks, ready_for_translation: errors.length === 0 };
 }

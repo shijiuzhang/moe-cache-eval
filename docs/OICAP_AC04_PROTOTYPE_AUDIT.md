@@ -304,3 +304,113 @@ J1 is the single open finding. It is confined to two lines plus a test, does not
 affect the privacy properties, and does not block the re-run of the rehearsal on the
 new buyer page — but it should be fixed before any translated contract is produced
 from an intake draft, because it determines what the translator is told to build.
+
+---
+
+# J1 confirming pass and rehearsal-analysis audit — 2026-09-06
+
+**Commit:** `4ddf0c8` "Derive buyer test plans from requirements". Tree clean,
+11 commits ahead, `v0.1` at `e62fed3`.
+
+## 27. J1 — CLOSED
+
+The auditor's original counterexample was re-run unchanged: a buyer declaring 500 peak
+users and 720 hours of stability whose only ticked worry is OOM.
+
+```
+CONCURRENCY_SWEEP_REQUIRED           owner oicap_compiler
+SOAK_PLAN_REQUIRED                   owner oicap_compiler
+RECOVERY_OBSERVATION_PLAN_REQUIRED   owner oicap_compiler
+OOM_EVIDENCE_PLAN_REQUIRED           owner technical_reviewer
+```
+
+All three plan tasks now derive from the declared requirements. `RECOVERY_OBSERVATION_
+PLAN_REQUIRED` was added for `recovery_expectation`, which the finding named but did
+not demonstrate. Tests 18/18 and 93/93.
+
+## 28. Rehearsal artifact — structural checks only
+
+The buyer instructed the auditor to review structural conclusions and
+de-identification, not procurement content. That instruction was honoured: the draft's
+answers were not read. The checks below are structural, and the two reproducible
+findings were confirmed against **synthetic inputs constructed by the auditor**, not
+against the buyer's answers.
+
+- `private/` contains the two drafts and the rehearsal analysis; `git ls-files private/`
+  returns nothing and `git check-ignore` matches `.gitignore:11` for both JSON files.
+  Nothing from the rehearsal is tracked.
+- The reported digest is correct: `724ad4b71cbbc59d…`.
+- The rehearsal analysis is itself inside the ignored tree, which is the right place
+  for a document that quotes procurement content.
+
+## 29. The implementer's findings 2 and 3 are one defect
+
+Both reproduce, and neither is specific to the buyer's case.
+
+**Case A — a task is generated about a promise the buyer said does not exist.**
+With `first_response_required: "no"` and stale subordinate values
+(`first_response_seconds: 10`, `first_response_reliability: "unclear"`):
+
+```
+status = READY_FOR_TECHNICAL_TRANSLATION   errors = 0
+tasks  = LATENCY_RELIABILITY_TRANSLATION, …
+```
+
+`LATENCY_RELIABILITY_TRANSLATION` fires unconditionally on the subordinate field, so
+the translator receives a blocking task about a latency promise that was explicitly
+declined. The subordinate fields are required when the answer is "yes" but are never
+cleared or rejected when it is "no".
+
+**Case B — a stability promise that cannot fit the on-site window passes silently.**
+With `stability_hours: 1000` and `site_window_hours: 8`:
+
+```
+status = READY_FOR_TECHNICAL_TRANSLATION   errors = 0
+no task or error references the window conflict
+```
+
+`stability_hours` and `site_window_hours` appear in `buyer-model.mjs` only inside
+isolated presence checks (lines 45 and 85). **They are never compared.** More broadly,
+the model validates every field in isolation and has no cross-field consistency pass
+at all. Findings 2 and 3 are two symptoms of that single absence, and enumerating
+them as separate patches will leave the next instance to be discovered by the next
+rehearsal.
+
+**Case B is already mandated by the accepted baseline.** AC10 requires that "a plan
+exceeding the buyer's frozen appointment window cannot be frozen without a deliberate
+profile change", and §8.2 forbids silently trimming coverage on site to fit the
+appointment. The intake is the cheapest possible place to detect this — it holds both
+numbers, in hours, before anyone compiles anything — and it is the only place where
+the buyer can still change the answer rather than discover the conflict on site.
+
+Required:
+
+1. add a cross-field consistency pass to `validateBuyerIntake`, distinct from the
+   per-field checks;
+2. subordinate fields must be cleared or rejected when their governing answer is "no"
+   or "unclear", so no task can be generated about a declined promise;
+3. a stability requirement exceeding the site window MUST surface at intake, and MUST
+   carry the AC10 reason code rather than a locally invented one, so intake and
+   compiler name the same condition. The resolution is a business choice between a
+   site soak plus a defined follow-on observation period and a changed requirement —
+   which is exactly the kind of choice that belongs to the buyer, before travel;
+4. rule tests for both cases.
+
+On findings 1 and 4 — the concurrency/TPS ambiguity and a stability answer occupying
+the quality field — the auditor takes no position, having not read the content. Both
+are the kind of finding AC04 exists to produce, and both are recorded in the right
+place.
+
+## 30. Disposition
+
+J1 is closed. The rehearsal has already returned its principal value: one pass by a
+real procurement owner produced four product defects, two of which are reproducible
+model bugs and one of which contradicts a rule the accepted specification already
+carries. That is a better return than any further review of the specification text
+would have given, and it is the outcome that was predicted when specification review
+was closed.
+
+The single open item is the missing cross-field consistency pass. It should be built
+as a layer rather than as two fixes, and item 3 should reuse the AC10 code. The buyer's
+existing `test case 1` draft must be preserved unmodified as the rehearsal's primary
+record; the re-run belongs in a new file.
