@@ -540,3 +540,87 @@ itself was passed by an ordinary `git push`, which means the gate is currently
 advisory. A document that must not be published before review should not sit in the
 tracked tree; it belongs under `private/` until the review is recorded, and the
 `v0.1`-style discipline of hashing the reviewed version applies here too.
+
+---
+
+# v0.2.0-alpha.1 release-candidate audit — 2026-09-06
+
+**Candidate:** `afe8671`, identical on `origin/main`. Tree clean. `v0.1` still
+`e62fed3`. No `v0.2.0-alpha.1` tag yet. Wheel `moe_cache_eval-0.2.0a1-py3-none-any.whl`
+digest `936d99ddb48f532d…` matches the reported value.
+
+## 36. Verified
+
+- 29/29 frontend, 93/93 Python locally; the candidate additionally reports 104/104
+  under CI's fuller collection.
+- The wheel was installed into a **clean venv** and the documented example run end to
+  end: `translate-expert` → `validate`, both `ok: true`, identity
+  `52cf80b46f9b6978…`.
+- `formal_procurement_verdict_enabled: false` is emitted by the translator itself, not
+  only stated in the notes.
+- `translation-report.json` records the emitted contract hashes and the runner profile,
+  so a compiled benchmark is traceable to the draft it came from.
+- **The translator's entry gate is correct.** `_validate_expert_draft` refuses any
+  draft whose `schema` is unrecognised, whose `status` is not
+  `READY_FOR_HUMAN_REVIEW`, or whose `validation.error_count` is non-zero. An
+  unresolved draft cannot be compiled.
+- The translator otherwise invents nothing: `weight_percent`, `input_tokens`,
+  `output_tokens`, `quality_rule`, every gate field and every execution field raise
+  `TranslationError` when absent.
+
+## 37. Finding K1 — `think_time_ms` is the one silent default, at two layers (OPEN)
+
+`oicap/translator.py:158`
+
+```python
+think_time = _finite_number(item.get("think_time_ms", 0), f"{class_id}.think_time_ms")
+```
+
+is the only `.get(..., <literal>)` in the file. Every neighbouring field is strictly
+required; think time alone becomes `0` when absent. `web/intake-prototype/model.mjs:99`
+initialises the same field to `0`, and the shipped fixture carries it. Running the
+documented example produces:
+
+```yaml
+arrival:
+  kind: closed_loop
+  active_users: 2
+session:
+  think_time_ms: 0.0
+```
+
+Two consequences:
+
+1. **It is not the same load.** Zero think time means clients that resubmit the instant
+   a response completes. That is a continuous-hammer profile, not the conversational
+   use the intake describes. Spec §3.1 lists "concurrency semantics or arrival process"
+   among the facts OICAP MUST reject rather than guess.
+2. **It silently changes the apparatus check.** `oicap/metrics.py:364` branches on
+   `think_s <= 0` to `method: "declared_active_users"`, so the interactive response
+   time law — the check that catches a client failing to sustain load — is never
+   applied to any contract that omitted think time.
+
+The sharper point is the pipeline as a whole. Commit `40e9dc7`, one commit earlier,
+rebuilt the buyer intake specifically so that peak users plus request rate derive an
+average request cycle — 100 s for the probed pair. **Nothing consumes it.** The expert
+workbench defaults the field to 0 and the translator accepts 0, so the value the
+previous fix existed to produce is discarded at the next layer. This is the same
+silently-idle-input defect as J1 and §31-33, now one layer down.
+
+Required, and small: make `think_time_ms` required in `_validate_expert_draft` exactly
+as its four neighbours are; leave the expert workbench field empty rather than `0`; give
+the fixture a think time consistent with the workload it claims to model; and carry the
+intake's derived cycle into the expert draft.
+
+## 38. Disposition
+
+K1 is **not release-blocking for this alpha as scoped** — it emits no SLA verdict, the
+fixture is labelled synthetic and explicitly not a recommendation, and no procurement
+conclusion can be drawn from the output. Everything else in the candidate is sound, and
+the chain genuinely runs from a clean install.
+
+It should nonetheless be fixed before tagging, because it is roughly fifteen minutes of
+work and because the shipped worked example currently models conversational users as
+zero-think-time hammering — a poor first demonstration of the discipline the product
+exists to enforce. Fix K1, re-run the example, then tag, release and re-verify the
+published wheel as planned.
