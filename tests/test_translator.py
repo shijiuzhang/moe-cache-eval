@@ -80,7 +80,8 @@ def valid_draft() -> dict:
                 "output_tokens": "1-32",
                 "source_policy": "public synthetic",
                 "session_semantics": "single_turn",
-                "think_time_ms": 0,
+                "buyer_mean_request_cycle_seconds": 2,
+                "think_time_ms": 1000,
                 "streaming": "required",
                 "quality_rule": "non-empty response; not executed by alpha1",
             }
@@ -150,6 +151,7 @@ class TranslatorTests(unittest.TestCase):
         output = self.translate(valid_draft())
         contracts = load_contracts(output)
         self.assertEqual(contracts.scenario["arrival"], {"kind": "closed_loop", "active_users": 2})
+        self.assertEqual(contracts.scenario["session"], {"think_time_ms": 1000.0})
         self.assertEqual(contracts.run["measurement"]["requests"], 4)
         self.assertEqual(contracts.run["token_accounting"]["authority"], "server_usage")
         report = json.loads((output / "translation-report.json").read_text())
@@ -158,6 +160,16 @@ class TranslatorTests(unittest.TestCase):
         self.assertIn("quality_gate_execution", report["not_included"])
         self.assertEqual(len(report["source_expert_draft_sha256"]), 64)
         self.assertEqual(report["emitted_contract_identity"], contracts.identity)
+        self.assertEqual(
+            report["think_time_review"]["short-answer"],
+            {"buyer_mean_request_cycle_seconds": 2.0, "reviewed_think_time_ms": 1000.0},
+        )
+
+    def test_missing_think_time_is_rejected_instead_of_defaulting_to_zero(self) -> None:
+        draft = valid_draft()
+        del draft["workload_classes"][0]["think_time_ms"]
+        with self.assertRaisesRegex(TranslationError, "think_time_ms"):
+            self.translate(draft)
 
     def test_unfinished_draft_is_rejected(self) -> None:
         draft = valid_draft()

@@ -30,7 +30,9 @@ It refuses to overwrite an existing output directory.
 Every successful translation includes `translation-report.json`, the source and
 workload SHA-256 values, emitted contract identity and hashes, selected load
 point, and a machine-readable statement that formal procurement verdicts are
-disabled.
+disabled. Closed-loop think time must be explicitly reviewed: the buyer-derived
+mean request cycle is carried forward as provenance but is never silently treated
+as think time or replaced with zero.
 
 ## What this release does not do
 

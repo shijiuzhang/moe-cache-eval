@@ -182,7 +182,8 @@
         <label>请求输出 token 范围<input data-field="output_tokens" placeholder="例如：100–800"></label>
         <label>来源<select data-field="source_policy"><option value="oicap_standard">OICAP 标准包</option><option value="buyer_local">甲方本地数据</option><option value="distribution_matched_synthetic">分布匹配合成</option></select></label>
         <label>会话<select data-field="session_semantics"><option value="single_turn">单轮</option><option value="multi_turn">多轮</option></select></label>
-        <label>思考间隔（毫秒）<input data-field="think_time_ms" type="number" min="0" step="any" value="0"></label>
+        <label>买方平均请求周期（秒，可选）<input data-field="buyer_mean_request_cycle_seconds" type="number" min="0" step="any" placeholder="由买方人数与请求率推导"></label>
+        <label>复核后思考间隔（毫秒）<input data-field="think_time_ms" type="number" min="0" step="any" placeholder="必填；不能默认为 0"></label>
         <label>响应<select data-field="streaming"><option value="required">必须流式</option><option value="forbidden">必须非流式</option><option value="either">均可</option></select></label>
       </div>
       <label>质量规则<textarea data-field="quality_rule" rows="2" placeholder="描述合格输出的判据和可用的参考证据；没有规则不能靠速度替代质量。"></textarea></label>

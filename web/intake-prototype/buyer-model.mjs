@@ -220,11 +220,21 @@ export function finalizeBuyerIntake(draft) {
   out.status = result.ready_for_translation ? "READY_FOR_TECHNICAL_TRANSLATION" : "DRAFT_WITH_ERRORS";
   out.validation = { checked_at: new Date().toISOString(), error_count: result.errors.length, errors: result.errors, requirement_coverage: result.requirement_coverage };
   out.technical_translation_tasks = result.tasks;
+  const loadModelCandidates = result.tasks
+    .filter(item => item.code === "LOAD_MODEL_TRANSLATION_REQUIRED" && item.details?.mean_request_cycle_seconds)
+    .map(item => ({
+      mean_request_cycle_seconds: item.details.mean_request_cycle_seconds,
+      formula: item.details.formula,
+      interpretation: item.details.interpretation,
+      reviewed_think_time_ms: null,
+      status: "REQUIRES_TECHNICAL_REVIEW",
+    }));
   out.handoff = {
     procurement_intent_recorded: result.ready_for_translation,
     technical_contract_frozen: false,
     test_pack_compiled: false,
     verdict_available: false,
+    load_model_candidates: loadModelCandidates,
   };
   return out;
 }

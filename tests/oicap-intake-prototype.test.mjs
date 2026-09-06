@@ -24,7 +24,8 @@ function completeDraft() {
     output_tokens: "100-800",
     source_policy: "buyer_local",
     session_semantics: "single_turn",
-    think_time_ms: 0,
+    buyer_mean_request_cycle_seconds: 100,
+    think_time_ms: 1000,
     streaming: "required",
     quality_rule: "Pinned post-hoc validator and private reference manifest.",
   }];
@@ -81,6 +82,15 @@ test("bare TPS is rejected even when imported outside the dropdown", () => {
   draft.sla_gates[0].metric = "TPS";
   const result = validateDraft(draft);
   assert(result.errors.some(item => item.code === "BARE_TPS_REJECTED"));
+});
+
+test("think time is explicit and never silently defaulted", () => {
+  const draft = completeDraft();
+  draft.workload_classes[0].think_time_ms = null;
+  assert(validateDraft(draft).errors.some(item => item.code === "THINK_TIME_REQUIRED"));
+
+  draft.workload_classes[0].think_time_ms = 0;
+  assert.equal(validateDraft(draft).errors.some(item => item.code === "THINK_TIME_REQUIRED"), false);
 });
 
 test("a silent deployment catalogue field blocks review", () => {

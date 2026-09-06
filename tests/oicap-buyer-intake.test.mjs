@@ -87,6 +87,10 @@ test("concurrency and aggregate request rate derive one candidate load model plu
   assert.equal(translation?.details?.mean_request_cycle_seconds, 100);
   assert.equal(translation?.details?.interpretation, "service_time_plus_think_time; requires technical review");
   assert.equal(translation?.blocks_freeze, true);
+  const finalized = finalizeBuyerIntake(draft);
+  assert.equal(finalized.handoff.load_model_candidates[0].mean_request_cycle_seconds, 100);
+  assert.equal(finalized.handoff.load_model_candidates[0].reviewed_think_time_ms, null);
+  assert.equal(finalized.handoff.load_model_candidates[0].status, "REQUIRES_TECHNICAL_REVIEW");
 });
 
 test("request-rate interaction still compiles one formal load plan when peak users are also known", () => {

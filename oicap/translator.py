@@ -142,6 +142,7 @@ def _validate_expert_draft(draft: dict[str, Any]) -> dict[str, Any]:
     class_ids: list[str] = []
     weights: list[float] = []
     think_times: list[float] = []
+    think_time_reviews: dict[str, dict[str, float | None]] = {}
     for index, raw in enumerate(classes):
         item = _object(raw, f"workload_classes[{index}]")
         class_id = str(item.get("class_id", "")).strip()
@@ -155,10 +156,24 @@ def _validate_expert_draft(draft: dict[str, Any]) -> dict[str, Any]:
         for key in ("input_tokens", "output_tokens", "quality_rule"):
             if not str(item.get(key, "")).strip():
                 raise TranslationError(f"{class_id}.{key} is required.")
-        think_time = _finite_number(item.get("think_time_ms", 0), f"{class_id}.think_time_ms")
+        think_time = _finite_number(item.get("think_time_ms"), f"{class_id}.think_time_ms")
         if think_time < 0:
             raise TranslationError(f"{class_id}.think_time_ms cannot be negative.")
         think_times.append(think_time)
+        buyer_cycle_raw = item.get("buyer_mean_request_cycle_seconds")
+        buyer_cycle = None
+        if buyer_cycle_raw not in (None, ""):
+            buyer_cycle = _finite_number(
+                buyer_cycle_raw, f"{class_id}.buyer_mean_request_cycle_seconds"
+            )
+            if buyer_cycle <= 0:
+                raise TranslationError(
+                    f"{class_id}.buyer_mean_request_cycle_seconds must be greater than zero."
+                )
+        think_time_reviews[class_id] = {
+            "buyer_mean_request_cycle_seconds": buyer_cycle,
+            "reviewed_think_time_ms": think_time,
+        }
     if abs(sum(weights) - 100.0) > 0.001:
         raise TranslationError("Workload class weights must sum to 100 percent.")
 
@@ -251,6 +266,7 @@ def _validate_expert_draft(draft: dict[str, Any]) -> dict[str, Any]:
         "class_ids": class_ids,
         "weights": weights,
         "think_times": think_times,
+        "think_time_reviews": think_time_reviews,
         "gate_min_samples": gate_min_samples,
         "gate_min_durations": gate_min_durations,
         "authorities": authorities,
@@ -445,6 +461,7 @@ def _compile_documents(
         "workload_sha256": file_sha256(workload_source),
         "selected_load_point": selected_load,
         "load_semantics": semantics,
+        "think_time_review": normalized["think_time_reviews"],
         "formal_procurement_verdict_enabled": False,
         "local_measurement_enabled": True,
         "local_unsigned_evidence_verification_enabled": True,

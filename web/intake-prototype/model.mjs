@@ -96,7 +96,8 @@ export function emptyWorkload() {
     output_tokens: "",
     source_policy: "oicap_standard",
     session_semantics: "single_turn",
-    think_time_ms: 0,
+    buyer_mean_request_cycle_seconds: null,
+    think_time_ms: null,
     streaming: "required",
     quality_rule: "",
   };
@@ -164,6 +165,15 @@ export function validateDraft(draft) {
     else totalWeight += weight;
     if (!item.input_tokens?.trim()) error("workload", "INPUT_DISTRIBUTION_REQUIRED", `业务类别 ${n} 缺少输入 token 分布。`);
     if (!item.output_tokens?.trim()) error("workload", "OUTPUT_DISTRIBUTION_REQUIRED", `业务类别 ${n} 缺少请求输出 token 分布。`);
+    const buyerCycle = numberOrNull(item.buyer_mean_request_cycle_seconds);
+    if (item.buyer_mean_request_cycle_seconds !== null
+        && item.buyer_mean_request_cycle_seconds !== ""
+        && !(buyerCycle > 0)) {
+      error("workload", "BUYER_REQUEST_CYCLE_INVALID", `业务类别 ${n} 的买方平均请求周期必须大于零。`);
+    }
+    const thinkTime = numberOrNull(item.think_time_ms);
+    if (thinkTime === null) error("workload", "THINK_TIME_REQUIRED", `业务类别 ${n} 必须由技术复核明确填写思考间隔，不能默认为零。`);
+    else if (thinkTime < 0) error("workload", "THINK_TIME_INVALID", `业务类别 ${n} 的思考间隔不能为负数。`);
     if (!item.quality_rule?.trim()) error("workload", "QUALITY_RULE_REQUIRED", `业务类别 ${n} 缺少质量规则。`);
   });
   if ((draft.workload_classes ?? []).length && Math.abs(totalWeight - 100) > 0.001) {

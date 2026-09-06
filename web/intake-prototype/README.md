@@ -68,6 +68,11 @@ the prototype shape as a frozen API.
 The prototype's `validation` and `derived` blocks are advisory AC04 findings. They
 must not be copied into canonical contracts as if they were server adjudication.
 
+When peak users and aggregate request rate are both known, the buyer export carries
+their derived mean request cycle in `handoff.load_model_candidates`. That value is
+service time plus think time, not think time itself. The expert workbench preserves it
+as review input and requires an explicit `think_time_ms`; it never substitutes zero.
+
 ## Handling downloaded drafts
 
 The copy-to-clipboard path is intentionally absent: system clipboards may be shared
