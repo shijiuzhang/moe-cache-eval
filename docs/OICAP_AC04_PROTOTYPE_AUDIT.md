@@ -414,3 +414,129 @@ The single open item is the missing cross-field consistency pass. It should be b
 as a layer rather than as two fixes, and item 3 should reuse the AC10 code. The buyer's
 existing `test case 1` draft must be preserved unmodified as the rehearsal's primary
 record; the re-run belongs in a new file.
+
+---
+
+# Review of the two test-case-2 findings — 2026-09-06
+
+Both implementer findings reproduce. They were confirmed against **synthetic inputs
+constructed by the auditor**, not against the buyer's answers, per the standing
+instruction that the auditor reviews structure and de-identification only.
+
+Probe: `peak_users: 50`, `interaction_pattern: "conversational"`,
+`requests_per_minute: 30`, `first_response_required: "yes"` / `10s` / `"most"`,
+`quality_expectation` filled, `stability_hours: 10`.
+
+```
+status = READY_FOR_TECHNICAL_TRANSLATION   errors = 0
+tasks  = CONCURRENCY_SWEEP_REQUIRED, SOAK_PLAN_REQUIRED,
+         RECOVERY_OBSERVATION_PLAN_REQUIRED, SUPPLIER_REPORT_PROVENANCE_ONLY
+
+requests_per_minute = 30      -> arrival-rate task?   false
+first_response 10s / "most"   -> any TTFT gate task?  false
+quality_expectation set       -> quality gate task?   false
+stability_hours = 10          -> soak task?           true      (contrast)
+```
+
+## 31. Finding 1 confirmed — but the proposed remedy is wrong
+
+`buyer-model.mjs:80-93` selects the plan task with a ternary:
+
+```js
+const arrivalRatePlan = draft.peak_use?.interaction_pattern === "known_request_rate";
+task("oicap_compiler", arrivalRatePlan ? "ARRIVAL_RATE_PLAN_REQUIRED" : "CONCURRENCY_SWEEP_REQUIRED", …)
+```
+
+Exactly one task is ever produced, so a populated `requests_per_minute` under any
+other interaction pattern drives nothing and raises no error. The finding is correct.
+
+**The proposed fix — "generate both a concurrency plan and an arrival-rate plan" —
+should not be adopted.** Closed-loop concurrency and open-loop arrival rate are
+different load models, not two views of one. Emitting both doubles the measured phases
+and therefore the wall-clock budget, which collides with `SITE_WINDOW_BELOW_MEASUREMENT_
+FLOOR` — the AC10 rule committed in the previous change — and yields two capacity
+answers that can disagree with no rule for reconciling them.
+
+The two numbers are not redundant and not alternatives. **Together they determine think
+time**, which is precisely the field the buyer can never state and the scenario schema
+demands:
+
+- `oicap/schemas/0.1/scenario.schema.json` makes `session.think_time_ms` **required**
+  whenever `arrival.kind` is `closed_loop`, and forbids `session` otherwise;
+- `oicap/metrics.py:362-372` already implements the interactive response time law
+  `N × S/(S+Z)` and reports `method: "interactive_response_time_law"`.
+
+For the probed pair, 50 users at 30 requests/minute gives `S + Z = 100 s` — one request
+per user every hundred seconds. That is a derived think time, obtained from two
+questions a procurement officer can answer, for a parameter they could never be asked
+about directly. **Treating the pair as mutually exclusive discards the only route by
+which think time can be supplied at all.**
+
+Correct treatment: when both are present, derive the implied per-user request interval,
+surface it to the technical reviewer for confirmation, and pick one load model with the
+other number retained as a consistency check. If the pair is internally impossible,
+that is an intake-time error, not a site-time discovery.
+
+## 32. Finding 2 confirmed — it is an incomplete J1, not a new class
+
+A fully specified latency promise produces no obligation. `LATENCY_RELIABILITY_
+TRANSLATION` fires only when reliability is `"unclear"`, and
+`FIRST_RESPONSE_PROMISE_UNRESOLVED` only when the promise itself is `"unclear"`. A
+buyer who answers the question *well* — yes, 10 seconds, most requests — generates
+nothing, while a buyer who answers it badly generates a blocking task.
+
+J1's fix established the rule that a declared requirement creates a plan obligation,
+and implemented it for load, stability and recovery. Latency is the fourth requirement
+family and was not covered. The comment now standing at `buyer-model.mjs:76-78` states
+the rule the code does not yet fully keep.
+
+## 33. Auditor addition — quality is the third instance
+
+Neither party has named it: `QUALITY_RULE_UNRESOLVED` fires only when
+`quality_expectation` is **empty**. A buyer who states a quality expectation clearly
+produces no obligation to compile a quality gate.
+
+This is the most consequential of the three. Charter invariant 6 is "No speed without
+quality", spec §10 requires every formal quality gate to carry a gate-specific positive
+control, and AC12 makes that a release criterion. If the intake records a quality
+requirement and emits no task, the quality gate can simply never be built — and a
+delivered system then passes on latency and throughput alone, which is the exact
+outcome the invariant exists to prevent.
+
+## 34. The rule to implement, rather than three more patches
+
+All three are one gap: **a populated field that generates neither an obligation nor an
+error is silently idle.** The model already applies the correct rule to three
+requirement families; it needs to apply it to all of them, and to reject input it does
+not consume.
+
+1. every declared requirement produces a compilation obligation — latency, quality and
+   arrival rate joining load, stability and recovery;
+2. a populated field that no task consumes and no rule rejects is itself a defect;
+   add a completeness check that fails when input is retained without an obligation;
+3. a rule test per requirement family asserting that the well-specified answer produces
+   its task, mirroring the J1 counterexample test;
+4. the arrival-rate pair per §31 — derive, confirm, choose one model.
+
+## 35. Push and tag — verified, and one process finding
+
+Checked against the remote rather than the local copy. `refs/heads/main` is
+`67f03c89`; the annotated tag object `192b9b0a` dereferences to `67f03c89` on the
+remote; `refs/tags/v0.1^{}` still dereferences to `e62fed3`. The tag name
+`v0.2-ac04-intake-1` correctly does not claim a v0.2 release.
+
+No rehearsal material reached the public repository: `git log --all --name-only`
+contains no path under `private/`, and a content scan of every tracked file for
+organization, vendor, model, hardware, price and threshold patterns returns nothing.
+The only matches for "test case 1" are two audit documents referring to the codename
+itself, which carries no information.
+
+**Process finding, no harm done.** `docs/OICAP_AC04_PUBLIC_SUMMARY_DRAFT.md` is now on
+public GitHub while its own header still reads "**Not yet approved for publication** …
+still requires an authorized confidentiality review", and its status block still says
+`confidentiality review: pending`. The content is in fact clean — that was verified
+before and after the push — so nothing was disclosed. But the gate the team wrote for
+itself was passed by an ordinary `git push`, which means the gate is currently
+advisory. A document that must not be published before review should not sit in the
+tracked tree; it belongs under `private/` until the review is recorded, and the
+`v0.1`-style discipline of hashing the reviewed version applies here too.

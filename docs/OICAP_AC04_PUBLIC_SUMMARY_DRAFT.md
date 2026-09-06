@@ -1,8 +1,10 @@
-# OICAP V02-AC04 public structural summary — DRAFT
+# OICAP V02-AC04 public structural summary — PUBLIC WORKING DRAFT
 
-> **Not yet approved for publication.** This draft contains structural findings only
-> and still requires an authorized confidentiality review for indirect
-> identifiability. It intentionally omits project, supplier, model, hardware,
+> **Not an accepted AC04 evidence artifact.** This de-identified working draft was
+> committed before an authorized confidentiality approval was recorded. It is
+> already public and is labelled accordingly rather than pretending that the
+> publication gate still controls it. Future drafts remain under `private/` until
+> approval. This document intentionally omits project, supplier, model, hardware,
 > threshold, workload, date, price and organization details.
 
 ## Status
@@ -10,7 +12,8 @@
 - rehearsal basis: de-identified real enterprise acceptance case;
 - participant roles represented: procurement acceptance and technical facilitation;
 - private source: outside Git under the ignored `private/` tree;
-- confidentiality review: pending;
+- automated and independent content scans: passed; authorized confidentiality
+  approval: pending;
 - V02-AC04 result: pending confidentiality and final acceptance review; the buyer UI
   revision has been implemented locally.
 
@@ -100,6 +103,9 @@ this as a later human warning; it does not pretend to predict supplier capabilit
     retain active target fields, and requested coverage that exceeds the appointment
     window must be surfaced before technical compilation rather than silently
     shortened on site.
+11. require every retained acceptance input to name its downstream compilation
+    obligation; complete latency and quality answers must not disappear from the
+    translator's work queue.
 
 ## Confidentiality review checklist
 

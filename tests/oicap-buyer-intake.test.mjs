@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile } from "node:fs/promises";
-import { emptyBuyerIntake, finalizeBuyerIntake, validateBuyerIntake } from "../web/intake-prototype/buyer-model.mjs";
+import { checkRequirementCoverage, emptyBuyerIntake, finalizeBuyerIntake, validateBuyerIntake } from "../web/intake-prototype/buyer-model.mjs";
 
 function completeBuyerIntake() {
   const draft = emptyBuyerIntake();
@@ -73,6 +73,69 @@ test("buyer worries raise plan emphasis without determining whether the plan exi
   const byCode = new Map(result.tasks.map(item => [item.code, item]));
   assert.equal(byCode.get("CONCURRENCY_SWEEP_REQUIRED").buyer_emphasis, true);
   assert.equal(byCode.get("SOAK_PLAN_REQUIRED").buyer_emphasis, true);
+});
+
+test("concurrency and aggregate request rate derive one candidate load model plus a reviewed cycle-time constraint", () => {
+  const draft = completeBuyerIntake();
+  draft.peak_use.peak_users = 50;
+  draft.peak_use.interaction_pattern = "active_chat";
+  draft.peak_use.requests_per_minute = 30;
+  const result = validateBuyerIntake(draft);
+  const formalPlans = result.tasks.filter(item => ["CONCURRENCY_SWEEP_REQUIRED", "ARRIVAL_RATE_PLAN_REQUIRED"].includes(item.code));
+  const translation = result.tasks.find(item => item.code === "LOAD_MODEL_TRANSLATION_REQUIRED");
+  assert.deepEqual(formalPlans.map(item => item.code), ["CONCURRENCY_SWEEP_REQUIRED"]);
+  assert.equal(translation?.details?.mean_request_cycle_seconds, 100);
+  assert.equal(translation?.details?.interpretation, "service_time_plus_think_time; requires technical review");
+  assert.equal(translation?.blocks_freeze, true);
+});
+
+test("request-rate interaction still compiles one formal load plan when peak users are also known", () => {
+  const draft = completeBuyerIntake();
+  draft.peak_use.peak_users = 50;
+  draft.peak_use.interaction_pattern = "known_request_rate";
+  draft.peak_use.requests_per_minute = 30;
+  const result = validateBuyerIntake(draft);
+  const formalPlans = result.tasks.filter(item => ["CONCURRENCY_SWEEP_REQUIRED", "ARRIVAL_RATE_PLAN_REQUIRED"].includes(item.code));
+  assert.deepEqual(formalPlans.map(item => item.code), ["ARRIVAL_RATE_PLAN_REQUIRED"]);
+  assert(result.tasks.some(item => item.code === "LOAD_MODEL_TRANSLATION_REQUIRED"));
+});
+
+test("a complete first-response requirement always creates a TTFT gate obligation", () => {
+  const result = validateBuyerIntake(completeBuyerIntake());
+  const task = result.tasks.find(item => item.code === "FIRST_RESPONSE_GATE_REQUIRED");
+  assert(task);
+  assert.deepEqual(task.source_fields, ["experience.first_response_required", "experience.first_response_seconds", "experience.first_response_reliability"]);
+});
+
+test("a stated quality requirement always creates a quality gate obligation", () => {
+  const result = validateBuyerIntake(completeBuyerIntake());
+  const task = result.tasks.find(item => item.code === "QUALITY_GATE_REQUIRED");
+  assert(task);
+  assert(task.source_fields.includes("experience.quality_expectation"));
+});
+
+test("requirement coverage detects a retained input with no compilation obligation", () => {
+  const coverage = checkRequirementCoverage(["experience.quality_expectation"], []);
+  assert.deepEqual(coverage.uncovered_fields, ["experience.quality_expectation"]);
+});
+
+test("retained optional load values are either valid and consumed or rejected", () => {
+  const draft = completeBuyerIntake();
+  draft.peak_use.requests_per_minute = 0;
+  let result = validateBuyerIntake(draft);
+  assert(result.errors.some(item => item.code === "REQUEST_RATE_REQUIRED"));
+
+  draft.peak_use.requests_per_minute = null;
+  draft.peak_use.peak_users_known = "unknown";
+  draft.peak_use.peak_users = 50;
+  result = validateBuyerIntake(draft);
+  assert(result.errors.some(item => item.code === "PEAK_USERS_SUBORDINATE_FIELD_NOT_ALLOWED"));
+});
+
+test("complete buyer input has no silently retained acceptance requirement", () => {
+  const result = validateBuyerIntake(completeBuyerIntake());
+  assert.deepEqual(result.requirement_coverage.uncovered_fields, []);
+  assert.equal(result.errors.some(item => item.code === "RETAINED_REQUIREMENT_WITHOUT_OBLIGATION"), false);
 });
 
 test("declined first-response promise rejects stale subordinate values without creating a latency task", () => {

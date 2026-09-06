@@ -48,7 +48,7 @@
           <div class="section-head"><div><p class="step-number">02</p><h2>使用高峰</h2></div><p>“有多少账号”不等于“同时有多少请求”。只填你真正知道的，系统会把缺口交给技术人员确认。</p></div>
           <div class="field-grid two">
             <label>高峰期可能同时在线的人数<select name="peak_users_known"><option value="">请选择</option><option value="known">我知道大致人数</option><option value="unknown">目前说不清</option></select></label>
-            <label>人数（如已知）<input name="peak_users" type="number" min="1" step="1" placeholder="例如：500"></label>
+            <label>人数（如已知）<span>选择“我知道”后填写</span><input name="peak_users" type="number" min="1" step="1" placeholder="例如：500"></label>
           </div>
           <fieldset><legend>高峰期每个人大概怎么使用？<span>必填</span></legend><div class="radio-stack">
             <label><input type="radio" name="interaction_pattern" value="burst">可能在同一时刻集中发问</label>
@@ -58,7 +58,7 @@
             <label><input type="radio" name="interaction_pattern" value="unknown">不知道，需要技术人员或日志确认</label>
           </div></fieldset>
           <div class="field-grid two">
-            <label>已知的高峰请求量（可不填）<input name="requests_per_minute" type="number" min="0" step="any" placeholder="每分钟请求数"></label>
+            <label>已知的高峰请求量（可不填）<input name="requests_per_minute" type="number" min="0.1" step="any" placeholder="每分钟请求数"></label>
             <label>一次使用通常要处理多长内容？<select name="input_size"><option value="">请选择或不清楚</option><option value="short">短问题或短指令</option><option value="medium">数页文档</option><option value="long">长文档或大量上下文</option><option value="mixed">以上情况混合</option><option value="unknown">不清楚</option></select></label>
           </div>
         </section>

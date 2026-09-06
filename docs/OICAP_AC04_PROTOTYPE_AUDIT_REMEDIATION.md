@@ -89,6 +89,34 @@ primary rehearsal observation, not a draft to repair in place. Revalidation unde
 new rules exposes the stale subordinate fields and site-window conflict without
 rewriting the source file.
 
+## Requirement-to-obligation completeness
+
+Every retained acceptance-requirement field now appears in a machine-readable
+`requirement_coverage` block and names the compilation or review tasks that consume
+it. Any retained field with no corresponding task produces
+`RETAINED_REQUIREMENT_WITHOUT_OBLIGATION`; the intake cannot silently carry an input
+that the translator is never assigned to use.
+
+The previously missing families now behave as follows:
+
+- a complete first-response requirement creates `FIRST_RESPONSE_GATE_REQUIRED`;
+- a stated answer-quality requirement creates `QUALITY_GATE_REQUIRED`, while an
+  empty one continues to create the blocking `QUALITY_RULE_UNRESOLVED` task;
+- business outcome and workload intent create explicit translation/profile tasks;
+- a peak-user count plus aggregate requests per minute derives
+  `mean_request_cycle_seconds = peak_users * 60 / requests_per_minute`. It creates
+  one blocking `LOAD_MODEL_TRANSLATION_REQUIRED` task, not a second formal load plan.
+  The translator confirms the interpretation, freezes either closed-loop or
+  open-loop semantics, and retains the other number as a consistency constraint.
+
+The last rule deliberately avoids running both a closed-loop and an open-loop suite
+merely because the buyer knew both numbers. Those are different load models with
+different wall-clock costs and potentially different capacity conclusions.
+
+The private `test case 2` file is also preserved unchanged. Revalidation under this
+implementation derives the request cycle, creates the missing TTFT obligation, and
+reports zero uncovered retained requirement fields.
+
 ## Verification commands
 
 ```sh

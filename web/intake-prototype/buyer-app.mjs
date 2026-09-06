@@ -29,6 +29,13 @@ function syncFirstResponseFields() {
   reliability.disabled = !enabled;
 }
 
+function syncPeakUsersField() {
+  const enabled = value("peak_users_known") === "known";
+  const peakUsers = form.elements.namedItem("peak_users");
+  if (!enabled) peakUsers.value = "";
+  peakUsers.disabled = !enabled;
+}
+
 function renderNav() {
   nav.replaceChildren();
   BUYER_STEPS.forEach(([key, label], index) => {
@@ -76,5 +83,9 @@ document.querySelector("#buyer-next-step").addEventListener("click", () => show(
 document.querySelector("#buyer-download-json").addEventListener("click", download);
 document.querySelector("#buyer-clear-form").addEventListener("click", () => { if (window.confirm("清空本次采购需求录入？页面没有自动保存。")) window.location.reload(); });
 form.addEventListener("input", refresh);
-form.addEventListener("change", event => { if (event.target.name === "first_response_required") syncFirstResponseFields(); refresh(); });
-syncFirstResponseFields(); show(0); refresh();
+form.addEventListener("change", event => {
+  if (event.target.name === "first_response_required") syncFirstResponseFields();
+  if (event.target.name === "peak_users_known") syncPeakUsersField();
+  refresh();
+});
+syncFirstResponseFields(); syncPeakUsersField(); show(0); refresh();

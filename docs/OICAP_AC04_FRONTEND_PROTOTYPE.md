@@ -75,6 +75,10 @@ analytics or API calls. The operator must store an exported draft under the igno
 - declared peak-use, stability and recovery requirements always create named
   compilation tasks; the buyer's selected concerns change task emphasis but never
   decide whether a contractual test exists;
+- every retained acceptance requirement maps to a named compilation obligation;
+  complete TTFT and quality answers cannot disappear from the translator's queue;
+- peak users plus aggregate request rate derive a buyer-reviewable mean request
+  cycle and one formal load-model decision, not two automatically doubled suites;
 - sustained maximum-load preflight, resource capture, on-site same-path calibration
   and buyer-controlled responder checks are explicit;
 - the export status is at most `READY_FOR_HUMAN_REVIEW`.
@@ -116,3 +120,5 @@ not copy tender text. The resulting JSON is a private rehearsal record. Only fin
 such as “this field was unavailable”, “this phrase had multiple meanings” or “this
 step would not fit the site window” may be transferred into
 `OICAP_AC04_PUBLIC_SUMMARY_TEMPLATE.md`, after an authorized confidentiality review.
+Future public-summary drafts stay under the ignored `private/` tree until that review
+is recorded; only the reviewed copy is added to a tracked path.
