@@ -94,11 +94,12 @@ into a new Python 3.12 virtual environment outside the repository, and the full
 translation, validation, calibration, real-endpoint run, and verification chain
 was repeated through the installed `oicap` console script. The installed runtime
 reported `0.2.0a1`; all five commands succeeded and verification again returned
-`ok: true` with no errors.
+`ok: true` with no errors. The final artifact was rebuilt twice with
+`SOURCE_DATE_EPOCH=1788703043`; both builds produced the same digest below.
 
 | Artifact | Size | SHA-256 |
 |---|---:|---|
-| `moe_cache_eval-0.2.0a1-py3-none-any.whl` | 61,910 bytes | `3a3a106a3c1bf9fe7ccfa0aea0de648ec9152d3c76a31e73c5a95045420be13b` |
+| `moe_cache_eval-0.2.0a1-py3-none-any.whl` | 61,910 bytes | `8b73a88c8a93f715a2fb32b71f2e0e41246bf53f03dce2ba9a36e826122a3c01` |
 
 The wheel contains the translator, console entry point, and all four published
 schema documents.
