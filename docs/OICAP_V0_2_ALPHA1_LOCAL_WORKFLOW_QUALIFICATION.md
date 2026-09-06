@@ -4,7 +4,7 @@
 
 **Date:** 2026-09-06
 
-**Runner commit:** `61c1f46581124e2b4b352d28c1b8052653ec0275`
+**Runner commit:** `ecb165d6fa265df71627878248e4eb70f860be6e`
 
 **OICAP version:** `0.2.0a1`
 
@@ -54,7 +54,8 @@ the exact commit above and `git_dirty: false`.
 | Four emitted contracts | accepted by the published schema-0.1 validator |
 | Calibration | `valid: true`; no invalid reasons |
 | Real run | 4/4 measured requests successful |
-| Closed-loop load | requested 2; realized mean before final submission 1.9956 |
+| Closed-loop load | 2 users with explicit 1,000 ms think time; interactive response-time-law check |
+| Load realization | expected mean in-flight 0.1240; realized 0.1621; ratio 1.3074; apparatus `VALID` |
 | Evidence verification | `ok: true`; `errors: []` |
 | Metrics ruleset | current `0.2-dev2`; adjudication eligible as measurement evidence |
 | Per-token latency | unavailable, as required without authoritative token timestamps |
@@ -68,18 +69,18 @@ capacity or procurement conclusion.
 
 | Record | SHA-256 |
 |---|---|
-| generated `translation-report.json` | `10c6c52262cc1d66c6eb305c510897d3f08e9526ba553ed17848c9a5830a0768` |
-| calibration `manifest.json` | `8c13f7ac3cb81346a7bf6eebc1ff6a9e28d76c6db400517f73bb4da245c571f4` |
-| run `manifest.json` | `b9fd62341da6e4537b504aec6631901c35ca1cb961f593e1c33e24a3c3de8906` |
+| generated `translation-report.json` | `4fba1e5f12cbd0f4a910d3970580addb6205954eed66e19f3927c204feb736a6` |
+| calibration `manifest.json` | `0c110659f422fb6c68d7695d7014616f23b3e55d50e82d472a0dd9eef99367bc` |
+| run `manifest.json` | `fd7dd88d33f4d014cdad194dcaf87f168a4083627d82cf0a8052fc372b18f665` |
 
 These are execution-record checksums, not a detached signature or external
 timestamp anchor. The bundles remain unsigned, exactly as `oicap verify` reports.
 
 ## Test suites
 
-- Python: 104 tests, all passed;
-- buyer/expert browser-local workflow: 29 tests, all passed;
-- translator-specific positive and negative controls: 11 tests, all passed.
+- Python: 105 tests, all passed;
+- buyer/expert browser-local workflow: 30 tests, all passed;
+- translator-specific positive and negative controls: 12 tests, all passed.
 
 The negative controls reject unfinished expert drafts, mismatched workload
 classes, undeclared load points, ambiguous service-discipline text, unsupported
@@ -97,7 +98,7 @@ reported `0.2.0a1`; all five commands succeeded and verification again returned
 
 | Artifact | Size | SHA-256 |
 |---|---:|---|
-| `moe_cache_eval-0.2.0a1-py3-none-any.whl` | 61,756 bytes | `936d99ddb48f532d1da7535105788be9500d0fed7424a693d75a7292e0b03369` |
+| `moe_cache_eval-0.2.0a1-py3-none-any.whl` | 61,910 bytes | `3a3a106a3c1bf9fe7ccfa0aea0de648ec9152d3c76a31e73c5a95045420be13b` |
 
 The wheel contains the translator, console entry point, and all four published
 schema documents.
