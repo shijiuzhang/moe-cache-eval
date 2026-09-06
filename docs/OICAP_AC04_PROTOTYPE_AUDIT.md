@@ -624,3 +624,77 @@ work and because the shipped worked example currently models conversational user
 zero-think-time hammering — a poor first demonstration of the discipline the product
 exists to enforce. Fix K1, re-run the example, then tag, release and re-verify the
 published wheel as planned.
+
+---
+
+# v0.2.0-alpha.1 release audit — CLOSED — 2026-09-06
+
+Verified against the **published artifact**, not the local build.
+
+| Check | Method | Result |
+|---|---|---|
+| Tag and branch agree on the remote | `git ls-remote` | `refs/heads/main` and `refs/tags/v0.2.0-alpha.1^{}` both `335a562c`; annotated tag object `989f54e5` |
+| v0.1 undisturbed | `git ls-remote` | `refs/tags/v0.1^{}` still `e62fed3` |
+| Published wheel is the audited one | downloaded from the release URL | HTTP 200, 61 910 bytes, SHA-256 `8b73a88c8a93f715a2fb32b71f2e0e41246bf53f03dce2ba9a36e826122a3c01` — matches the claim exactly |
+| Release artifact actually works | installed **the downloaded file** into a fresh venv | full chain `translate-expert` → `validate` → `calibrate` → `run` → `verify` all exit 0 |
+| Evidence verifies | `oicap verify` | `ok: true`, `errors: []`, ruleset `0.2-dev2`, `adjudication_eligible: true` |
+| Regression | local suites | 105/105 Python, 30/30 frontend |
+
+## 39. K1 — CLOSED, and the fix is observable in the evidence
+
+Omitting `think_time_ms` from an expert draft is now refused by the published binary:
+
+```
+"error": "substantive-short-answer.think_time_ms must be numeric.", "ok": false
+exit code 2
+```
+
+The shipped fixture emits `think_time_ms: 1000.0`, and the apparatus record from a real
+run shows the consequence that mattered:
+
+```
+status                          VALID
+declared_think_time_s           1.0
+closed_loop_concurrency_check   interactive_response_time_law
+closed_loop_concurrency_ratio   0.682
+capacity_claim_permitted        true
+```
+
+Under the previous default the check would have taken the `declared_active_users`
+branch and the interactive response time law would never have run. The fix is
+therefore visible in the emitted evidence, not only in the source.
+
+**The subtle half was handled correctly.** The buyer-derived figure is a request
+*cycle*, which is service time plus think time — not think time. `buyer-model.mjs:180`
+labels it `"service_time_plus_think_time; requires technical review"`, and
+`translation-report.json` carries a `think_time_review` block holding
+`buyer_mean_request_cycle_seconds` and `reviewed_think_time_ms` side by side. The
+derived value is preserved and routed to a human, and is never substituted for the
+parameter it merely constrains. Equating the two would have been a genuine measurement
+error; it was avoided.
+
+The translation report also enumerates `not_included` and `preserved_but_not_enforced`,
+so the alpha's limits travel with its output rather than living only in release notes.
+
+## 40. Disposition — audit closed
+
+**No findings. The release is accepted.**
+
+Across this engagement the specification audit ran five rounds and closed ten findings
+(A1–E1); the AC05 protocol qualification closed three (G1–G3); the AC04 prototype work
+closed nine (H1–H4, J1, §31–33, K1). Every fix was verified against the running
+artifact rather than the change description, and the two release artifacts — the v0.1
+wheel and this one — were both downloaded from their public locations and executed
+before being accepted.
+
+What v0.2.0-alpha.1 honestly is: buyer intent intake, technical translation to a
+frozen contract set, local measurement against a real OpenAI-compatible endpoint, and
+local unsigned evidence verification. What it is not, and says it is not: sealed test
+packs, server-side adjudication, dual verdicts, hosted reports, and any GPU-qualified
+or contract-grade procurement conclusion. `formal_procurement_verdict_enabled` is
+`false` in the artifact itself.
+
+The remaining path to a contract-grade product is unchanged and is recorded in
+`OICAP_V0_2_ACCEPTANCE_CRITERIA.md`: AC08–AC18 for the hosted pipeline, and AC20 for
+GPU capacity qualification, which this development machine cannot satisfy for
+architectural reasons rather than reasons of scale.
