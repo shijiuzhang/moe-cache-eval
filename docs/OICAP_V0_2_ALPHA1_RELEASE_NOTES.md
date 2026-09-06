@@ -78,3 +78,7 @@ oicap verify /tmp/oicap-alpha-run \
 
 The endpoint and model are operator-provided and are not distributed in the
 wheel or repository.
+
+The release-candidate chain was also executed against a real CPU llama.cpp
+endpoint. Its scoped evidence and checksums are recorded in
+[`OICAP_V0_2_ALPHA1_LOCAL_WORKFLOW_QUALIFICATION.md`](OICAP_V0_2_ALPHA1_LOCAL_WORKFLOW_QUALIFICATION.md).
