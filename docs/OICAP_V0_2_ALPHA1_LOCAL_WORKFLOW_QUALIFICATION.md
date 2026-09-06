@@ -85,3 +85,19 @@ The negative controls reject unfinished expert drafts, mismatched workload
 classes, undeclared load points, ambiguous service-discipline text, unsupported
 quality-hook and authoritative per-token gates, open-loop runs without a bounded
 client concurrency, and an existing output path.
+
+## Distribution artifact
+
+The wheel was built from the committed candidate, installed with dependencies
+into a new Python 3.12 virtual environment outside the repository, and the full
+translation, validation, calibration, real-endpoint run, and verification chain
+was repeated through the installed `oicap` console script. The installed runtime
+reported `0.2.0a1`; all five commands succeeded and verification again returned
+`ok: true` with no errors.
+
+| Artifact | Size | SHA-256 |
+|---|---:|---|
+| `moe_cache_eval-0.2.0a1-py3-none-any.whl` | 61,756 bytes | `936d99ddb48f532d1da7535105788be9500d0fed7424a693d75a7292e0b03369` |
+
+The wheel contains the translator, console entry point, and all four published
+schema documents.
