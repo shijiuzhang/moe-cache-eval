@@ -1,6 +1,6 @@
 # OICAP AC04 procurement-intake frontend prototype
 
-**Status:** implemented for private workflow rehearsal
+**Status:** revised after the first private workflow rehearsal
 
 **Product claim:** browser-local authoring and structural validation only
 
@@ -15,12 +15,31 @@ whether a technical reader understands the specification; it does not test wheth
 buyer can actually enter procurement intent through the product surface.
 
 The prototype under `web/intake-prototype/` makes the authoring surface testable now,
-without waiting for a hosted backend or access to a production inference server. It
-is intended for the buyer who recently completed a private-model deployment
-acceptance and therefore knows which tender and acceptance facts were available in
-practice.
+without waiting for a hosted backend or access to a production inference server. The
+first real procurement rehearsal showed that the original page was an expert contract
+editor, not a usable buyer entry point: a procurement participant could not reliably
+author statistical populations, token distributions, timing authority, scan points or
+most serving configuration, and judged the terminology unsuitable for the large
+majority of procurement users.
 
-## Implemented flow
+The revision therefore separates two surfaces. `index.html` is the default
+plain-language buyer-intent flow. `expert.html` retains the technical contract
+workbench for a named technical translator/reviewer. Unknown buyer facts become
+role-assigned translation tasks; they are not guessed.
+
+## Buyer flow
+
+1. de-identified project role, business uses and success description;
+2. peak users and a plain-language interaction pattern;
+3. visible first-response expectation, continuous stability, recovery and principal
+   concerns including concurrency or possible OOM;
+4. supplier evidence availability, existing FAIL transition, site time and retest
+   constraints;
+5. structural validation and a machine-readable translation queue.
+
+The buyer export can reach only `READY_FOR_TECHNICAL_TRANSLATION`.
+
+## Expert flow
 
 1. de-identified project roles and frozen SUT boundary;
 2. class-aware SLA gates with metric, population, statistic, comparator, threshold,
@@ -31,6 +50,9 @@ practice.
 5. load points, independent repeats, site time, client preflight and retest mutable
    paths;
 6. structural findings and machine-readable JSON export.
+
+The expert export can reach only `READY_FOR_HUMAN_REVIEW`; it is not a frozen
+contract.
 
 The page does not persist or upload form data. It has no remote JavaScript, fonts,
 analytics or API calls. The operator must store an exported draft under the ignored
@@ -73,10 +95,12 @@ node --test tests/oicap-intake-prototype.test.mjs
 python3 -m http.server 8765 --directory web/intake-prototype
 ```
 
-The automated controls cover a complete review-ready draft, ambiguous TPS, catalogue
-silence, physical-memory prerequisite loss, workload weights, site-time overflow,
-token-timing authority and absence of network/persistence calls. HTTP smoke testing
-must confirm `index.html`, `app.mjs` and `model.mjs` are served successfully.
+The automated controls cover both role surfaces. Buyer tests exercise unknown usage,
+supplier-report provenance, runtime binding, OOM evidence, post-FAIL renegotiation,
+the absence of expert terminology from the default page and DOM wiring. Expert tests
+cover ambiguous TPS, catalogue silence, physical-memory prerequisite loss, workload
+weights, site-time overflow and token-timing authority. Cross-surface privacy tests
+assert absence of network, persistence and clipboard calls.
 
 ## AC04 use and privacy boundary
 

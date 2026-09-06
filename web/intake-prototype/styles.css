@@ -28,6 +28,8 @@ button { cursor: pointer; }
 .brand strong, .brand small { display: block; }
 .brand small { margin-top: 2px; color: #bad0c8; font-size: 11px; letter-spacing: .08em; }
 .prototype-badge { border: 1px solid #55776c; padding: 7px 12px; border-radius: 999px; color: #d6e5df; font-size: 12px; }
+.header-actions { display: flex; align-items: center; gap: 16px; }
+.expert-link { color: #d6e5df; font-size: 12px; text-underline-offset: 3px; }
 
 .shell { max-width: 1500px; margin: 0 auto; display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: calc(100vh - 72px); }
 .rail { padding: 38px 24px; border-right: 1px solid var(--line); }
@@ -87,6 +89,9 @@ legend { padding: 0 8px; font-size: 13px; font-weight: 800; }
 .check-grid label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
 .check-grid input[type="checkbox"] { width: 16px; height: 16px; }
 .check-grid.compact { align-items: end; }
+.radio-stack { display: grid; gap: 11px; }
+.radio-stack label { display: flex; align-items: center; gap: 9px; font-weight: 500; }
+.radio-stack input { width: 16px; height: 16px; }
 
 .legend-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; color: var(--muted); font-size: 11px; }
 .dot { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; }
@@ -119,7 +124,7 @@ pre { max-height: 520px; overflow: auto; padding: 18px; border-radius: 7px; back
   .field-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
-  .topbar { padding: 0 18px; }.prototype-badge { display: none; }
+  .topbar { padding: 0 18px; }.prototype-badge { display: none; }.header-actions { gap: 8px; }
   .workspace { padding: 28px 14px 40px; }
   .intro { display: block; }.progress-card { width: 100%; margin-top: 18px; }
   .section-head { display: block; }.section-head > p { margin-top: 12px; }

@@ -1,12 +1,16 @@
 # OICAP AC04 intake prototype
 
-This is a browser-local procurement rehearsal surface. It lets a buyer translate
-an existing tender/acceptance case into a typed draft and exposes ambiguities before
-the v0.2 contract schemas are frozen.
+This directory contains two browser-local surfaces:
+
+- `index.html` is the default, plain-language buyer intake. It records business
+  intent and emits explicit technical-translation tasks.
+- `expert.html` is the technical contract workshop for OICAP/compiler maintainers and
+  named technical reviewers. It is not a procurement questionnaire.
 
 It is deliberately **not** the hosted v0.2 service. It does not authenticate users,
 compile or seal a test pack, upload evidence, adjudicate a result, or sign a report.
-An exported record says `READY_FOR_HUMAN_REVIEW`, never `FROZEN` or `PASS`.
+A buyer export says at most `READY_FOR_TECHNICAL_TRANSLATION`; an expert export says
+at most `READY_FOR_HUMAN_REVIEW`. Neither says `FROZEN` or `PASS`.
 
 ## Run locally
 
@@ -23,7 +27,15 @@ location—not in the public repository.
 
 ## Rehearsal boundary
 
-The prototype covers:
+The buyer surface covers:
+
+- business use, peak users and interaction pattern;
+- visible first-response expectations without asking for percentile terminology;
+- continuous stability, recovery and buyer concerns such as concurrency or OOM;
+- supplier evidence availability, site time and the existing FAIL/retest process;
+- a role-assigned queue of technical translations that block freeze when unresolved.
+
+The expert surface covers:
 
 - buyer/SUT measurement boundary;
 - class-aware, population-explicit SLA gates;
@@ -67,5 +79,5 @@ synced. A filename is a warning, not access control.
 ## Test
 
 ```sh
-node --test tests/oicap-intake-prototype.test.mjs
+node --test tests/oicap-intake-prototype.test.mjs tests/oicap-buyer-intake.test.mjs
 ```

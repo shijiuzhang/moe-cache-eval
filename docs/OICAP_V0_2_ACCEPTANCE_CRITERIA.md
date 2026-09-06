@@ -114,7 +114,13 @@ valid frozen metric.
 - an inter-token gate without authoritative token timing adjudicates as
   `INSUFFICIENT_EVIDENCE`, not from chunk timing;
 - a missing required metric cannot pass;
-- an empty or whitespace-only first stream event cannot end TTFT.
+- an empty or whitespace-only first stream event cannot end TTFT;
+- a sustained-stability promise compiles to a named soak phase and cannot be
+  satisfied by a short capacity point;
+- a black-box timeout, disconnect or restart without bound system/process evidence
+  cannot be labelled proven `OUT_OF_MEMORY`;
+- a supplier-environment report or hardware list alone cannot create a buyer-site
+  service `PASS` or L2 runtime binding.
 
 **Reverse control:** a complete class-aware SLA containing aggregate output-token
 throughput, TTFT, end-to-end latency, success rate and a quality gate compiles without
@@ -136,7 +142,16 @@ summary identifying:
   and how the authoring flow warns without pretending to predict performance;
 - estimated setup and execution time;
 - likely dispute points and technical state transitions;
-- schema changes resulting from the exercise.
+- schema changes resulting from the exercise;
+- which fields procurement can express in business language versus which require a
+  named technical translator, and whether unresolved translations visibly block
+  freeze rather than becoming defaults.
+
+**Usability control:** a procurement participant is not required to understand
+statistical populations, token-timing authority, serving topology or scan geometry.
+The buyer-facing flow produces at most `READY_FOR_TECHNICAL_TRANSLATION`; only the
+separate expert workbench can produce candidate frozen contracts. The rendered
+candidate must return to the buyer for business-intent approval.
 
 **Confidentiality control:** an authorized reviewer demonstrates that the public
 summary contains no tender text, price, supplier identity, private workload,

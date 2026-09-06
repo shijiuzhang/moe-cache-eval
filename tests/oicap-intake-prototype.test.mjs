@@ -118,13 +118,13 @@ test("per-token gates require authoritative token timestamps", () => {
   assert(validateDraft(draft).errors.some(item => item.code === "TOKEN_TIMING_AUTHORITY_REQUIRED"));
 });
 
-test("the page has no remote scripts, styles or automatic persistence", async () => {
-  const html = await readFile(new URL("../web/intake-prototype/index.html", import.meta.url), "utf8");
-  const app = await readFile(new URL("../web/intake-prototype/app.mjs", import.meta.url), "utf8");
-  assert.doesNotMatch(html, /(?:src|href)=["']https?:/i);
-  assert.doesNotMatch(app, /fetch\s*\(/);
-  assert.doesNotMatch(app, /localStorage|sessionStorage/);
-  assert.doesNotMatch(app, /clipboard/);
-  assert.doesNotMatch(html, /copy-json/);
-  assert.match(app, /PRIVATE-oicap-ac04-/);
+test("both local authoring surfaces have no remote assets, persistence, or clipboard egress", async () => {
+  const paths = ["index.html", "expert.html", "buyer-app.mjs", "buyer-model.mjs", "app.mjs", "model.mjs"];
+  const contents = await Promise.all(paths.map(path => readFile(new URL(`../web/intake-prototype/${path}`, import.meta.url), "utf8")));
+  const joined = contents.join("\n");
+  assert.doesNotMatch(joined, /(?:src|href)=["']https?:/i);
+  assert.doesNotMatch(joined, /fetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon/);
+  assert.doesNotMatch(joined, /localStorage|sessionStorage|indexedDB|document\.cookie/);
+  assert.doesNotMatch(joined, /clipboard|copy-json/);
+  assert.match(joined, /PRIVATE-oicap-ac04-/);
 });

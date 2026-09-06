@@ -165,6 +165,27 @@ become procurement requirements.
 
 ## 4. SLA authoring contract
 
+### 4.0 Buyer intent and technical translation are separate records
+
+The default buyer-facing flow MUST use business language. It asks what users do,
+expected peak use, acceptable visible waiting, continuous operating need, permitted
+service interruption, answer-quality intent, evidence available from the supplier,
+site time and the pre-existing failure/retest process. It MUST NOT require a
+procurement user to author metric populations, percentile notation, token-timing
+authority, workload distributions, serving topology or scan points.
+
+The intake produces a separately versioned business-intent record plus a queue of
+role-assigned technical translations. The compiler MAY propose an explicit SLA gate,
+workload distribution or scan plan, but each proposal MUST show the source business
+answer and the technical consequence in buyer-readable language. A value the buyer
+does not know becomes `UNRESOLVED` in authoring and blocks freeze; it MUST NOT become a
+default procurement fact.
+
+The expert contract workbench consumes that queue and produces the documents in §3.
+The buyer contract owner then approves a rendered business interpretation of the
+candidate frozen contract. An expert workbench and a valid schema do not substitute
+for that approval.
+
 ### 4.1 Required dimensions
 
 `sla.yaml` MUST express gates by workload class before any aggregate rule. A class
@@ -226,6 +247,25 @@ that the threshold cannot be distinguished MUST return `INSUFFICIENT_EVIDENCE`.
 Instrument overhead is not subtracted to manufacture precision. This threshold-
 indistinguishability rule also governs an observation that reaches a wall-clock cap;
 the cap alone cannot override it with `FAIL`.
+
+### 4.5 Sustained stability and resource-exhaustion evidence
+
+Where continuous service is part of the buyer intent, the compiled plan MUST contain
+a named stability/soak phase with frozen duration, load, allowed error, service-exit,
+restart and recovery rules. A short capacity point cannot satisfy a sustained-
+stability gate.
+
+OICAP may label a failure `OUT_OF_MEMORY` only when buyer-observed process, operating-
+system, container/cgroup, accelerator or equivalent authoritative evidence identifies
+that cause and is bound to the measured endpoint and interval. A black-box timeout,
+disconnect, restart or unavailable service without that evidence is reported as the
+observed failure and MAY be marked `RESOURCE_EXHAUSTION_CONSISTENT`; it is not promoted
+to proven OOM. Absence of observed OOM is not proof that a larger or longer unmeasured
+load would not exhaust memory.
+
+A supplier-environment benchmark report or hardware list enters the evidence record
+with provenance. Neither can by itself create a formal buyer-site service `PASS` or
+L2 runtime binding.
 
 ---
 
@@ -933,16 +973,20 @@ record and does not ask OICAP to decide payment or legal remedies.
 The v0.2 website is a core product surface. It MUST provide:
 
 1. authenticated organization and role management;
-2. an SLA/workload/SUT/policy authoring wizard with machine-readable export;
-3. validation errors that identify ambiguous or unsupported requirements;
-4. project freeze and immutable revision history;
-5. pack compilation, issue, download and expiry;
-6. preflight result registration;
-7. evidence upload with a redaction preview;
-8. server-side progress, verification and adjudication;
-9. separate service and conformance verdict views;
-10. report download and stable record identifier;
-11. retest, supersession and technical-review workflows.
+2. a plain-language buyer business-intent wizard that produces no hidden technical
+   defaults;
+3. a separate technical-translation queue and expert SLA/workload/SUT/policy
+   workbench with machine-readable export;
+4. validation errors that identify ambiguous or unsupported requirements and the
+   role responsible for resolving each one;
+5. project freeze and immutable revision history;
+6. pack compilation, issue, download and expiry;
+7. preflight result registration;
+8. evidence upload with a redaction preview;
+9. server-side progress, verification and adjudication;
+10. separate service and conformance verdict views;
+11. report download and stable record identifier;
+12. retest, supersession and technical-review workflows.
 
 The website MUST never require private prompts or responses for the baseline hosted
 flow. A fully local enterprise deployment MAY be supported later using the same
@@ -968,6 +1012,12 @@ The rehearsal MAY use a manual compiler and manual report. Its purpose is to exp
 which procurement fields are unavailable, which terms are ambiguous, which evidence
 the supplier can provide, and which steps cause operational dispute before those
 assumptions become code.
+
+The rehearsal also tests role usability. If a procurement participant cannot
+reliably author measurement semantics, that is evidence to split the buyer-intent and
+technical-translation surfaces—not a reason to supply training or silently complete
+the fields. A `DRAFT_WITH_ERRORS` may therefore be a successful rehearsal artifact
+when it precisely exposes information and responsibility gaps.
 
 The rehearsal MUST also flag requirements that are syntactically valid, unambiguous
 and freezable but appear physically doubtful to the human reviewers. This is a

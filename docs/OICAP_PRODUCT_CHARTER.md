@@ -57,9 +57,21 @@ the exact frozen contract:
 
 ### 3.1 Buyer contract owner
 
-Defines and freezes the procurement SLA, workload profile, required deployment,
-acceptance policy and authorized test plan before formal execution. Commercial
-remedies remain under the buyer's procurement contract.
+States the business use, experience promise, peak-use expectation, stability need,
+required delivery identity and commercial acceptance intent. The owner approves the
+translated procurement SLA, workload profile, required deployment, acceptance policy
+and authorized test plan before formal execution, but is not expected to author
+statistical populations, token-timing authority, scan geometry or low-level serving
+configuration. Commercial remedies remain under the buyer's procurement contract.
+
+### 3.1.1 Technical contract translator and reviewer
+
+Converts buyer business intent into explicit candidate metrics, populations,
+workload distributions, evidence authorities, deployment requirements and run plans.
+Every translation records its source intent and reviewer. Ambiguity becomes a named
+blocking task; it is never resolved through a hidden default. This role may be
+assisted by the OICAP compiler, but a generated candidate does not become procurement
+intent until the buyer contract owner approves the understandable rendered form.
 
 ### 3.2 Buyer test operator
 
@@ -234,6 +246,11 @@ pre-agreed commercial policy may still permit conditional acceptance.
     before use. A component treated only as an untrusted stimulus may remain unpinned
     only when the runner independently measures every accepted property and its
     identity or self-report receives no formal credit.
+12. **No forced expert authorship.** Procurement expresses business intent; OICAP and
+    a named technical reviewer translate it. A buyer's inability to specify a
+    percentile population, token authority, deployment topology or scan plan cannot
+    be repaired by guessing or by training the buyer to impersonate a benchmark
+    engineer.
 
 ## 8. Non-goals
 
