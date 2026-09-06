@@ -1,0 +1,95 @@
+{
+  "schema": "oicap-ac04-intake-draft/0.1",
+  "status": "READY_FOR_HUMAN_REVIEW",
+  "notice": "Public synthetic alpha fixture; not a frozen procurement contract, test pack, or verdict.",
+  "validation": {
+    "error_count": 0,
+    "warning_count": 0,
+    "errors": [],
+    "warnings": []
+  },
+  "project": {
+    "project_id": "public-llama-cpp-alpha",
+    "deployment_mode": "local_protocol_demo",
+    "buyer_role": "synthetic acceptance owner",
+    "technical_role": "local test operator",
+    "measurement_boundary": "local OICAP client to loopback OpenAI-compatible endpoint"
+  },
+  "sla_gates": [
+    {
+      "metric": "ttft_ms",
+      "workload_class": "substantive-short-answer",
+      "statistic": "p95",
+      "comparator": "lte",
+      "threshold": 30000,
+      "unit": "ms",
+      "population": "successful quality-eligible requests",
+      "min_samples": 4,
+      "min_duration_s": 1,
+      "quality_eligible": true,
+      "authority": "client_observed"
+    },
+    {
+      "metric": "aggregate_output_tokens_per_second",
+      "workload_class": "substantive-short-answer",
+      "statistic": "mean",
+      "comparator": "gte",
+      "threshold": 1,
+      "unit": "token/s",
+      "population": "successful requests with server usage",
+      "min_samples": 4,
+      "min_duration_s": 1,
+      "quality_eligible": true,
+      "authority": "server_usage"
+    }
+  ],
+  "workload_classes": [
+    {
+      "class_id": "substantive-short-answer",
+      "weight_percent": 100,
+      "input_tokens": "1-64",
+      "output_tokens": "1-64",
+      "source_policy": "public synthetic protocol fixture",
+      "session_semantics": "single_turn",
+      "think_time_ms": 0,
+      "streaming": "required",
+      "quality_rule": "non-empty response; preserved but not executed in alpha.1"
+    }
+  ],
+  "deployment_requirements": {
+    "model_identity": {"requirement_state": "required", "constraint": "local GGUF model with recorded SHA-256"},
+    "tokenizer_and_chat_template": {"requirement_state": "informational", "constraint": "record at run time"},
+    "quantization": {"requirement_state": "required", "constraint": "record exact GGUF quantization"},
+    "serving_engine": {"requirement_state": "required", "constraint": "llama.cpp version or commit"},
+    "container_and_runtime": {"requirement_state": "informational", "constraint": "native local process"},
+    "launch_configuration": {"requirement_state": "required", "constraint": "record arguments that affect measurement"},
+    "endpoint_boundary": {"requirement_state": "required", "constraint": "loopback OpenAI-compatible endpoint"},
+    "external_dependencies": {"requirement_state": "not_required", "constraint": "none"},
+    "accelerator_topology": {"requirement_state": "required", "constraint": "CPU protocol qualification only; record processor topology"},
+    "host_platform": {"requirement_state": "informational", "constraint": "record OS, CPU, and memory"},
+    "parallelism": {"requirement_state": "required", "constraint": "record engine slots"},
+    "memory_and_offload": {"requirement_state": "required", "constraint": "record model placement; not adjudicated by alpha.1"},
+    "decoding_acceleration": {"requirement_state": "informational", "constraint": "record if enabled"},
+    "batching_scheduling_admission": {
+      "requirement_state": "required",
+      "constraint": "{\"batching\":\"llama.cpp-continuous\",\"admission\":\"llama.cpp-default\",\"preemption\":\"unknown\"}"
+    }
+  },
+  "execution": {
+    "load_semantics": "closed_loop",
+    "max_load": 2,
+    "repeats": 2,
+    "site_window_minutes": 10,
+    "min_point_duration_s": 1,
+    "min_point_samples": 4,
+    "load_points": [1, 2],
+    "max_retests": 1,
+    "mutable_paths": "none in this public protocol fixture",
+    "preflight": {
+      "max_load_sustained": true,
+      "resource_recorded": true,
+      "onsite_same_path_calibration": true,
+      "buyer_controls_responder": true
+    }
+  }
+}

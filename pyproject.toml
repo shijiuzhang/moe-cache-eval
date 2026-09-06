@@ -1,6 +1,6 @@
 [project]
 name = "moe-cache-eval"
-version = "0.2.0.dev0"
+version = "0.2.0a1"
 description = "Open Inference Capacity and Acceptance Platform measurement kernel"
 requires-python = ">=3.12,<3.13"
 dependencies = [

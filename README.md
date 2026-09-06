@@ -91,6 +91,30 @@ The first browser-local procurement authoring surface is under
 prototype—not the hosted adjudication service—and exports only drafts for human
 review.
 
+### OICAP v0.2.0-alpha.1 local workflow
+
+The alpha adds the missing bridge between a reviewed expert-workbench draft and
+the v0.1 measurement kernel. It can compile one declared load point into
+`scenario.yaml`, `slo.yaml`, `sut.yaml`, and `run.yaml`, then validate, calibrate,
+measure a local OpenAI-compatible endpoint, and verify the unsigned evidence
+bundle.
+
+```bash
+uv run --no-default-groups oicap translate-expert \
+  examples/oicap/alpha_translation/expert-draft.json \
+  --workload examples/oicap/llama_cpp_ac05/workload.jsonl \
+  --load-point 2 \
+  --output /tmp/oicap-alpha-benchmark
+uv run --no-default-groups oicap validate /tmp/oicap-alpha-benchmark
+```
+
+The generated `translation-report.json` is part of the output and must be read
+before execution. In particular, `formal_procurement_verdict_enabled` is
+`false`. This developer alpha is not the complete V02-AC19 acceptance alpha: it
+does not seal a pack, execute sweeps/repeats/minimum-duration or quality gates,
+issue either formal verdict, host reports, or qualify GPU capacity. See
+[`docs/OICAP_V0_2_ALPHA1_RELEASE_NOTES.md`](docs/OICAP_V0_2_ALPHA1_RELEASE_NOTES.md).
+
 ## Quick checks
 
 Python 3.12 is the frozen research environment. Install dependencies with `uv`

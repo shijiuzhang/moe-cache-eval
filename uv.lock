@@ -290,7 +290,7 @@ wheels = [
 
 [[package]]
 name = "moe-cache-eval"
-version = "0.2.0.dev0"
+version = "0.2.0a1"
 source = { editable = "." }
 dependencies = [
     { name = "jsonschema" },

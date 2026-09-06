@@ -11,6 +11,7 @@ from .calibration import calibrate, load_calibration
 from .contracts import ContractError, load_contracts
 from .evidence import verify_bundle, write_bundle
 from .runner import execute_load_point
+from .translator import TranslationError, translate_expert_draft
 
 
 def parser() -> argparse.ArgumentParser:
@@ -19,6 +20,18 @@ def parser() -> argparse.ArgumentParser:
 
     validate = sub.add_parser("validate", help="validate and hash a benchmark contract")
     validate.add_argument("benchmark")
+
+    translate = sub.add_parser(
+        "translate-expert",
+        help="compile a reviewed expert intake draft into one local alpha load point",
+    )
+    translate.add_argument("expert_draft")
+    translate.add_argument("--workload", required=True)
+    translate.add_argument("--output", required=True)
+    translate.add_argument("--load-point", type=float)
+    translate.add_argument("--max-in-flight", type=int)
+    translate.add_argument("--timeout-s", type=float, default=60.0)
+    translate.add_argument("--seed", type=int, default=20260906)
 
     calibration = sub.add_parser("calibrate", help="measure the local runner noise floor")
     calibration.add_argument("benchmark")
@@ -44,7 +57,28 @@ def parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> None:
     args = parser().parse_args(argv)
     try:
-        if args.command == "validate":
+        if args.command == "translate-expert":
+            output = translate_expert_draft(
+                args.expert_draft,
+                args.workload,
+                args.output,
+                load_point=args.load_point,
+                max_in_flight=args.max_in_flight,
+                timeout_s=args.timeout_s,
+                seed=args.seed,
+            )
+            report = json.loads((output / "translation-report.json").read_text())
+            _print(
+                {
+                    "ok": True,
+                    "benchmark": str(output),
+                    "formal_procurement_verdict_enabled": report[
+                        "formal_procurement_verdict_enabled"
+                    ],
+                    "selected_load_point": report["selected_load_point"],
+                }
+            )
+        elif args.command == "validate":
             contracts = load_contracts(args.benchmark)
             _print(
                 {
@@ -93,7 +127,7 @@ def main(argv: list[str] | None = None) -> None:
             _print(result)
             if not result["ok"]:
                 raise SystemExit(2)
-    except (ContractError, ValueError, OSError) as exc:
+    except (ContractError, TranslationError, ValueError, OSError) as exc:
         _print({"ok": False, "error": str(exc)}, stream=sys.stderr)
         raise SystemExit(2) from exc
 
