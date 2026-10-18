@@ -73,3 +73,21 @@ Every change or clarification is appended here, in order.
   2. Report the position-0-excluded figures as post-hoc.
   3. State the detector's length sensitivity as a limitation of the package's own tool. Its threshold was
      validated on 512-token sequences; these records have 3–38 tokens.
+
+## D-005 — Static under the per-request reset column (clarification of PREREG §3)
+
+- Recorded: 2026-10-18, during stage 3, **before** any analysis D result existed.
+  Results of A–C had been read; none of them bears on this choice.
+- PREREG fixes Static to `per_layer` only (`global` is NA), but does not state how Static is treated
+  under start state (ii), the per-request reset alignment column.
+- **Fixed.** Static is reported only under start state (i). Under (ii) it is
+  `NA(per-request reset would re-load the pinned set for every request)`.
+  - The package counts a static policy's initial pinned load in its transfers
+    (`transferred_blocks = misses + initial_load_blocks`; reporting-block field "initial pinned load counted").
+  - Resetting per request would charge that load 100 times. That matches neither a deployment nor the
+    third-party contract, whose own comparison has no static policy.
+  - Static does not enter the best-causal choice, so no gap or share changes.
+- **Implementation note (not a deviation).** E1 traces built by the package's FCFS converter mark event
+  request indices with the sentinel −1. For the per-request reset column, analysis D recovers each
+  event's request from `schedule.jsonl` (B = 1: one active request per scheduler step) before using
+  `subset_event_trace`.

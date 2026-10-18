@@ -88,3 +88,9 @@ PY -I case_studies/moe_beyond/analysis_C.py       # -> results/C_workload.{json,
 # POST-HOC (D-004): where the positional agreement sits.
 PY -I case_studies/moe_beyond/exploratory_C_positional.py   # -> results/C_exploratory_positional.{json,md}
 ```
+
+```bash
+# Analysis D (P6): event-atomic replay of all policies, five tie seeds, both event definitions,
+# both scopes, both start states; secondary constructed B = 8.
+PY -I case_studies/moe_beyond/analysis_D.py      # -> results/D_decomposition.{json,md}; 613 s; peak RSS 1.64 GB
+```
