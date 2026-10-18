@@ -1,6 +1,10 @@
 # How to use the artifact: a third-party trace through the diagnostic chain
 
-Revised after the 2026-10-19 audit (F4); previous version in `history/paper_d030306/`.
+Revised after the 2026-10-19 audit (F4) and after a clean-checkout run of this sequence;
+previous versions in `history/paper_d030306/` and `history/paper_855f0ab/`.
+`CLEAN_CHECKOUT_VERIFICATION.md` records that run. Starting from a fresh clone with its results
+removed, it regenerated every number of analyses A–E and every paper macro, all identical to the
+committed results.
 This is the dependency-ordered sequence used for the MoE-Beyond case study, followed by
 the extension points. Run every command from the repository root. Each step's prerequisite
 is the step above it.
@@ -9,7 +13,7 @@ is the step above it.
 
 ```bash
 # Package interpreter: the locked environment of this repository (Python 3.12).
-uv sync --frozen
+uv sync --frozen        # add --no-config if a user-level uv.toml sets an unreachable proxy
 PY=.venv/bin/python
 
 # Third-party interpreter: a separate environment that only ever runs the third-party
@@ -36,6 +40,18 @@ cd ..
 The last command prints `0` when all 2206 frozen inputs match.
 `third_party/` is git-ignored; only the hash list is tracked.
 
+Analysis E also reads the published paper text, whose hash is frozen in `PREREG.md` §0:
+
+```bash
+mkdir -p third_party/moebeyond-paper
+curl -sSL -o third_party/moebeyond-paper/2508.17137v1.html https://arxiv.org/html/2508.17137v1
+shasum -a 256 third_party/moebeyond-paper/2508.17137v1.html
+# expected: ef57960064f883656578c12ed6df67d2d66313181ee333fd0ceb29888f0fc590
+```
+
+If arXiv ever re-renders this HTML, the hash changes and analysis E refuses to run; the frozen
+copy would then have to be supplied separately.
+
 For a new study, freeze `INPUTS.sha256` the same way, then write and commit `PREREG.md` and record its hash
 in `PREREG.lock`. `case_studies/moe_beyond/COMMANDS.md` shows the exact commands.
 
@@ -50,8 +66,8 @@ $PY -I case_studies/moe_beyond/build_canonical.py
   builder, and E2 (whole-prefill) events.
 - Output: `canonical/` (git-ignored), `canonical/HASHES.txt` (raw file hashes) and
   `canonical/CONTENT_HASHES.txt` (rebuild-stable safetensors digests).
-- Recorded run: about 78 s, peak resident memory 6.46 GB on an Apple M4 Pro with 24 GB.
-  This covers parsing 2200 CSV files and every conversion.
+- Recorded runs: 78 s (original) and 85 s (clean checkout); peak resident memory 6.46 GB (original run;
+  not measured in the clean run). Apple M4 Pro, 24 GB; covers parsing 2200 CSV files and every conversion.
 
 ## 3. Execution contract, probes and reproduction (analysis A)
 
@@ -63,7 +79,7 @@ $PY -I case_studies/moe_beyond/analysis_A.py
   `probe`, `confirm` and `reproduce`.
 - Classifies the executed replay contract, measures event fit and reproduces both reported hit rates.
 - Output: `results/A_probes/`, `results/A_*_raw.json`, `results/A_contract.{json,md}`.
-- Recorded run: about 15 s.
+- Recorded runs: 15 s (original) and 36 s (clean checkout, first use of the third-party environment).
 
 `$PY -I case_studies/moe_beyond/analysis_A.py --render-only` rebuilds `A_contract.md` from the stored
 JSON without executing anything.
@@ -76,7 +92,7 @@ $PY -I case_studies/moe_beyond/analysis_B.py
 
 - Computes r(s,l): mean, p95 and the fraction of events over quota, together with the uniform-routing
   null, then places the setting against Table 11.
-- Output: `results/B_regime.{json,md}`. Recorded run: under 1 s.
+- Output: `results/B_regime.{json,md}`. Recorded runs: under 1 s.
 
 ## 5. Workload construction (analysis C)
 
@@ -99,7 +115,7 @@ $PY -I case_studies/moe_beyond/analysis_D.py
 - Output: `results/D_decomposition.{json,md}`.
   Every table states that the results are not comparable with prefetch-inclusive hit rates.
 - Read the admission and future-victim shares only where m_F ≤ m_c.
-- Recorded run: 613 s, peak resident memory 1.64 GB.
+- Recorded runs: 613 s (original) and 610 s (clean checkout); peak resident memory 1.64 GB (original run).
   Most of that time is the per-request-reset column, which simulates each of the 100 requests separately.
 
 ## 7. Reporting block (analysis E)

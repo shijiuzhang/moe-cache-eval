@@ -129,6 +129,12 @@ def main() -> None:
             f"future-victim share {pct(pkg['future_victim_share'])} ({pkg['contract']}) |", ""]
 
     # R6, forbidden words, checklist, files
+    verification = CASE_DIR / "CLEAN_CHECKOUT_VERIFICATION.md"
+    if verification.is_file():
+        tail = [line for line in verification.read_text(encoding="utf-8").splitlines() if "checks match" in line]
+        out += ["## Clean-checkout verification", "",
+                f"See `CLEAN_CHECKOUT_VERIFICATION.md` (sha256 `{sha256_file(verification)}`): "
+                + (tail[-1].strip() if tail else "no summary line found") + ".", ""]
     out += ["## Final R6 regression", "", "```json", json.dumps(r6, indent=2, sort_keys=True), "```", ""]
     hits = []
     for name in ("case_study_section.tex", "response_point3_ii.md"):

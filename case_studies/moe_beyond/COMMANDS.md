@@ -130,3 +130,10 @@ PY -I case_studies/moe_beyond/regress.py > case_studies/moe_beyond/R6_final.json
 PY -I case_studies/moe_beyond/make_report.py
 # Superseded outputs are archived byte-for-byte under history/ (A, E, paper files, report, R6).
 ```
+
+```bash
+# Clean-checkout verification (2026-10-19): fresh clone of 855f0ab with results/ removed, the walkthrough
+# sequence run from step 0, then every regenerated number compared with the committed results.
+# uv sync used --no-config (user-level uv.toml points at a proxy that was not running).
+# -> CLEAN_CHECKOUT_VERIFICATION.md: 22 of 22 checks match.
+```

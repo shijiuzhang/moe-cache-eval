@@ -93,6 +93,10 @@ Shares outside [0, 1] occur where forced admission is worse than the best causal
 | comparison scope | paper text vs public artifact + package + documented analyst steps; no artifact-only control (DEVIATIONS D-008) |
 | package analysis, not counted | residency-gap decomposition (analysis D): gap 47.71%, future-victim share 96.05% (package: event-atomic, prefetch-free, cold start; E1, rho 0.40, per-layer, persistent) |
 
+## Clean-checkout verification
+
+See `CLEAN_CHECKOUT_VERIFICATION.md` (sha256 `96d34fedbca1725a984705ee55a725de8f1323c026886429f15ab51f68db935f`): 22 of 22 checks match.
+
 ## Final R6 regression
 
 ```json
@@ -174,4 +178,4 @@ No hits.
 | case_study_table.tex | `10c892a437fb6476038284630d4575d46934d1e2006fffcc700586befabdedd0` | True |
 | case_study_section.tex | `8ce88da00d411b1cbe68023397d2ef6f1517cd88cdab429142c3f6184e95a937` | True |
 | response_point3_ii.md | `dd80bcb44bb510b3ebaef119b8daac9129d7860dc63f6d757819337f6ef1a1a4` | True |
-| how_to_use_walkthrough.md | `eb42064b2de9ddb52b4e7258cf6de9ffe6ed099dcda26e880fba183eba000b6d` | True |
+| how_to_use_walkthrough.md | `ae3d954d8cfd037bb0fcfc462d156ea941b55cc100bc6207b902106b721927dd` | True |
