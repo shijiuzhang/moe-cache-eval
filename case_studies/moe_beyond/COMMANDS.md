@@ -81,3 +81,10 @@ PY -I case_studies/moe_beyond/analysis_A.py
 # Analysis B (P4): regime statistics, uniform-routing null, placement against Table 11.
 PY -I case_studies/moe_beyond/analysis_B.py      # -> results/B_regime.{json,md}; under 1 s
 ```
+
+```bash
+# Analysis C (P5): prompt-side audit_probe (unchanged) and the §5.8 route detector (unchanged, subprocess).
+PY -I case_studies/moe_beyond/analysis_C.py       # -> results/C_workload.{json,md}; detector files stay local
+# POST-HOC (D-004): where the positional agreement sits.
+PY -I case_studies/moe_beyond/exploratory_C_positional.py   # -> results/C_exploratory_positional.{json,md}
+```

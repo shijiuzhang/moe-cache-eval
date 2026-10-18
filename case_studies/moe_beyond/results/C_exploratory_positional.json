@@ -1,0 +1,53 @@
+{
+  "all_records_start_with_bos": true,
+  "inputs": {
+    "files": {
+      "canonical/test_prompts.jsonl": "e90e1c305fe8596adebc868917c37b306be3e6c0f694325d17e4c8d9527cb2a0"
+    },
+    "inputs_manifest_sha256": "bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+    "prereg_commit": "08938d1e4a9240b6afbb3017ed499468df1895bf",
+    "prereg_sha256": "187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d",
+    "third_party_commit": "47031eefc7808e996ecd5c01d7ed90aa32e32514"
+  },
+  "most_common_tokens_at_position_1": [
+    [
+      "Why",
+      16
+    ],
+    [
+      "What",
+      10
+    ],
+    [
+      "How",
+      8
+    ],
+    [
+      "Is",
+      2
+    ],
+    [
+      "Can",
+      2
+    ]
+  ],
+  "pairs": 1128,
+  "pairs_agreeing_only_at_position_0": 815,
+  "pairs_agreeing_only_at_position_0_fraction": 0.7225177304964538,
+  "positional_agreement_frozen_definition": {
+    "mean": 0.13429799792753483,
+    "p95": 0.2857142857142857
+  },
+  "positional_agreement_position_0_excluded": {
+    "mean": 0.027956475744070456,
+    "p95": 0.14285714285714285
+  },
+  "records": 48,
+  "reference_validation_length_tokens": 512,
+  "status": "POST-HOC, NOT PRE-REGISTERED (DEVIATIONS D-004)",
+  "tokens_per_record": {
+    "max": 38,
+    "median": 15.5,
+    "min": 3
+  }
+}

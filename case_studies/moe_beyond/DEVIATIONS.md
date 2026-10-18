@@ -53,3 +53,23 @@ Every change or clarification is appended here, in order.
 - **Wider note for the author.** Any regeneration of a package event trace reproduces the published file hash
   with only about even odds. For canonical traces in this case study, `HASHES.txt` file digests are therefore
   not rebuild-stable; payload digests are.
+
+## D-004 — Post-hoc decomposition of the route-side positional agreement (approved by the author 2026-10-18)
+
+- Recorded: 2026-10-18, during stage 3, **after** reading the analysis C result. This is a post-hoc addition.
+- **Trigger.** The pre-registered §5.8 detector reported `flag = true` on the first 48 test records.
+  The trigger was positional token agreement p95 0.2857, against a threshold of 0.05.
+  The prompt side showed 100 distinct heads, 100 distinct final lines and zero word 5-gram overlap.
+  Because a contamination flag could be read as a statement about the reported hit rates,
+  the result was held and given to the author under protocol §7.
+- **Addition.** `exploratory_C_positional.py` writes `results/C_exploratory_positional.{json,md}`,
+  which are labelled post-hoc. It decomposes the agreement: position 0 (a shared BOS token) versus the rest,
+  and the most common position-1 tokens.
+- **What does not change.** The pre-registered flag (`true`) and the frozen P5 sentence in `C_workload.md`
+  stand as generated. The exploratory numbers are reported beside them and never in their place.
+- **Reporting decision (author).**
+  1. Report `flag = true` with the frozen P5 sentence, followed by the factual description of where the
+     agreement sits.
+  2. Report the position-0-excluded figures as post-hoc.
+  3. State the detector's length sensitivity as a limitation of the package's own tool. Its threshold was
+     validated on 512-token sequences; these records have 3–38 tokens.
