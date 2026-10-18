@@ -24,3 +24,8 @@ paper/**/*.log
 
 # Third-party material for external case studies; never committed (case study protocol R2).
 third_party/
+
+# Canonical traces derived from third-party data stay local; only their hash list is tracked (R2).
+case_studies/moe_beyond/canonical/*
+!case_studies/moe_beyond/canonical/HASHES.txt
+!case_studies/moe_beyond/canonical/CONTENT_HASHES.txt
