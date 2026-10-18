@@ -152,7 +152,11 @@
     }
   },
   "filled_count": 13,
-  "inputs": {},
+  "inputs": {
+    "paper_files": {
+      "/Users/zhangyu/Documents/moe-cache-eval-release/third_party/moebeyond-paper/2508.17137v1.html": "ef57960064f883656578c12ed6df67d2d66313181ee333fd0ceb29888f0fc590"
+    }
+  },
   "mode": "paper_only",
   "total_fields": 30
 }

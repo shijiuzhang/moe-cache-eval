@@ -99,3 +99,18 @@ PY -I case_studies/moe_beyond/analysis_D.py      # -> results/D_decomposition.{j
 # Analysis E (P7): both reporting blocks through the released package's own command, and the delta.
 PY -I case_studies/moe_beyond/analysis_E.py      # -> results/E_report_block_{paper_only,with_artifacts}.{md,json}, E_delta.{md,json}
 ```
+
+## Stage 4 — outputs (no new analysis)
+
+```bash
+# E regenerated to record its inputs (paper text hash; facts inputs). The reported version is
+# archived unchanged in history/results_E_6322203/. Values unchanged (13 -> 25 fields).
+PY -I case_studies/moe_beyond/analysis_E.py
+# Every paper number as a \CS* macro, read from results/*.json.
+PY -I case_studies/moe_beyond/make_macros.py      # -> paper/case_study_macros.tex (46 macros)
+# Compile check of macros + section + table (scratch directory).
+tectonic -X compile main.tex
+# Forbidden-word check (protocol §6.5) on the section draft and the response paragraph: zero hits.
+# Final regression, output kept beside REPORT.md.
+PY -I case_studies/moe_beyond/regress.py > case_studies/moe_beyond/R6_final.json
+```

@@ -246,6 +246,8 @@ def main() -> None:
     parser.add_argument("--paper-only", action="store_true")
     parser.add_argument("--paper", action="append", default=[],
                         help="paper-only mode: key=value@section-or-sentence")
+    parser.add_argument("--paper-file", type=Path, action="append", default=[],
+                        help="paper-only mode: the text the values were read from; its SHA-256 is recorded")
     parser.add_argument("--title", default="Minimal reporting block")
     parser.add_argument("--out-md", type=Path, required=True)
     parser.add_argument("--out-json", type=Path, required=True)
@@ -256,7 +258,7 @@ def main() -> None:
 
     if args.paper_only:
         block = build_block(mode="paper_only", supplied=_parse_paper_values(args.paper))
-        inputs: dict = {}
+        inputs: dict = {"paper_files": {str(p): sha256_file(p) for p in args.paper_file}}
     else:
         supplied = _load_facts(args.facts)
         inputs = {"facts": {str(p): sha256_file(p) for p in args.facts}}

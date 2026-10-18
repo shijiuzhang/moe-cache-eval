@@ -170,7 +170,7 @@
   "inputs": {
     "events_sha256": "e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
     "facts": {
-      "/Users/zhangyu/Documents/moe-cache-eval-release/case_studies/moe_beyond/results/E_facts.json": "024dc6f421f178cde7405ee224ada360b66b5a7a8114d5e59f5b9ff3ed8ecc59"
+      "/Users/zhangyu/Documents/moe-cache-eval-release/case_studies/moe_beyond/results/E_facts.json": "e5407861c07a535a5393e96c3e530147b121e72a539e4b173d9c6dc66033d7e4"
     }
   },
   "mode": "with_artifacts",

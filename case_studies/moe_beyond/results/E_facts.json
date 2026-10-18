@@ -118,5 +118,18 @@
       "source": "",
       "value": "no generated tokens are recorded; input sequences 48 / 48 unique"
     }
+  },
+  "inputs": {
+    "files": {
+      "canonical/test-e1-source/routes-00000.safetensors": "e13cdf4aaece26c830b0552dd33623dbc8feaa9f3698db666f7123ed0f9087ef",
+      "results/A_contract.json": "8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "results/C_workload.json": "42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "results/D_decomposition.json": "66fe9104a560d0c9e7d3a372a864f861c0f56f328212ac2ce91d9909e2777b0a",
+      "third_party/moebeyond-paper/2508.17137v1.html": "ef57960064f883656578c12ed6df67d2d66313181ee333fd0ceb29888f0fc590"
+    },
+    "inputs_manifest_sha256": "bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+    "prereg_commit": "08938d1e4a9240b6afbb3017ed499468df1895bf",
+    "prereg_sha256": "187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d",
+    "third_party_commit": "47031eefc7808e996ecd5c01d7ed90aa32e32514"
   }
 }

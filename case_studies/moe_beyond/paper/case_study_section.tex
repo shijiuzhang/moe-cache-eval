@@ -1,0 +1,91 @@
+% Draft generated for the SPE revision (reviewer point 3, option ii).
+% All numbers are \CS* macros from case_study_macros.tex; do not type numbers here.
+\subsection{External case study: a third-party trace through the package}
+\label{sec:case-study}
+
+\paragraph{Why this case.}
+MoE-Beyond~\cite{gavhane2025moebeyond} is the only study in our audit
+(Appendix~A) that publishes both its traces and its trace simulator. It reports
+that, for DeepSeek-V2-Lite at batch size one with 10\% of experts resident, a
+learned predictor raises the cache hit rate from \CSreportedInfinity{} for the
+MoE-Infinity heuristic to \CSreportedBeyond{}. Setting that comparison beside
+other studies requires fields its public text does not state: event replay,
+cache scope and capacity, hit counting, and workload construction. This section applies the released package to the public
+artifact (commit \texttt{\CSthirdPartyCommit}) to recover those fields. It does
+not re-evaluate the reported result. The analysis was pre-registered before any
+result was computed; every deviation is listed with the artifact.
+
+\paragraph{Execution contract.}
+Running the published artifact at the reported configuration reproduced the
+reported value (\CSreproInfinity{} vs \CSreportedInfinity{}). Running the
+published artifact at the reported configuration reproduced the reported value
+(\CSreproBeyond{} vs \CSreportedBeyond{}). Both are means over \CSseeds{} seeds of the
+random cache pre-fill (tolerance $\pm$\CSreproTolerance{} percentage points).
+On the in-event
+eviction probe, the published simulator recorded \CSprobeAtwoMisses{} misses,
+the count expected under per-access retention; its executed replay contract is
+classified as per-access. On the reference trace of Section~2.5 the published
+simulator recorded \CSprobeAoneHits{} hits and \CSprobeAoneMisses{} misses,
+matching the event-atomic reference counts (12 / 18). Execution also confirmed
+three contract fields: the cache is global and rebuilt, with a random pre-fill,
+for every prompt; hits are counted per expert access; and prefetched experts
+are not counted as hits but do change residency. The traces record one prefill
+forward pass per prompt, so we declare two event definitions: per-token events,
+matching the simulator's replay unit, and one whole-prefill event per layer,
+matching the executed forward pass. At the reported operating point
+(batch size one, 10\% residency, global scope, \CStheirCapacity{} blocks) under
+either event definition, every event's expert set fits within capacity, so
+in-event eviction cannot occur; whatever replay semantics the simulator uses, its
+counts there coincide with the event-atomic contract. Axis~I does not operate in
+this setting. At our per-layer frame with whole-prefill events, a fraction
+\CSoverCapEtwoPerLayerTen{} of events exceed capacity; in that setting the replay
+contract affects the counts and should be declared (checklist A1--A2).
+
+\paragraph{Operating regime.}
+Under our reporting frame, the per-token event stream of this setting has
+$\bar r = \CSrbarEoneRhoForty$ at $\rho = 40\%$ (per-layer scope); the nearest
+measured alignment point in Table~11 is the \CSnearestEone{}
+($\bar r = \CSnearestEoneRbar$). Under our reporting frame, the whole-prefill
+event stream of this setting has $\bar r = \CSrbarEtwoRhoForty$ at $\rho = 40\%$
+(per-layer scope); the nearest measured alignment point in Table~11 is the
+\CSnearestEtwo{} ($\bar r = \CSnearestEtwoRbar$).
+
+\paragraph{Workload construction and residency headroom.}
+The \CStestPrompts{} public test prompts have \CSheadsDistinct{} distinct
+70-character heads, \CSfinalsDistinct{} distinct final lines and a 95th-percentile
+word 5-gram Jaccard of \CSpromptJaccardPninetyfive{}; the collection scripts
+apply no chat template and record no decode step. The public text describes
+recording each token of the generated sequences, while the published collection
+scripts run one prefill forward pass per prompt; we record the difference without
+attributing it. On the public test prompts, the \S5.8 detector reports
+flag~=~\CSdetectorFlag{}; this is a detector-level screening result, not a
+replication or refutation of any workload effect in that study. The triggering
+positional agreement sits at position~0, a shared beginning-of-sequence token
+(\CSonlyBosShare{} of pairs agree only there), and at the question opener, in
+sequences of \CSlenMin{}--\CSlenMax{} tokens; the threshold was validated on
+512-token sequences. Excluding position~0 post hoc lowers the 95th percentile
+from \CSposAgreePninetyfive{} to \CSposAgreeNoBosPninetyfive{}. This is a
+limitation of our own detector: positional agreement is length-sensitive and
+needs a length-aware threshold.
+Under the package's prefetch-free contract (per-token events, per-layer scope,
+$\rho = 40\%$), the offline optimum leaves a recoverable gap of
+\CSgapRhoForty{}, of which the future-victim share is \CSfvShareRhoForty{}.
+These are prefetch-free residency results under our replay contract and are not
+comparable with the prefetch-inclusive hit rates reported by MoE-Beyond.
+The case also bounds the decomposition of Section~7.2. With whole-prefill events
+at $\rho = 40\%$ ($\bar r = \CSrbarEtwoRhoForty$), forced admission performs
+worse than the best causal policy and the two shares leave $[0,1]$
+(\CSadmShareBreak{} and \CSfvShareBreak{}): the decomposition presupposes
+$m_B \le m_F \le m_c$, which no longer holds once most events exceed their quota.
+
+\paragraph{What the package added.}
+From the paper text alone, \CSfieldsPaperOnly{} of the \CSfieldsTotal{}
+reporting-block fields can be filled; with the public artifact and the released
+package, \CSfieldsWithArtifacts{} can be filled. The fields that only the package
+made fillable are: retention decision, intra-event order, distinct prompt heads
+and final lines, chat template, decode steps recorded, positional token
+agreement, expert Jaccard on low-text-overlap pairs, cache scope, union per
+layer-step, capacity per layer, $r(s,l)$, and the forced-admission decomposition.
+Each is required before a hit rate measured under one contract can be set beside
+one measured under another, and each was obtained by executing the published
+artifact rather than by rereading the paper.

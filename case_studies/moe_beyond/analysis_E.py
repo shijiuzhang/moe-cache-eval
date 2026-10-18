@@ -64,6 +64,7 @@ PAPER_VALUES = {
 def _paper_only(out_md: Path, out_json: Path) -> None:
     args = [sys.executable, "-I", "-m", "moe_controller.report_block", "--paper-only",
             "--title", "MoE-Beyond — reporting block from the public text only",
+            "--paper-file", str(PAPER_HTML),
             "--out-md", str(out_md), "--out-json", str(out_json)]
     for key, (value, source) in PAPER_VALUES.items():
         args += ["--paper", f"{key}={value}@{source}"]
@@ -157,6 +158,7 @@ def main() -> None:
         "absolute_bytes_per_output_token": {"value": "no output tokens are generated and expert byte sizes are not in the artifact",
                                             "kind": "NA", "source": ""},
     }}
+    facts["inputs"] = prereg_guard.inputs_record(lock, dict(files))
     (RESULTS / "E_facts.json").write_text(json.dumps(facts, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     files["results/E_facts.json"] = sha256_file(RESULTS / "E_facts.json")
 
