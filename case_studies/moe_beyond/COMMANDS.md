@@ -67,3 +67,12 @@ PY -I -m moe_controller.report_block --events <toy-trace-dir> --rho 0.5 --scope 
 PY -I -m moe_controller.report_block --paper-only --paper "concurrency=1@Abstract" \
    --out-md paper.md --out-json paper.json
 ```
+
+## Stage 3 — analyses
+
+```bash
+# Analysis A (P1-P3): probes, contract-field execution checks, Axis-I applicability, reproduction.
+PY -I case_studies/moe_beyond/analysis_A.py
+#   internally: TPY -I thirdparty_harness.py probe|confirm|reproduce  (third-party code run in isolation)
+#   -> results/A_contract.{json,md}; about 15 s; peak RSS 0.22 GB
+```

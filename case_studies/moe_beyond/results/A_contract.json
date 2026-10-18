@@ -1,0 +1,193 @@
+{
+  "P1_probes": {
+    "A0": {
+      "consistent_across_seeds": true,
+      "eligible_seeds": [
+        11,
+        23,
+        47,
+        89,
+        131
+      ],
+      "excluded_seeds": [],
+      "probe_counts_observed": [
+        {
+          "hits": 3,
+          "misses": 3
+        }
+      ]
+    },
+    "A1": {
+      "consistent_across_seeds": true,
+      "eligible_seeds": [
+        11,
+        23,
+        47,
+        89,
+        131
+      ],
+      "excluded_seeds": [],
+      "matches_reference_12_18": true,
+      "probe_counts_observed": [
+        {
+          "hits": 12,
+          "misses": 18
+        }
+      ]
+    },
+    "A2": {
+      "classification": "per_access",
+      "consistent_across_seeds": true,
+      "eligible_seeds": [
+        11,
+        23,
+        47,
+        89,
+        131
+      ],
+      "excluded_seeds": [],
+      "probe_counts_observed": [
+        {
+          "hits": 0,
+          "misses": 6
+        }
+      ]
+    },
+    "a1_a2_conflict": false,
+    "executed_contract": "per_access"
+  },
+  "P2_axis_one": [
+    {
+      "all_fit": true,
+      "event_definition": "E1 (per-token)",
+      "events": 40118,
+      "events_sha256": "e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "fraction_over_capacity": 0.0,
+      "max_event_union": 6,
+      "setting": "reported point: B=1, global scope, 166 blocks (int(1664*0.10))",
+      "trace": "test-e1-b1"
+    },
+    {
+      "all_fit": true,
+      "event_definition": "E1 (per-token)",
+      "events": 40118,
+      "events_sha256": "e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "fraction_over_capacity": 0.0,
+      "max_event_union": 6,
+      "setting": "package frame: B=1, per-layer scope, rho=0.10 (total 166, quotas 6-7)",
+      "trace": "test-e1-b1"
+    },
+    {
+      "all_fit": true,
+      "event_definition": "E2 (whole-prefill)",
+      "events": 2600,
+      "events_sha256": "7b4c2b62419f3f8f13f9057d80561f5e04cb5687a36b14b6486fc0c783a41f04",
+      "fraction_over_capacity": 0.0,
+      "max_event_union": 62,
+      "setting": "reported point: B=1, global scope, 166 blocks (int(1664*0.10))",
+      "trace": "test-e2-b1"
+    },
+    {
+      "all_fit": false,
+      "event_definition": "E2 (whole-prefill)",
+      "events": 2600,
+      "events_sha256": "7b4c2b62419f3f8f13f9057d80561f5e04cb5687a36b14b6486fc0c783a41f04",
+      "fraction_over_capacity": 1.0,
+      "max_event_union": 62,
+      "setting": "package frame: B=1, per-layer scope, rho=0.10 (total 166, quotas 6-7)",
+      "trace": "test-e2-b1"
+    }
+  ],
+  "P3_reproduction": {
+    "moe_beyond_predicted": {
+      "absolute_difference_pp": 0.3672538334811861,
+      "files_skipped_no_access": [
+        20
+      ],
+      "files_used": [
+        80
+      ],
+      "max_cache_hit_percent": 72.36725383348119,
+      "mean_cache_hit_percent": 72.36725383348119,
+      "min_cache_hit_percent": 72.36725383348119,
+      "per_seed_cache_hit_percent": {
+        "11": 72.36725383348119,
+        "23": 72.36725383348119,
+        "47": 72.36725383348119,
+        "89": 72.36725383348119,
+        "131": 72.36725383348119
+      },
+      "per_seed_prediction_hit_percent": {
+        "11": 72.10429603345584,
+        "23": 72.10429603345584,
+        "47": 72.10429603345584,
+        "89": 72.10429603345584,
+        "131": 72.10429603345584
+      },
+      "reported_percent": 72.0,
+      "within_tolerance": true
+    },
+    "moe_infinity_eamc": {
+      "absolute_difference_pp": 0.14113124656782006,
+      "files_skipped_no_access": [
+        20
+      ],
+      "files_used": [
+        80
+      ],
+      "max_cache_hit_percent": 16.85886875343218,
+      "mean_cache_hit_percent": 16.85886875343218,
+      "min_cache_hit_percent": 16.85886875343218,
+      "per_seed_cache_hit_percent": {
+        "11": 16.85886875343218,
+        "23": 16.85886875343218,
+        "47": 16.85886875343218,
+        "89": 16.85886875343218,
+        "131": 16.85886875343218
+      },
+      "per_seed_prediction_hit_percent": {
+        "11": 16.42060575338994,
+        "23": 16.42060575338994,
+        "47": 16.42060575338994,
+        "89": 16.42060575338994,
+        "131": 16.42060575338994
+      },
+      "reported_percent": 17.0,
+      "within_tolerance": true
+    }
+  },
+  "contract_fields": {
+    "cache_retained_across_requests": {
+      "code": "infinity_moe_sim.py:211 (ExpertCache constructed per call), :86-90",
+      "execution_check": true,
+      "value": "no; each prompt starts from a new, randomly pre-filled cache"
+    },
+    "hit_denominator": {
+      "code": "infinity_moe_sim.py:242-251",
+      "execution_check": true,
+      "value": "each actual expert access"
+    },
+    "prefetch_loads_counted_as_hits": {
+      "code": "infinity_moe_sim.py:237-239",
+      "execution_check": true,
+      "value": "no; predicted experts are loaded before counting and change LRU order"
+    }
+  },
+  "hold_for_author_review": false,
+  "inputs": {
+    "files": {
+      "cache_simulator/infinity_moe_sim.py": "734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa",
+      "results/A_confirm_raw.json": "9823fb82722cef3647934dc58a9417a09688cbfd0975b822c47f042849543ef8",
+      "results/A_probes/A0.csv": "e34390f51a28e309abe2dea13ef9e7b0b25caead305d5245772a098a14664d53",
+      "results/A_probes/A1.csv": "26eee1ce85e595f6fe9c2565ded76e678a0c88815e91a93ccaf9738a6f1d9f96",
+      "results/A_probes/A2.csv": "e34390f51a28e309abe2dea13ef9e7b0b25caead305d5245772a098a14664d53",
+      "results/A_probes/EXPECTED.json": "1322916d9011862aed2fd1e3c877920767874c7b71d7939b6a05a76893d5037b",
+      "results/A_probes_raw.json": "f41ad149de8b056759afd57cd41716cf6b53b086679c0fbae0af90bace2e451d",
+      "results/A_reproduction_raw.json": "c7c773eaf88657f14cd2b4a2d235c194b075381cf579837f6f11d03fb8049d43"
+    },
+    "inputs_manifest_sha256": "bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+    "prereg_commit": "08938d1e4a9240b6afbb3017ed499468df1895bf",
+    "prereg_sha256": "187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d",
+    "third_party_commit": "47031eefc7808e996ecd5c01d7ed90aa32e32514"
+  }
+}

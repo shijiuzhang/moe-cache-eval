@@ -10,7 +10,7 @@ never imported by the released package.  Its global ``np.random`` state is
 seeded immediately before the simulator constructs its randomly pre-filled
 cache, which makes otherwise unseeded runs reproducible.
 
-``probe`` and ``reproduce`` produce stage-3 results and therefore refuse to run
+``probe``, ``confirm`` and ``reproduce`` produce stage-3 results and therefore refuse to run
 unless the pre-registration lock verifies.  ``smoke`` checks only that the
 simulator can be loaded and called, on a hand-checkable input that is not one of
 the pre-registered probes.
@@ -121,6 +121,52 @@ def run_probe(module, csv_path: Path, spec: dict) -> list[dict]:
     return rows
 
 
+def confirm_contract_fields(module, probes_dir: Path, workdir: Path) -> dict:
+    """Execution checks of the three contract fields (PREREG P2); not decision probes.
+
+    * Each replay call builds its own cache: the same input and seed, called
+      twice in a row, gives identical counts.
+    * The hit denominator is per expert access: on probe A0 the measured
+      accesses are the sentinel (1) plus 2 x 3 probe experts.
+    * Prefetch loads are not counted but do change residency: the same A0 rows
+      with the probe experts also listed as predictions keep the same
+      denominator while the probe accesses become hits.
+    """
+    expected = json.loads((probes_dir / "EXPECTED.json").read_text(encoding="utf-8"))
+    a0 = expected["A0"]
+    seed = TIE_SEEDS[0]
+    first = call_with_predicted(module, probes_dir / a0["file"], a0["capacity_blocks"], seed, 0)
+    second = call_with_predicted(module, probes_dir / a0["file"], a0["capacity_blocks"], seed, 0)
+
+    prefetch_path = workdir / "A0_with_predictions.csv"
+    with (probes_dir / a0["file"]).open(encoding="utf-8", newline="") as source, prefetch_path.open(
+        "w", encoding="utf-8", newline=""
+    ) as target:
+        reader = csv.reader(source)
+        writer = csv.writer(target)
+        writer.writerow(next(reader))
+        for index, row in enumerate(reader):
+            if index > 0:  # keep the sentinel row prediction-free
+                row[3] = row[2]
+            writer.writerow(row)
+    with_prefetch = call_with_predicted(module, prefetch_path, a0["capacity_blocks"], seed, 0)
+    return {
+        "seed": seed,
+        "stateless_between_calls": {"first": first, "second": second, "identical": first == second},
+        "denominator": {
+            "measured_accesses": first["hits"] + first["misses"],
+            "sentinel_plus_probe_expert_accesses": 1 + 2 * 3,
+        },
+        "prefetch": {
+            "without_predictions": first,
+            "with_predictions": with_prefetch,
+            "same_denominator": (first["hits"] + first["misses"])
+            == (with_prefetch["hits"] + with_prefetch["misses"]),
+            "prefetch_file_sha256": prereg_guard.sha256_path(prefetch_path),
+        },
+    }
+
+
 def _aggregate_like_main(per_file: list[tuple[int, int, int, int]]) -> dict:
     """Aggregate exactly as the simulator's ``main()``, including its skips."""
     totals = [0, 0, 0, 0]
@@ -217,6 +263,9 @@ def main() -> None:
     probe_parser = sub.add_parser("probe")
     probe_parser.add_argument("--probes", type=Path, required=True)
     probe_parser.add_argument("--output", type=Path, required=True)
+    confirm_parser = sub.add_parser("confirm")
+    confirm_parser.add_argument("--probes", type=Path, required=True)
+    confirm_parser.add_argument("--output", type=Path, required=True)
     rep_parser = sub.add_parser("reproduce")
     rep_parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -239,6 +288,13 @@ def main() -> None:
             for name, spec in expected.items()
         }
         payload = {"probes": results, "expected": expected, "probe_file_sha256": probe_files}
+    elif args.command == "confirm":
+        with tempfile.TemporaryDirectory() as tmp:
+            payload = {"confirmation": confirm_contract_fields(module, args.probes, Path(tmp))}
+        payload["probe_file_sha256"] = {
+            "A0.csv": prereg_guard.sha256_path(args.probes / "A0.csv"),
+            "EXPECTED.json": prereg_guard.sha256_path(args.probes / "EXPECTED.json"),
+        }
     else:
         relative = (
             [f"test_datasets/predicted_csvs/prompt_{n}_data_predicted.csv" for n in range(1, 101)]

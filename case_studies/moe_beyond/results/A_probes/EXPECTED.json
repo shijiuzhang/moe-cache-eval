@@ -1,0 +1,164 @@
+{
+  "A0": {
+    "cache_scope": "global (third-party simulator)",
+    "capacity_blocks": 3,
+    "expected_probe_counts": {
+      "any_contract": {
+        "hits": 3,
+        "misses": 3
+      }
+    },
+    "file": "A0.csv",
+    "predicted_expert_ids": "empty for every row (prefetch disabled)",
+    "probe_blocks": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "sentinel_blocks": [
+      [
+        1,
+        63
+      ]
+    ],
+    "sentinel_contribution": {
+      "hits": 1,
+      "misses": 0
+    },
+    "source": "PREREG P1",
+    "warmup_count": 0
+  },
+  "A1": {
+    "cache_scope": "global (third-party simulator)",
+    "capacity_blocks": 6,
+    "expected_probe_counts": {
+      "event_atomic_reference": {
+        "hits": 12,
+        "misses": 18
+      }
+    },
+    "file": "A1.csv",
+    "predicted_expert_ids": "empty for every row (prefetch disabled)",
+    "probe_blocks": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ]
+    ],
+    "sentinel_blocks": [
+      [
+        1,
+        63
+      ],
+      [
+        2,
+        63
+      ],
+      [
+        3,
+        63
+      ]
+    ],
+    "sentinel_contribution": {
+      "hits": 1,
+      "misses": 2
+    },
+    "source": "PREREG P1",
+    "warmup_count": 0
+  },
+  "A2": {
+    "cache_scope": "global (third-party simulator)",
+    "capacity_blocks": 2,
+    "expected_probe_counts": {
+      "event_level_retention": {
+        "hits": 2,
+        "misses": 4
+      },
+      "per_access_retention": {
+        "hits": 0,
+        "misses": 6
+      }
+    },
+    "file": "A2.csv",
+    "predicted_expert_ids": "empty for every row (prefetch disabled)",
+    "probe_blocks": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "sentinel_blocks": [
+      [
+        1,
+        63
+      ]
+    ],
+    "sentinel_contribution": {
+      "hits": 1,
+      "misses": 0
+    },
+    "source": "PREREG P1",
+    "warmup_count": 0
+  }
+}
