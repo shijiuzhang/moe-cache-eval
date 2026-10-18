@@ -167,18 +167,24 @@ def _sentences(probe: dict, p2: list[dict], p3: dict) -> list[str]:
             f"{a1_counts['misses']} misses, {'matching' if a1['matches_reference_12_18'] else 'not matching'} "
             "the event-atomic reference counts (12 / 18)."
         )
+    lines.append(
+        "The simulator's executed contract is per-access (probe A2); its reported counts are per-access "
+        "counts, and setting them beside an event-atomic study requires declaring this (checklist A1–A2)."
+    )
+    # D-006: an all-fit result is a capacity observation only; it does not imply equal counts.
     for row in p2:
         setting = f"{row['setting']} with {row['event_definition']} events"
         if row["all_fit"]:
             lines.append(
-                f"At {setting}, every event's expert set fits within capacity, so in-event eviction "
-                "cannot occur; whatever replay semantics the simulator uses, its counts there coincide "
-                "with the event-atomic contract. Axis I does not operate in this setting."
+                f"At {setting}, every event's expert set fits within capacity. This is a capacity "
+                "observation; it does not by itself establish equal counts under per-access and "
+                "event-atomic replay, because a per-access miss can evict a resident expert needed later "
+                "in the same event."
             )
         else:
             lines.append(
                 f"At {setting}, a fraction {row['fraction_over_capacity']:.4f} of events exceed capacity; "
-                "in that setting the replay contract affects the counts and should be declared "
+                "in that setting the replay contract can affect the counts and should be declared "
                 "(checklist A1–A2)."
             )
     for path_kind, item in p3.items():
@@ -190,7 +196,36 @@ def _sentences(probe: dict, p2: list[dict], p3: dict) -> list[str]:
     return lines
 
 
+def render(payload: dict) -> str:
+    contract_fields, p2 = payload["contract_fields"], payload["P2_axis_one"]
+    reproduction, hold = payload["P3_reproduction"], payload["hold_for_author_review"]
+    md = ["# Analysis A — execution contract, Axis I, reproduction", ""]
+    md += ["| contract field | value | code | execution check |", "|---|---|---|---|"]
+    md += [f"| {k} | {v['value']} | `{v['code']}` | {v['execution_check']} |" for k, v in contract_fields.items()]
+    md += ["", "| setting | events | max union | fraction over capacity |", "|---|---:|---:|---:|"]
+    md += [f"| {r['setting']} — {r['event_definition']} | {r['events']} | {r['max_event_union']} | "
+           f"{r['fraction_over_capacity']:.4f} |" for r in p2]
+    md += ["", "| path | reported | mean over 5 seeds | min–max | files used |", "|---|---:|---:|---|---|"]
+    md += [f"| {k} | {v['reported_percent']:.0f}% | {v['mean_cache_hit_percent']:.2f}% | "
+           f"{v['min_cache_hit_percent']:.2f}–{v['max_cache_hit_percent']:.2f}% | {v['files_used']} |"
+           for k, v in reproduction.items()]
+    md.append("")
+    if hold:
+        md += ["**HOLD — protocol §7.** A reproduction is outside the ±2.0 pp tolerance. No conclusion "
+               "sentence is written; the raw numbers go to the author first.", ""]
+    else:
+        md += ["## Conclusion sentences (P2 wording revised by DEVIATIONS D-006)", ""]
+        md += [f"- {s}" for s in _sentences(payload["P1_probes"], p2, reproduction)] + [""]
+    return "\n".join(md)
+
+
 def main() -> None:
+    if "--render-only" in sys.argv:
+        prereg_guard.verify_prereg()
+        payload = json.loads((RESULTS / "A_contract.json").read_text(encoding="utf-8"))
+        (RESULTS / "A_contract.md").write_text(render(payload), encoding="utf-8")
+        print(RESULTS / "A_contract.md")
+        return
     lock = prereg_guard.verify_prereg()
     files = prereg_guard.verify_third_party_files([probes_path for probes_path in ("cache_simulator/infinity_moe_sim.py",)])
     outputs = [RESULTS / name for name in (
@@ -252,23 +287,7 @@ def main() -> None:
     }
     (RESULTS / "A_contract.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
-    md = ["# Analysis A — execution contract, Axis I, reproduction", ""]
-    md += ["| contract field | value | code | execution check |", "|---|---|---|---|"]
-    md += [f"| {k} | {v['value']} | `{v['code']}` | {v['execution_check']} |" for k, v in contract_fields.items()]
-    md += ["", "| setting | events | max union | fraction over capacity |", "|---|---:|---:|---:|"]
-    md += [f"| {r['setting']} — {r['event_definition']} | {r['events']} | {r['max_event_union']} | "
-           f"{r['fraction_over_capacity']:.4f} |" for r in p2]
-    md += ["", "| path | reported | mean over 5 seeds | min–max | files used |", "|---|---:|---:|---|---|"]
-    md += [f"| {k} | {v['reported_percent']:.0f}% | {v['mean_cache_hit_percent']:.2f}% | "
-           f"{v['min_cache_hit_percent']:.2f}–{v['max_cache_hit_percent']:.2f}% | {v['files_used']} |"
-           for k, v in reproduction.items()]
-    md.append("")
-    if hold:
-        md += ["**HOLD — protocol §7.** A reproduction is outside the ±2.0 pp tolerance. No conclusion "
-               "sentence is written; the raw numbers go to the author first.", ""]
-    else:
-        md += ["## Frozen conclusion sentences", ""] + [f"- {s}" for s in _sentences(classification, p2, reproduction)] + [""]
-    (RESULTS / "A_contract.md").write_text("\n".join(md), encoding="utf-8")
+    (RESULTS / "A_contract.md").write_text(render(payload), encoding="utf-8")
     print(json.dumps({"hold_for_author_review": hold, "executed_contract": classification["executed_contract"]}, indent=2))
 
 

@@ -105,9 +105,16 @@ def build() -> list[tuple[str, str, str]]:
     add("CSadmShareBreak", pct(brk["admission_share"]), "D_decomposition E2 per-layer (i) rho 0.40")
     add("CSfvShareBreak", pct(brk["future_victim_share"]), "D_decomposition E2 per-layer (i) rho 0.40")
     add("CSfieldsTotal", str(e["total_fields"]), "E_delta")
-    add("CSfieldsPaperOnly", str(e["paper_only_filled"]), "E_delta")
-    add("CSfieldsWithArtifacts", str(e["with_artifacts_filled"]), "E_delta")
-    add("CSfieldsDelta", str(e["delta"]), "E_delta")
+    add("CSfieldsPaperOnly", str(e["paper_only_answered"]), "E_delta (answered, D-007)")
+    add("CSfieldsPaperOnlyNotApplicable", str(e["paper_only_not_applicable"]), "E_delta (D-007)")
+    add("CSfieldsWithArtifacts", str(e["with_artifacts_answered"]), "E_delta (answered, D-007)")
+    add("CSfieldsWithArtifactsNotApplicable", str(e["with_artifacts_not_applicable"]), "E_delta (D-007)")
+    added = e["answered_only_with_artifacts"]
+    add("CSfieldsAnsweredOnlyWithArtifacts", str(len(added)), "E_delta.answered_only_with_artifacts")
+    for provenance, word in (("execution", "Execution"), ("code_inspection", "CodeInspection"),
+                             ("data_inspection", "DataInspection"), ("analyst_inference", "AnalystInference")):
+        add(f"CSaddedBy{word}", str(sum(1 for item in added if item["provenance"] == provenance)),
+            f"E_delta.answered_only_with_artifacts provenance {provenance}")
     for name, _, _ in m:
         if not name.isalpha():
             raise RuntimeError(f"Macro name {name} is not letters only")

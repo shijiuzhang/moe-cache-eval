@@ -6,7 +6,7 @@
 % C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25
 % C_exploratory_positional.json sha256 3869744a3f0ddd93f732a9d3d59f646d61bd83bc299d2386f22e581bc2b016c8
 % D_decomposition.json sha256 66fe9104a560d0c9e7d3a372a864f861c0f56f328212ac2ce91d9909e2777b0a
-% E_delta.json sha256 9fc46f162add62c7471da7421d1e7937b7958d1d2f1b737f2f8d306c3ca9a3f5
+% E_delta.json sha256 456892751c1ea68b820d3444b856a075b7d1ea8987c97dda8b537e6684aff9ee
 \newcommand{\CSthirdPartyCommit}{47031ee} % git rev-parse of third_party/moe-beyond
 \newcommand{\CStestPrompts}{100} % C_workload.prompt_side.records
 \newcommand{\CSseeds}{5} % A_contract.P1_probes.A2.eligible_seeds
@@ -50,6 +50,12 @@
 \newcommand{\CSadmShareBreak}{194.1\%} % D_decomposition E2 per-layer (i) rho 0.40
 \newcommand{\CSfvShareBreak}{$-$94.1\%} % D_decomposition E2 per-layer (i) rho 0.40
 \newcommand{\CSfieldsTotal}{30} % E_delta
-\newcommand{\CSfieldsPaperOnly}{13} % E_delta
-\newcommand{\CSfieldsWithArtifacts}{25} % E_delta
-\newcommand{\CSfieldsDelta}{12} % E_delta
+\newcommand{\CSfieldsPaperOnly}{8} % E_delta (answered, D-007)
+\newcommand{\CSfieldsPaperOnlyNotApplicable}{5} % E_delta (D-007)
+\newcommand{\CSfieldsWithArtifacts}{19} % E_delta (answered, D-007)
+\newcommand{\CSfieldsWithArtifactsNotApplicable}{7} % E_delta (D-007)
+\newcommand{\CSfieldsAnsweredOnlyWithArtifacts}{11} % E_delta.answered_only_with_artifacts
+\newcommand{\CSaddedByExecution}{7} % E_delta.answered_only_with_artifacts provenance execution
+\newcommand{\CSaddedByCodeInspection}{3} % E_delta.answered_only_with_artifacts provenance code_inspection
+\newcommand{\CSaddedByDataInspection}{1} % E_delta.answered_only_with_artifacts provenance data_inspection
+\newcommand{\CSaddedByAnalystInference}{0} % E_delta.answered_only_with_artifacts provenance analyst_inference

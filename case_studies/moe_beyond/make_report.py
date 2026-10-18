@@ -71,8 +71,10 @@ def main() -> None:
     for k, v in a["P3_reproduction"].items():
         out.append(f"| reproduction {k} | {v['mean_cache_hit_percent']:.2f}% vs reported {v['reported_percent']:.0f}% "
                    f"(within ±2.0 pp: {v['within_tolerance']}; files used {v['files_used'][0]}) |")
-    out += ["", "The executed replay contract is per-access. At the reported operating point every event fits "
-            "within capacity under both event definitions, so Axis I does not operate there. Both reported hit "
+    out += ["", "The executed replay contract is per-access, so the reported counts are per-access counts. At the "
+            "reported operating point every event fits within capacity under both event definitions; this is a "
+            "capacity observation and does not by itself establish equal counts under per-access and event-atomic "
+            "replay (DEVIATIONS D-006; regression control tests/test_fit_is_not_equivalence.py). Both reported hit "
             "rates were reproduced within tolerance.", ""]
 
     # B
@@ -112,10 +114,19 @@ def main() -> None:
             "`results/D_decomposition.md`.", ""]
 
     # E
-    out += ["## E — reporting-block delta", "",
-            f"| fields filled from the paper text | {e['paper_only_filled']} of {e['total_fields']} |", "|---|---|",
-            f"| fields filled with the artifact and the package | {e['with_artifacts_filled']} of {e['total_fields']} |",
-            f"| added by the package | {', '.join(e['fields_only_the_package_made_fillable'])} |", ""]
+    added = ", ".join(f"{item['field'].replace('|', chr(92) + '|')} ({item['provenance'].replace('_', ' ')})"
+                      for item in e["answered_only_with_artifacts"])
+    pkg = e["package_analyses_not_counted"][0]
+    out += ["## E — reporting-block comparison (target: published configuration; DEVIATIONS D-007, D-008)", "",
+            "| item | value |", "|---|---|",
+            f"| answered from the paper text | {e['paper_only_answered']} of {e['total_fields']} "
+            f"({e['paper_only_not_applicable']} not applicable) |",
+            f"| answered with artifact, package and analyst steps | {e['with_artifacts_answered']} of {e['total_fields']} "
+            f"({e['with_artifacts_not_applicable']} not applicable) |",
+            f"| answered only in the second mode, with provenance | {added} |",
+            f"| comparison scope | {e['comparison_scope']} |",
+            f"| package analysis, not counted | {pkg['analysis']}: gap {pct(pkg['recoverable_gap'])}, "
+            f"future-victim share {pct(pkg['future_victim_share'])} ({pkg['contract']}) |", ""]
 
     # R6, forbidden words, checklist, files
     out += ["## Final R6 regression", "", "```json", json.dumps(r6, indent=2, sort_keys=True), "```", ""]
@@ -140,7 +151,7 @@ def main() -> None:
             "- [x] Every table with Belady or gap carries the non-comparability note.",
             "- [x] Every constructed B > 1 result is labelled “constructed by this paper”.",
             "- [x] The first paragraph lists every deviation.", "",
-            "## Paper files (lab repository copies, new files only)", "", "| file | sha256 | identical to source |", "|---|---|---|"]
+            "## Paper files (lab repository copies; the 2026-10-18 versions are archived byte-for-byte under history/)", "", "| file | sha256 | identical to source |", "|---|---|---|"]
     for name in PAPER_FILES:
         src, dst = CASE_DIR / "paper" / name, LAB_PAPER / name
         out.append(f"| {name} | `{sha256_file(src)}` | {dst.is_file() and sha256_file(dst) == sha256_file(src)} |")

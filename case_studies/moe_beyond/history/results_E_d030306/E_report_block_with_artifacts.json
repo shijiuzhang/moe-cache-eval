@@ -1,0 +1,178 @@
+{
+  "fields": {
+    "absolute_bytes_per_output_token": {
+      "kind": "NA",
+      "source": "",
+      "value": "no output tokens are generated and expert byte sizes are not in the artifact"
+    },
+    "bandwidth_budget_assumed": {
+      "kind": "DECLARE",
+      "source": "only the original authors can state the bandwidth they assumed",
+      "value": "DECLARE"
+    },
+    "cache_scope": {
+      "kind": "computed",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": "global"
+    },
+    "capacity_per_layer": {
+      "kind": "computed",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": "166 blocks shared by all layers (global; round(1664 x 0.1))"
+    },
+    "chat_template_applied": {
+      "kind": "computed",
+      "source": "collection scripts; results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": "no"
+    },
+    "concurrency": {
+      "kind": "computed",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": 1
+    },
+    "conformance_trace": {
+      "kind": "computed",
+      "source": "INPUTS.sha256 sha256 bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+      "value": "no (none in the public repository)"
+    },
+    "decode_steps_recorded": {
+      "kind": "computed",
+      "source": "collection scripts; results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": 0
+    },
+    "dedup_credited_to_policy": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "no (B = 1, nothing to deduplicate)"
+    },
+    "distinct_prompt_heads_finals": {
+      "kind": "computed",
+      "source": "results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": "100 / 100"
+    },
+    "effect_stable_across_position_bands": {
+      "kind": "NA",
+      "source": "",
+      "value": "no category labels or matched template arm"
+    },
+    "event_unit": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "per-access (probe A2, five seeds)"
+    },
+    "expert_jaccard_low_text_overlap": {
+      "kind": "computed",
+      "source": "results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": 0.14737107054939225
+    },
+    "experts_topk_layers": {
+      "kind": "computed",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": "64 / 6 / 26"
+    },
+    "forced_admission_decomposition": {
+      "kind": "computed",
+      "source": "results/D_decomposition.json sha256 66fe9104a560d0c9e7d3a372a864f861c0f56f328212ac2ce91d9909e2777b0a",
+      "value": {
+        "admission_share": 0.013527779823721262,
+        "contract": "prefetch-free, E1, rho 0.10, global, per-request reset; not comparable with prefetch-inclusive rates",
+        "future_victim_share": 0.9864722201762788
+      }
+    },
+    "initial_pinned_load_counted": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "n/a; each prompt starts from a random pre-fill and its first 10 tokens are not counted"
+    },
+    "intra_event_order": {
+      "kind": "computed",
+      "source": "canonical/test-e1-source sha256 e13cdf4aaece26c830b0552dd33623dbc8feaa9f3698db666f7123ed0f9087ef",
+      "value": "ascending id (40118 of 40118 rows ascending in the replayed files)"
+    },
+    "miss_denominator": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "per expert access, pre-dedup (no dedup at B = 1)"
+    },
+    "offline_bound_reported": {
+      "kind": "computed",
+      "source": "results/D_decomposition.json sha256 66fe9104a560d0c9e7d3a372a864f861c0f56f328212ac2ce91d9909e2777b0a",
+      "value": "not in the study; this package supplies a prefetch-free Belady bound (analysis D), not comparable with the prefetch-inclusive rates"
+    },
+    "position_locked_cohorts": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "no (B = 1)"
+    },
+    "positional_token_agreement": {
+      "kind": "computed",
+      "source": "results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": {
+        "mean": 0.13429799792753483,
+        "p95": 0.2857142857142857,
+        "scope": "input sequences, first 48 records; post-hoc decomposition in C_exploratory_positional (D-004)"
+      }
+    },
+    "r_union_over_capacity": {
+      "kind": "computed",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": {
+        "fraction_gt_1": 0.0,
+        "mean": 0.03614457831325301,
+        "p95": 0.03614457831325301
+      }
+    },
+    "residency_fraction": {
+      "kind": "computed",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": 0.1
+    },
+    "retention_decision": {
+      "kind": "computed",
+      "source": "probe A2; results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "immediate"
+    },
+    "service_discipline": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "one prompt replayed at a time; cache rebuilt for every prompt"
+    },
+    "static_fit_source": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "n/a (no static policy in the reported comparison)"
+    },
+    "static_quota_rule": {
+      "kind": "computed",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "n/a"
+    },
+    "templates_per_category": {
+      "kind": "NA",
+      "source": "",
+      "value": "no category labels in the public artifact"
+    },
+    "union_per_layer_step": {
+      "kind": "computed",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": {
+        "mean": 6.0,
+        "p95": 6.0
+      }
+    },
+    "unique_generated_sequences": {
+      "kind": "NA",
+      "source": "",
+      "value": "no generated tokens are recorded; input sequences 48 / 48 unique"
+    }
+  },
+  "filled_count": 25,
+  "inputs": {
+    "events_sha256": "e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+    "facts": {
+      "/Users/zhangyu/Documents/moe-cache-eval-release/case_studies/moe_beyond/results/E_facts.json": "e5407861c07a535a5393e96c3e530147b121e72a539e4b173d9c6dc66033d7e4"
+    }
+  },
+  "mode": "with_artifacts",
+  "total_fields": 30
+}

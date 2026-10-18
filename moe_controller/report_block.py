@@ -1,14 +1,23 @@
 """Minimal reporting block (paper Appendix B.1 / §10.5) as a fillable artifact.
 
-Every one of the 30 fields carries exactly one value class:
+Every one of the 30 fields describes one target configuration and carries
+exactly one value class, under the same rule in both modes:
 
-* ``computed`` — derived by a tool; its ``source`` must cite at least one
-  SHA-256 of the file it was computed from;
-* ``DECLARE`` — only the original authors can state it; it cannot be derived;
-* ``NA`` — the information does not exist in the data (the reason is required);
-* ``NR`` — not reported in the public text (paper-only mode default);
-* ``paper`` — stated in the public text (paper-only mode; ``source`` must cite
-  the section or sentence).
+* ``answered`` — a definite value for the target, including "no" for a
+  question about whether something exists or was reported;
+* ``not_applicable`` — the field presupposes a mechanism the target does not
+  have, and the cited source establishes that absence;
+* ``NA`` — the information exists in neither the text nor the artifact
+  (the reason is required);
+* ``DECLARE`` — only the original authors can state it;
+* ``NR`` — paper-only mode: not stated in the public text.
+
+``answered`` and ``not_applicable`` carry a provenance: ``text`` (paper-only
+mode, citing a section) or, with artifacts, ``execution``, ``code_inspection``,
+``data_inspection`` or ``analyst_inference``, each citing a SHA-256.  The
+headline is the number of ``answered`` fields; ``not_applicable`` is counted
+separately and never added to it.  Results obtained under a different replay
+contract are not entries of this block.
 
 Regime fields are computed from an event trace with the same definitions as the
 paper's regime tables: per-layer integer quotas from the §2.3 capacity rule,
@@ -20,7 +29,9 @@ Usage::
     python -m moe_controller.report_block --events TRACE_DIR --rho 0.10 \\
         --scope per_layer --facts facts.json --out-md block.md --out-json block.json
     python -m moe_controller.report_block --paper-only \\
-        --paper "concurrency=1@Abstract" --out-md paper_only.md --out-json paper_only.json
+        --paper "concurrency=1@Abstract" \\
+        --paper-not-applicable "static_fit_source=no static policy@Section 4" \\
+        --out-md paper_only.md --out-json paper_only.json
 """
 
 from __future__ import annotations
@@ -71,7 +82,8 @@ FIELDS: tuple[tuple[str, str, str], ...] = (
     ("Oracle", "bandwidth_budget_assumed", "bandwidth budget assumed"),
 )
 FIELD_KEYS = tuple(key for _, key, _ in FIELDS)
-VALUE_KINDS = ("computed", "DECLARE", "NA", "NR", "paper")
+VALUE_KINDS = ("answered", "not_applicable", "NA", "DECLARE", "NR")
+PROVENANCES = ("text", "execution", "code_inspection", "data_inspection", "analyst_inference")
 _SHA256 = re.compile(r"\b[0-9a-f]{64}\b")
 
 
@@ -80,24 +92,44 @@ class FieldValue:
     value: object
     kind: str
     source: str
+    provenance: str = ""
 
     def validate(self, key: str) -> None:
         if self.kind not in VALUE_KINDS:
             raise ValueError(f"{key}: unknown value kind {self.kind!r}")
-        if self.kind == "computed" and not _SHA256.search(self.source or ""):
-            raise ValueError(f"{key}: a computed value must cite the SHA-256 of its input")
-        if self.kind == "NA" and not str(self.value).strip():
-            raise ValueError(f"{key}: NA requires a reason")
-        if self.kind == "paper" and not str(self.source).strip():
-            raise ValueError(f"{key}: a paper value must cite its section or sentence")
+        if self.kind in {"answered", "not_applicable"}:
+            if self.provenance not in PROVENANCES:
+                raise ValueError(f"{key}: {self.kind} needs a provenance from {PROVENANCES}")
+            if self.provenance == "text":
+                if not str(self.source).strip():
+                    raise ValueError(f"{key}: a text value must cite its section or sentence")
+            elif not _SHA256.search(self.source or ""):
+                raise ValueError(f"{key}: a {self.provenance} value must cite the SHA-256 of its input")
+        elif self.provenance:
+            raise ValueError(f"{key}: {self.kind} carries no provenance")
+        if self.kind in {"NA", "not_applicable"} and not str(self.value).strip():
+            raise ValueError(f"{key}: {self.kind} requires a reason")
 
 
 def _quantile_higher(values: np.ndarray, probability: float) -> float:
     return float(np.quantile(values, probability, method="higher"))
 
 
-def regime_fields(trace: EventTrace, *, rho: float, scope: str, trace_sha256: str) -> dict[str, FieldValue]:
-    """Regime fields computed from an event trace (paper §6.1 definitions)."""
+def regime_fields(
+    trace: EventTrace,
+    *,
+    rho: float,
+    scope: str,
+    trace_sha256: str,
+    parameter_provenance: str = "analyst_inference",
+    parameter_source: str = "",
+) -> dict[str, FieldValue]:
+    """Regime fields computed from an event trace (paper §6.1 definitions).
+
+    Statistics of the trace are ``execution``.  The residency fraction and the
+    cache scope are inputs, not measurements; their provenance and source say
+    where the caller took them from.
+    """
     if scope not in {"per_layer", "global"}:
         raise ValueError("scope must be 'per_layer' or 'global'")
     (capacity,) = capacity_blocks_from_fractions(trace, [rho])
@@ -116,29 +148,34 @@ def regime_fields(trace: EventTrace, *, rho: float, scope: str, trace_sha256: st
         capacity_text = f"{capacity} blocks shared by all layers (global; round({trace.num_expert_blocks} x {rho}))"
     ratio = union / quotas
     source = f"event trace events.safetensors sha256 {trace_sha256}"
+    parameter_source = parameter_source or source
     model = trace.manifest.get("model", {})
     batch = trace.manifest.get("conversion", {}).get("batch_size")
     return {
         "experts_topk_layers": FieldValue(
-            f"{trace.num_experts_per_layer} / {model.get('top_k')} / {trace.num_layers}", "computed", source
+            f"{trace.num_experts_per_layer} / {model.get('top_k')} / {trace.num_layers}", "answered", source, "execution"
         ),
-        "residency_fraction": FieldValue(rho, "computed", source),
-        "cache_scope": FieldValue(scope.replace("_", "-"), "computed", source),
+        "residency_fraction": FieldValue(rho, "answered", parameter_source, parameter_provenance),
+        "cache_scope": FieldValue(scope.replace("_", "-"), "answered", parameter_source, parameter_provenance),
         "union_per_layer_step": FieldValue(
-            {"mean": float(union.mean()), "p95": _quantile_higher(union, 0.95)}, "computed", source
+            {"mean": float(union.mean()), "p95": _quantile_higher(union, 0.95)}, "answered", source, "execution"
         ),
-        "capacity_per_layer": FieldValue(capacity_text, "computed", source),
+        "capacity_per_layer": FieldValue(capacity_text, "answered", source, "execution"),
         "r_union_over_capacity": FieldValue(
             {
                 "mean": float(ratio.mean()),
                 "p95": _quantile_higher(ratio, 0.95),
                 "fraction_gt_1": float(np.mean(union > quotas)),
             },
-            "computed",
+            "answered",
             source,
+            "execution",
         ),
-        "concurrency": FieldValue(batch, "computed" if batch is not None else "NA",
-                                  source if batch is not None else "trace manifest has no batch size"),
+        "concurrency": (
+            FieldValue(batch, "answered", source, "execution")
+            if batch is not None
+            else FieldValue("trace manifest has no batch size", "NA", "")
+        ),
     }
 
 
@@ -158,10 +195,13 @@ def build_block(
     for key in FIELD_KEYS:
         if key in supplied:
             value = supplied[key]
-            if mode == "paper_only" and value.kind not in {"paper", "NR"}:
-                raise ValueError(f"{key}: paper-only mode accepts only text-cited values")
-            if mode == "with_artifacts" and value.kind in {"NR", "paper"}:
-                raise ValueError(f"{key}: with-artifacts mode needs computed, DECLARE or NA")
+            text_only = value.provenance == "text"
+            if mode == "paper_only" and value.kind in {"answered", "not_applicable"} and not text_only:
+                raise ValueError(f"{key}: paper-only mode accepts only text provenance")
+            if mode == "paper_only" and value.kind in {"NA", "DECLARE"}:
+                raise ValueError(f"{key}: paper-only mode uses NR for anything the text does not state")
+            if mode == "with_artifacts" and (value.kind == "NR" or text_only):
+                raise ValueError(f"{key}: with-artifacts mode cites artifact provenance, not text")
         elif mode == "paper_only":
             value = FieldValue("NR", "NR", "not reported in the public text")
         else:
@@ -171,12 +211,14 @@ def build_block(
     return block
 
 
-def filled_count(block: dict[str, FieldValue]) -> int:
-    """Fields carrying information: computed or paper-cited values.
+def answered_count(block: dict[str, FieldValue]) -> int:
+    """The headline: fields with a definite value for the target configuration."""
+    return sum(1 for value in block.values() if value.kind == "answered")
 
-    DECLARE and NA fields are not counted: the value is not available to a reader.
-    """
-    return sum(1 for value in block.values() if value.kind in {"computed", "paper"})
+
+def not_applicable_count(block: dict[str, FieldValue]) -> int:
+    """Reported separately; never added to the headline."""
+    return sum(1 for value in block.values() if value.kind == "not_applicable")
 
 
 def _format(value: object) -> str:
@@ -202,15 +244,27 @@ def render_markdown(block: dict[str, FieldValue], *, title: str) -> str:
             lines.append(name)
             section = name
         value = block[key]
-        shown = _format(value.value) if value.kind in {"computed", "paper"} else (
-            f"{value.kind}" if value.kind in {"NR", "DECLARE"} else f"NA({_format(value.value)})"
-        )
+        if value.kind == "answered":
+            shown = _format(value.value)
+        elif value.kind == "not_applicable":
+            shown = f"n/a ({_format(value.value)})"
+        elif value.kind == "NA":
+            shown = f"NA({_format(value.value)})"
+        else:
+            shown = value.kind
         lines.append(f"  {label} {'.' * max(3, 36 - len(label))} {shown}")
-    lines += ["```", "", "| field | class | source |", "|---|---|---|"]
+    lines += ["```", "", "| field | class | provenance | source |", "|---|---|---|---|"]
     for _, key, label in FIELDS:
         value = block[key]
-        lines.append(f"| {_cell(label)} | {value.kind} | {_cell(value.source or '—')} |")
-    lines += ["", f"Fields carrying information (computed or text-cited): {filled_count(block)} of {len(FIELDS)}.", ""]
+        lines.append(
+            f"| {_cell(label)} | {value.kind} | {value.provenance or '—'} | {_cell(value.source or '—')} |"
+        )
+    lines += [
+        "",
+        f"Answered: {answered_count(block)} of {len(FIELDS)}. "
+        f"Established as not applicable (counted separately): {not_applicable_count(block)}.",
+        "",
+    ]
     return "\n".join(lines)
 
 
@@ -221,16 +275,16 @@ def _load_facts(paths: Iterable[Path]) -> dict[str, FieldValue]:
         for key, raw in payload["fields"].items():
             if key in facts:
                 raise ValueError(f"{key} is supplied by more than one facts file")
-            facts[key] = FieldValue(raw["value"], raw["kind"], raw.get("source", ""))
+            facts[key] = FieldValue(raw["value"], raw["kind"], raw.get("source", ""), raw.get("provenance", ""))
     return facts
 
 
-def _parse_paper_values(items: Iterable[str]) -> dict[str, FieldValue]:
+def _parse_paper_values(items: Iterable[str], kind: str) -> dict[str, FieldValue]:
     values: dict[str, FieldValue] = {}
     for item in items:
         key_value, _, source = item.partition("@")
         key, _, value = key_value.partition("=")
-        values[key.strip()] = FieldValue(value.strip(), "paper", source.strip())
+        values[key.strip()] = FieldValue(value.strip(), kind, source.strip(), "text")
     return values
 
 
@@ -240,12 +294,18 @@ def main() -> None:
     parser.add_argument("--rho", type=float)
     parser.add_argument("--scope", choices=("per_layer", "global"))
     parser.add_argument("--facts", type=Path, action="append", default=[],
-                        help="JSON {'fields': {key: {value, kind, source}}} from an analysis")
+                        help="JSON {'fields': {key: {value, kind, source, provenance}}} from an analysis")
     parser.add_argument("--declare", action="append", default=[],
                         help="key=reason for a field only the original authors can state")
     parser.add_argument("--paper-only", action="store_true")
     parser.add_argument("--paper", action="append", default=[],
                         help="paper-only mode: key=value@section-or-sentence")
+    parser.add_argument("--paper-not-applicable", action="append", default=[],
+                        help="paper-only mode: key=reason@section establishing the absence")
+    parser.add_argument("--parameter-provenance", default="analyst_inference",
+                        help="provenance of --rho and --scope (for example code_inspection)")
+    parser.add_argument("--parameter-source", default="",
+                        help="where --rho and --scope were taken from; must cite a SHA-256")
     parser.add_argument("--paper-file", type=Path, action="append", default=[],
                         help="paper-only mode: the text the values were read from; its SHA-256 is recorded")
     parser.add_argument("--title", default="Minimal reporting block")
@@ -257,7 +317,12 @@ def main() -> None:
             raise FileExistsError(f"Refusing to overwrite {out}")
 
     if args.paper_only:
-        block = build_block(mode="paper_only", supplied=_parse_paper_values(args.paper))
+        supplied = _parse_paper_values(args.paper, "answered")
+        for key, value in _parse_paper_values(args.paper_not_applicable, "not_applicable").items():
+            if key in supplied:
+                raise ValueError(f"{key} is given both as answered and as not applicable")
+            supplied[key] = value
+        block = build_block(mode="paper_only", supplied=supplied)
         inputs: dict = {"paper_files": {str(p): sha256_file(p) for p in args.paper_file}}
     else:
         supplied = _load_facts(args.facts)
@@ -267,7 +332,11 @@ def main() -> None:
                 parser.error("--events requires --rho and --scope")
             events_sha = sha256_file(args.events / "events.safetensors")
             trace = load_event_trace(args.events)
-            for key, value in regime_fields(trace, rho=args.rho, scope=args.scope, trace_sha256=events_sha).items():
+            regime = regime_fields(
+                trace, rho=args.rho, scope=args.scope, trace_sha256=events_sha,
+                parameter_provenance=args.parameter_provenance, parameter_source=args.parameter_source,
+            )
+            for key, value in regime.items():
                 if key in supplied:
                     raise ValueError(f"{key} is supplied both by the trace and by a facts file")
                 supplied[key] = value
@@ -284,7 +353,8 @@ def main() -> None:
             {
                 "mode": "paper_only" if args.paper_only else "with_artifacts",
                 "fields": {key: asdict(value) for key, value in block.items()},
-                "filled_count": filled_count(block),
+                "answered_count": answered_count(block),
+                "not_applicable_count": not_applicable_count(block),
                 "total_fields": len(FIELDS),
                 "inputs": inputs,
             },

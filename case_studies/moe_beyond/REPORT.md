@@ -1,6 +1,6 @@
 # MoE-Beyond external case study — report
 
-**Deviations from the protocol and the pre-registration** (full text in `DEVIATIONS.md`): D-001 — Location of the reporting-block generator (protocol path, not PREREG); D-002 — Seeding of the reproduction runs (clarification of PREREG P3); D-003 — R6 compares safetensors files by content, not by raw file hash (approved by the author 2026-10-18); D-004 — Post-hoc decomposition of the route-side positional agreement (approved by the author 2026-10-18); D-005 — Static under the per-request reset column (clarification of PREREG §3). In addition, `RECON.md` §7 corrects a stage-0 descriptive statistic (test-prompt lengths); the reported version is archived under `history/`, and PREREG was unaffected.
+**Deviations from the protocol and the pre-registration** (full text in `DEVIATIONS.md`): D-001 — Location of the reporting-block generator (protocol path, not PREREG); D-002 — Seeding of the reproduction runs (clarification of PREREG P3); D-003 — R6 compares safetensors files by content, not by raw file hash (approved by the author 2026-10-18); D-004 — Post-hoc decomposition of the route-side positional agreement (approved by the author 2026-10-18); D-005 — Static under the per-request reset column (clarification of PREREG §3); D-006 — The P2 template's equivalence implication is invalid (audit F1); D-007 — Reporting-block target, classes and counting rule (audit F2); D-008 — Scope of the package-benefit claim (audit F3; replaces the P7 conclusion template). In addition, `RECON.md` §7 corrects a stage-0 descriptive statistic (test-prompt lengths); the reported version is archived under `history/`, and PREREG was unaffected.
 
 Pre-registration: `PREREG.md` sha256 `187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d`, commit `08938d1e4a9240b6afbb3017ed499468df1895bf`. Third-party commit `47031eefc7808e996ecd5c01d7ed90aa32e32514`.
 
@@ -22,7 +22,7 @@ Pre-registration: `PREREG.md` sha256 `187427d8f9173f644d597bab27283864c2df6d3e50
 | reproduction moe_beyond_predicted | 72.37% vs reported 72% (within ±2.0 pp: True; files used 80) |
 | reproduction moe_infinity_eamc | 16.86% vs reported 17% (within ±2.0 pp: True; files used 80) |
 
-The executed replay contract is per-access. At the reported operating point every event fits within capacity under both event definitions, so Axis I does not operate there. Both reported hit rates were reproduced within tolerance.
+The executed replay contract is per-access, so the reported counts are per-access counts. At the reported operating point every event fits within capacity under both event definitions; this is a capacity observation and does not by itself establish equal counts under per-access and event-atomic replay (DEVIATIONS D-006; regression control tests/test_fit_is_not_equivalence.py). Both reported hit rates were reproduced within tolerance.
 
 ## B — operating regime
 
@@ -83,12 +83,15 @@ The pre-registered flag is true and stands. The agreement sits at a shared BOS t
 
 Shares outside [0, 1] occur where forced admission is worse than the best causal policy (most events over quota); the §7.2 decomposition is not interpretable there. Full grid in `results/D_decomposition.md`.
 
-## E — reporting-block delta
+## E — reporting-block comparison (target: published configuration; DEVIATIONS D-007, D-008)
 
-| fields filled from the paper text | 13 of 30 |
+| item | value |
 |---|---|
-| fields filled with the artifact and the package | 25 of 30 |
-| added by the package | retention decision, intra-event order (if immediate), distinct prompt heads / finals, chat template applied, decode steps recorded, positional token agreement, expert Jaccard | low-text-overlap, cache scope, union per layer-step, capacity per layer, r(s,l) = union / capacity, forced-admission decomposition |
+| answered from the paper text | 8 of 30 (5 not applicable) |
+| answered with artifact, package and analyst steps | 19 of 30 (7 not applicable) |
+| answered only in the second mode, with provenance | retention decision (execution), intra-event order (if immediate) (data inspection), distinct prompt heads / finals (execution), chat template applied (code inspection), decode steps recorded (code inspection), positional token agreement (execution), expert Jaccard \| low-text-overlap (execution), cache scope (code inspection), union per layer-step (execution), capacity per layer (execution), r(s,l) = union / capacity (execution) |
+| comparison scope | paper text vs public artifact + package + documented analyst steps; no artifact-only control (DEVIATIONS D-008) |
+| package analysis, not counted | residency-gap decomposition (analysis D): gap 47.71%, future-victim share 96.05% (package: event-atomic, prefetch-free, cold start; E1, rho 0.40, per-layer, persistent) |
 
 ## Final R6 regression
 
@@ -128,7 +131,7 @@ Shares outside [0, 1] occur where forced admission is worse than the best causal
       "pass": true,
       "returncode": 0,
       "tail": [
-        "Ran 12 tests in 0.015s",
+        "Ran 14 tests in 0.028s",
         "",
         "OK"
       ]
@@ -137,7 +140,7 @@ Shares outside [0, 1] occur where forced admission is worse than the best causal
       "pass": true,
       "returncode": 0,
       "tail": [
-        "Ran 114 tests in 12.076s",
+        "Ran 115 tests in 12.129s",
         "",
         "OK"
       ]
@@ -163,12 +166,12 @@ No hits.
 - [x] Every constructed B > 1 result is labelled “constructed by this paper”.
 - [x] The first paragraph lists every deviation.
 
-## Paper files (lab repository copies, new files only)
+## Paper files (lab repository copies; the 2026-10-18 versions are archived byte-for-byte under history/)
 
 | file | sha256 | identical to source |
 |---|---|---|
-| case_study_macros.tex | `a961ba84c8592106c4e9bd7e70e6694656089c4a85cb5f11786c5481f4ebd84d` | True |
-| case_study_table.tex | `db7f7a7e0d4263f532f9d68f9c89816b5214c61a33e7408e1690792e67041bbc` | True |
-| case_study_section.tex | `60012ebed0c28629352534d6fac2d35b6dc0338cd6d2b961feca7bbefbf8de7f` | True |
-| response_point3_ii.md | `be02beff808e5927af5b771d32f4c6f6ea7c5e4267a5ce8be977d36fc7604595` | True |
-| how_to_use_walkthrough.md | `6628d7fc7fe01d17ed74a0d4943aa7b5da693ae39c2711ea308a6608f673c35d` | True |
+| case_study_macros.tex | `097d0c703804e25d826ba04d334c8c5c95a5c3b01f003b318ec1dbf4f9c7a897` | True |
+| case_study_table.tex | `10c892a437fb6476038284630d4575d46934d1e2006fffcc700586befabdedd0` | True |
+| case_study_section.tex | `8ce88da00d411b1cbe68023397d2ef6f1517cd88cdab429142c3f6184e95a937` | True |
+| response_point3_ii.md | `dd80bcb44bb510b3ebaef119b8daac9129d7860dc63f6d757819337f6ef1a1a4` | True |
+| how_to_use_walkthrough.md | `eb42064b2de9ddb52b4e7258cf6de9ffe6ed099dcda26e880fba183eba000b6d` | True |

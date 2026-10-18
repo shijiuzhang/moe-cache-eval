@@ -114,3 +114,19 @@ tectonic -X compile main.tex
 # Final regression, output kept beside REPORT.md.
 PY -I case_studies/moe_beyond/regress.py > case_studies/moe_beyond/R6_final.json
 ```
+
+## Post-audit corrections (2026-10-19; audit F1–F4, DEVIATIONS D-006 to D-008)
+
+```bash
+# F1: hand-derived regression control (fit does not imply equal per-access and atomic counts).
+PY -m unittest discover -s case_studies/moe_beyond/tests -p "test_fit*"
+# F1: re-render A's conclusions without re-executing (results/A_contract.json unchanged).
+PY -I case_studies/moe_beyond/analysis_A.py --render-only
+# F2/F3: report block with answered / not_applicable / NA / DECLARE / NR and provenance; E regenerated.
+PY -m unittest tests.test_report_block
+PY -I case_studies/moe_beyond/analysis_E.py
+PY -I case_studies/moe_beyond/make_macros.py
+PY -I case_studies/moe_beyond/regress.py > case_studies/moe_beyond/R6_final.json
+PY -I case_studies/moe_beyond/make_report.py
+# Superseded outputs are archived byte-for-byte under history/ (A, E, paper files, report, R6).
+```

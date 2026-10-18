@@ -91,3 +91,81 @@ Every change or clarification is appended here, in order.
   request indices with the sentinel −1. For the per-request reset column, analysis D recovers each
   event's request from `schedule.jsonl` (B = 1: one active request per scheduler step) before using
   `subset_event_trace`.
+
+## D-006 — The P2 template's equivalence implication is invalid (audit F1)
+
+- Recorded: 2026-10-19, after the independent audit of commit `4869568` (`docs/revision/MOE_BEYOND_EXPERIMENT_AUDIT_20261019.md`, F1).
+  All results had been read. The audit's private recomputation was **not** seen by the implementer.
+- **Error.** The PREREG P2 template concludes that if every event's expert set fits within capacity,
+  “in-event eviction cannot occur; whatever replay semantics the simulator uses, its counts there coincide
+  with the event-atomic contract. Axis I does not operate in this setting.” The implication is false.
+  Under per-access LRU, a miss can evict a block that was resident at event start and is needed **later in the
+  same event**, even when the whole event fits.
+- **Hand-derived counterexample.** Derived before any execution; it becomes a regression control:
+  - setup: one layer, capacity 2, LRU, per-event access in ascending expert id;
+  - events {1, 3} then {0, 1}; both fit, since |E| = 2 ≤ 2;
+  - per-access: event 2 misses 0 (evicting 1), then misses 1 (evicting 3) → **4 misses, 0 hits**;
+  - event-atomic: block 1 is resident at the start of event 2 → **3 misses, 1 hit**.
+- **What stands.** The measured capacity fractions, the probe-based contract classification (per-access)
+  and the reproduction results are unchanged.
+- **What changes.**
+  - The all-fit result is reported only as a capacity observation.
+  - The over-capacity wording changes from “affects the counts” to “can affect the counts”.
+  - “Axis I does not operate” and every count-equivalence claim are removed from every surface.
+  - Replacement sentences:
+    - **All fit:** “At {setting}, every event's expert set fits within capacity. This is a capacity
+      observation; it does not by itself establish equal counts under per-access and event-atomic replay,
+      because a per-access miss can evict a resident expert needed later in the same event.”
+    - **Over capacity:** “At {setting}, a fraction {f} of events exceed capacity; in that setting the replay
+      contract can affect the counts and should be declared (checklist A1–A2).”
+    - **Contract:** “The simulator's executed contract is per-access (probe A2); its reported counts are
+      per-access counts, and setting them beside an event-atomic study requires declaring this
+      (checklist A1–A2).”
+- This makes no statement about the direction or size of any effect on the published comparison.
+
+## D-007 — Reporting-block target, classes and counting rule (audit F2)
+
+- Recorded: 2026-10-19, after the audit (F2), before regenerating E.
+  The previously reported E outputs are archived under `history/results_E_d030306/`.
+- **Target.** Every one of the 30 fields describes the **original reported configuration**: the published
+  simulator's contract, rho = 0.10, global scope, B = 1, per-token replay unit, prefetch included.
+  Results obtained under the package's own contract (analysis D: atomic, prefetch-free, cold-start) are
+  **not** entries of the block. They are listed in a separate “package analyses” section and never counted.
+- **Classes, one rule for both modes.**
+  - `answered` — a definite value for the target, including “no” for a question about whether something
+    exists or was reported.
+  - `not_applicable` — the field presupposes a mechanism the target configuration does not have:
+    no static policy; B = 1, so no concurrent cohorts and nothing to deduplicate; no generated tokens.
+    The absence must be established by the cited source.
+  - `NA` — the required information exists in neither the text nor the artifact.
+  - `DECLARE` — only the original authors can state it.
+  - `NR` — paper-only mode; not stated in the text.
+- **Provenance**, required for `answered` and `not_applicable`: `text` (paper-only), `execution`,
+  `code_inspection`, `data_inspection`, or `analyst_inference`. Every non-`text` provenance cites a SHA-256.
+- **Counting.** The headline in each mode is the number of `answered` fields. `not_applicable` is reported
+  as a separate count in each mode and is never added to the headline.
+- **Field assignment**, fixed now:
+  - `forced_admission_decomposition`: `NA` for the original contract, which is not defined under its
+    prefetch-inclusive per-access replay.
+  - `unique_generated_sequences` and `absolute_bytes_per_output_token`: `not_applicable` with artifacts,
+    because no generated token is recorded. In paper-only mode they are `NR`, because the text describes
+    generated sequences and does not establish their absence.
+  - `position_locked_cohorts` and `dedup_credited_to_policy`: `not_applicable` in both modes (B = 1).
+  - The three static fields: `not_applicable` in both modes.
+- The package module `moe_controller.report_block` is changed to these classes (kind `computed` becomes
+  `answered`, plus `not_applicable` and a provenance field), with tests.
+
+## D-008 — Scope of the package-benefit claim (audit F3; replaces the P7 conclusion template)
+
+- Recorded: 2026-10-19, after the audit (F3).
+- The P7 template “The fields that only the package made fillable are …” and the draft sentence “each was
+  obtained by executing the published artifact” overstate the evidence.
+  - The comparison is paper text versus public artifact **plus** package **plus** analyst work.
+  - There is no artifact-only control.
+  - Several answers come from code inspection or analyst inference, not from execution.
+- **Replacement template:** “From the paper text alone, {a} of the 30 reporting-block fields are answered
+  ({na_a} more are established as not applicable); with the public artifact, the package and the
+  documented analyst steps, {b} are answered ({na_b} not applicable). The fields answered only in the second
+  mode, with their provenance, are: {list}.”
+- The paper describes the concrete checks and structured outputs the workflow provides, with its manual steps
+  declared. It does not claim that an ordinary simulator cannot perform them.

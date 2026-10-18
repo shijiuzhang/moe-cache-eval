@@ -20,8 +20,9 @@ from moe_controller.events import save_event_trace  # noqa: E402
 from moe_controller.report_block import (  # noqa: E402
     FIELDS,
     FieldValue,
+    answered_count,
     build_block,
-    filled_count,
+    not_applicable_count,
     regime_fields,
     render_markdown,
 )
@@ -100,38 +101,60 @@ class RegimeTests(unittest.TestCase):
 
 
 class BlockTests(unittest.TestCase):
-    def test_paper_only_defaults_to_nr_and_counts_cited_fields(self) -> None:
-        block = build_block(mode="paper_only", supplied={"concurrency": FieldValue("1", "paper", "Abstract")})
-        self.assertEqual(filled_count(block), 1)
+    def test_paper_only_defaults_to_nr_and_counts_classes_separately(self) -> None:
+        block = build_block(mode="paper_only", supplied={
+            "concurrency": FieldValue("1", "answered", "Abstract", "text"),
+            "static_fit_source": FieldValue("no static policy", "not_applicable", "Section 4", "text"),
+        })
+        self.assertEqual(answered_count(block), 1)
+        self.assertEqual(not_applicable_count(block), 1)
         self.assertEqual(block["cache_scope"].kind, "NR")
 
-    def test_computed_values_must_cite_a_file_hash(self) -> None:
+    def test_artifact_provenance_must_cite_a_file_hash(self) -> None:
         with self.assertRaises(ValueError):
-            build_block(mode="with_artifacts", supplied={"concurrency": FieldValue(1, "computed", "no hash")})
-        block = build_block(mode="with_artifacts", supplied={"concurrency": FieldValue(1, "computed", f"x {FAKE_SHA}")})
-        self.assertEqual(filled_count(block), 1)
+            build_block(mode="with_artifacts", supplied={
+                "concurrency": FieldValue(1, "answered", "no hash", "execution")})
+        block = build_block(mode="with_artifacts", supplied={
+            "concurrency": FieldValue(1, "answered", f"x {FAKE_SHA}", "execution"),
+            "static_quota_rule": FieldValue("no static policy", "not_applicable", f"y {FAKE_SHA}", "code_inspection"),
+        })
+        self.assertEqual(answered_count(block), 1)
+        self.assertEqual(not_applicable_count(block), 1)
         self.assertEqual(block["event_unit"].kind, "NA")
 
-    def test_mode_rules(self) -> None:
+    def test_mode_and_class_rules(self) -> None:
+        bad = [
+            ("paper_only", FieldValue(1, "answered", FAKE_SHA, "execution")),      # artifact provenance in paper mode
+            ("paper_only", FieldValue("x", "NA", "")),                              # paper mode uses NR
+            ("with_artifacts", FieldValue("1", "answered", "Abstract", "text")),    # text provenance with artifacts
+            ("with_artifacts", FieldValue(1, "answered", FAKE_SHA, "")),            # answered without provenance
+            ("with_artifacts", FieldValue("x", "NA", "", "execution")),             # NA with provenance
+            ("with_artifacts", FieldValue(1, "computed", FAKE_SHA, "execution")),   # retired class
+        ]
+        for mode, value in bad:
+            with self.assertRaises(ValueError, msg=(mode, value)):
+                build_block(mode=mode, supplied={"concurrency": value})
         with self.assertRaises(ValueError):
-            build_block(mode="paper_only", supplied={"concurrency": FieldValue(1, "computed", FAKE_SHA)})
-        with self.assertRaises(ValueError):
-            build_block(mode="with_artifacts", supplied={"concurrency": FieldValue("1", "paper", "Abstract")})
-        with self.assertRaises(ValueError):
-            build_block(mode="with_artifacts", supplied={"not_a_field": FieldValue(1, "NA", "")})
+            build_block(mode="with_artifacts", supplied={"not_a_field": FieldValue("x", "NA", "")})
+
+    def test_regime_parameters_carry_their_own_provenance(self) -> None:
+        fields = regime_fields(_toy_trace(), rho=0.5, scope="global", trace_sha256=FAKE_SHA,
+                               parameter_provenance="code_inspection", parameter_source=f"simulator {FAKE_SHA}")
+        self.assertEqual(fields["cache_scope"].provenance, "code_inspection")
+        self.assertEqual(fields["union_per_layer_step"].provenance, "execution")
 
     def test_markdown_lists_every_field(self) -> None:
         text = render_markdown(build_block(mode="paper_only"), title="t")
         for label in B1_LABELS:
             self.assertIn(label, text)
 
-    def test_provenance_table_rows_have_three_cells(self) -> None:
+    def test_provenance_table_rows_have_four_cells(self) -> None:
         # One B.1 label contains '|'; an unescaped pipe would add a column.
         text = render_markdown(build_block(mode="paper_only"), title="t")
         rows = [line for line in text.splitlines() if line.startswith("| ") and "class" not in line]
         self.assertEqual(len(rows), 30)
         for row in rows:
-            self.assertEqual(len(re.split(r"(?<!\\)\|", row)) - 2, 3, row)
+            self.assertEqual(len(re.split(r"(?<!\\)\|", row)) - 2, 4, row)
 
 
 if __name__ == "__main__":
