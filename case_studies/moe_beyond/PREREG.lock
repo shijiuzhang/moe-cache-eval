@@ -1,0 +1,8 @@
+# Generated from shasum -a 256 and git log output; not hand-typed.
+prereg_file: case_studies/moe_beyond/PREREG.md
+prereg_sha256: 187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d
+prereg_commit: 08938d1e4a9240b6afbb3017ed499468df1895bf
+prereg_commit_time: 2026-10-18T22:24:59+08:00
+inputs_manifest: case_studies/moe_beyond/INPUTS.sha256
+inputs_manifest_sha256: bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c
+third_party_commit: 47031eefc7808e996ecd5c01d7ed90aa32e32514
