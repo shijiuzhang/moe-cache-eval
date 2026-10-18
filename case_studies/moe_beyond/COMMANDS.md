@@ -94,3 +94,8 @@ PY -I case_studies/moe_beyond/exploratory_C_positional.py   # -> results/C_explo
 # both scopes, both start states; secondary constructed B = 8.
 PY -I case_studies/moe_beyond/analysis_D.py      # -> results/D_decomposition.{json,md}; 613 s; peak RSS 1.64 GB
 ```
+
+```bash
+# Analysis E (P7): both reporting blocks through the released package's own command, and the delta.
+PY -I case_studies/moe_beyond/analysis_E.py      # -> results/E_report_block_{paper_only,with_artifacts}.{md,json}, E_delta.{md,json}
+```

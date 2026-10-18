@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 import tempfile
 import unittest
@@ -123,6 +124,14 @@ class BlockTests(unittest.TestCase):
         text = render_markdown(build_block(mode="paper_only"), title="t")
         for label in B1_LABELS:
             self.assertIn(label, text)
+
+    def test_provenance_table_rows_have_three_cells(self) -> None:
+        # One B.1 label contains '|'; an unescaped pipe would add a column.
+        text = render_markdown(build_block(mode="paper_only"), title="t")
+        rows = [line for line in text.splitlines() if line.startswith("| ") and "class" not in line]
+        self.assertEqual(len(rows), 30)
+        for row in rows:
+            self.assertEqual(len(re.split(r"(?<!\\)\|", row)) - 2, 3, row)
 
 
 if __name__ == "__main__":

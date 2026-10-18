@@ -187,6 +187,11 @@ def _format(value: object) -> str:
     return str(value)
 
 
+def _cell(text: object) -> str:
+    """Escape a value for a Markdown table cell (one B.1 label contains '|')."""
+    return str(text).replace("|", "\\|")
+
+
 def render_markdown(block: dict[str, FieldValue], *, title: str) -> str:
     lines = [f"# {title}", "", "```"]
     section = None
@@ -204,7 +209,7 @@ def render_markdown(block: dict[str, FieldValue], *, title: str) -> str:
     lines += ["```", "", "| field | class | source |", "|---|---|---|"]
     for _, key, label in FIELDS:
         value = block[key]
-        lines.append(f"| {label} | {value.kind} | {value.source or '—'} |")
+        lines.append(f"| {_cell(label)} | {value.kind} | {_cell(value.source or '—')} |")
     lines += ["", f"Fields carrying information (computed or text-cited): {filled_count(block)} of {len(FIELDS)}.", ""]
     return "\n".join(lines)
 
