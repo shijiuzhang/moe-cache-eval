@@ -76,3 +76,8 @@ PY -I case_studies/moe_beyond/analysis_A.py
 #   internally: TPY -I thirdparty_harness.py probe|confirm|reproduce  (third-party code run in isolation)
 #   -> results/A_contract.{json,md}; about 15 s; peak RSS 0.22 GB
 ```
+
+```bash
+# Analysis B (P4): regime statistics, uniform-routing null, placement against Table 11.
+PY -I case_studies/moe_beyond/analysis_B.py      # -> results/B_regime.{json,md}; under 1 s
+```
