@@ -58,3 +58,12 @@ PY -I case_studies/moe_beyond/build_canonical.py
 # R6 regression check (must pass before every merge).
 PY -I case_studies/moe_beyond/regress.py
 ```
+
+```bash
+# Reporting block (Appendix B.1), package module per D-001. Checked on the §2.5 toy trace only.
+PY -m unittest tests.test_report_block              # 8 tests, incl. agreement with the paper's regime script
+PY -I -m moe_controller.report_block --events <toy-trace-dir> --rho 0.5 --scope per_layer \
+   --declare "chat_template_applied=<reason>" --out-md with.md --out-json with.json
+PY -I -m moe_controller.report_block --paper-only --paper "concurrency=1@Abstract" \
+   --out-md paper.md --out-json paper.json
+```
