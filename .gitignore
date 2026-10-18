@@ -21,3 +21,6 @@ models/
 # Local build intermediates
 paper/**/*.aux
 paper/**/*.log
+
+# Third-party material for external case studies; never committed (case study protocol R2).
+third_party/
