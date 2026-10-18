@@ -1,0 +1,1899 @@
+{
+  "inputs": {
+    "files": {
+      "canonical/test-e1-b1/events.safetensors": "e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "canonical/test-e1-b1/schedule.jsonl": "59580a9b819e2ac107459047b866c408f7667d81a39981301d0ba136f4b49ba8",
+      "canonical/test-e1-b8-constructed/events.safetensors": "928d66d5c5c268aadaf3352f91e08aaa7579002146a33cdddf794056bef8cd3b",
+      "canonical/test-e2-b1/events.safetensors": "7b4c2b62419f3f8f13f9057d80561f5e04cb5687a36b14b6486fc0c783a41f04",
+      "canonical/train-e1-b1/events.safetensors": "880925d9568cf5c2bfcb18542d4ac7a40ad142314412752dc87db6aec86c2d65",
+      "canonical/train-e2-b1/events.safetensors": "4c9b91e25c039bb2c74398c9f2240594cedb32171f2eb69a18e928db78d9d5cc"
+    },
+    "inputs_manifest_sha256": "bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+    "prereg_commit": "08938d1e4a9240b6afbb3017ed499468df1895bf",
+    "prereg_sha256": "187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d",
+    "third_party_commit": "47031eefc7808e996ecd5c01d7ed90aa32e32514"
+  },
+  "note": "These are prefetch-free residency results under our replay contract and are not comparable with the prefetch-inclusive hit rates reported by MoE-Beyond.",
+  "rows": [
+    {
+      "admission_share": 0.6242081551969844,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.3757918448030156,
+      "logical_assignments": 240708,
+      "m_belady": 0.5385197002176911,
+      "m_best_causal": 0.7192615118733071,
+      "m_forced_admit": 0.651340213038204,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.5385197002176911,
+          "mean": 0.5385197002176911,
+          "min": 0.5385197002176911
+        },
+        "belady_forced_admit": {
+          "max": 0.6514989115442777,
+          "mean": 0.651340213038204,
+          "min": 0.6511914851188992
+        },
+        "least_stale": {
+          "max": 0.7253560330358775,
+          "mean": 0.7251566213004969,
+          "min": 0.725031988965884
+        },
+        "lfru": {
+          "max": 0.7192739751067684,
+          "mean": 0.7192615118733071,
+          "min": 0.7192532030509996
+        },
+        "lfu": {
+          "max": 0.7610174983797796,
+          "mean": 0.7609950645595494,
+          "min": 0.7609634910347808
+        },
+        "lru": {
+          "max": 0.7253560330358775,
+          "mean": 0.7251566213004969,
+          "min": 0.725031988965884
+        },
+        "static": {
+          "initial_load_blocks": 166,
+          "mean": 0.8276417900526779
+        }
+      },
+      "recoverable_gap": 0.2512880345632235,
+      "rho": 0.1,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.5878132301067389,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.4121867698932611,
+      "logical_assignments": 240708,
+      "m_belady": 0.5839855758844741,
+      "m_best_causal": 0.7290842016052644,
+      "m_forced_admit": 0.6692764677534606,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.5839855758844741,
+          "mean": 0.5839855758844741,
+          "min": 0.5839855758844741
+        },
+        "belady_forced_admit": {
+          "max": 0.6693462618608439,
+          "mean": 0.6692764677534606,
+          "min": 0.6692091662927696
+        },
+        "least_stale": {
+          "max": 0.7316832012230586,
+          "mean": 0.7316167306445983,
+          "min": 0.731500407132293
+        },
+        "lfru": {
+          "max": 0.7291614736527244,
+          "mean": 0.7290842016052644,
+          "min": 0.7290243780846503
+        },
+        "lfu": {
+          "max": 0.7582174252621433,
+          "mean": 0.7577994915000749,
+          "min": 0.7575651827110026
+        },
+        "lru": {
+          "max": 0.7316832012230586,
+          "mean": 0.7316167306445983,
+          "min": 0.731500407132293
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.1990149085679251,
+      "rho": 0.1,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.014513239875389059,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9854867601246109,
+      "logical_assignments": 240708,
+      "m_belady": 0.519322166276152,
+      "m_best_causal": 0.732692723133423,
+      "m_forced_admit": 0.5224188643501669,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.519322166276152,
+          "mean": 0.519322166276152,
+          "min": 0.519322166276152
+        },
+        "belady_forced_admit": {
+          "max": 0.5224213569968592,
+          "mean": 0.5224188643501669,
+          "min": 0.5224172025857055
+        },
+        "least_stale": {
+          "max": 0.732692723133423,
+          "mean": 0.732692723133423,
+          "min": 0.732692723133423
+        },
+        "lfru": {
+          "max": 0.785524369775828,
+          "mean": 0.7855027668378284,
+          "min": 0.7854786712531365
+        },
+        "lfu": {
+          "max": 0.7613540056832344,
+          "mean": 0.7613448659786961,
+          "min": 0.7613332336274656
+        },
+        "lru": {
+          "max": 0.732692723133423,
+          "mean": 0.732692723133423,
+          "min": 0.732692723133423
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.2912142431888413,
+      "rho": 0.1,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.013527779823721262,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9864722201762788,
+      "logical_assignments": 240708,
+      "m_belady": 0.5690006148528508,
+      "m_best_causal": 0.7382139355567742,
+      "m_forced_admit": 0.5712896953985742,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.5690006148528508,
+          "mean": 0.5690006148528508,
+          "min": 0.5690006148528508
+        },
+        "belady_forced_admit": {
+          "max": 0.5712896953985742,
+          "mean": 0.5712896953985742,
+          "min": 0.5712896953985742
+        },
+        "least_stale": {
+          "max": 0.7382139355567742,
+          "mean": 0.7382139355567742,
+          "min": 0.7382139355567742
+        },
+        "lfru": {
+          "max": 0.8078792561942271,
+          "mean": 0.8077928444422288,
+          "min": 0.8077130797480765
+        },
+        "lfu": {
+          "max": 0.7902354720241953,
+          "mean": 0.7901515529188893,
+          "min": 0.790065141166891
+        },
+        "lru": {
+          "max": 0.7382139355567742,
+          "mean": 0.7382139355567742,
+          "min": 0.7382139355567742
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.22921989487546,
+      "rho": 0.1,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.15061457672110326,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.8493854232788968,
+      "logical_assignments": 240708,
+      "m_belady": 0.37945145155125715,
+      "m_best_causal": 0.5810284660252256,
+      "m_forced_admit": 0.4098118882629576,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.37945145155125715,
+          "mean": 0.37945145155125715,
+          "min": 0.37945145155125715
+        },
+        "belady_forced_admit": {
+          "max": 0.4098492779633415,
+          "mean": 0.4098118882629576,
+          "min": 0.409786961796035
+        },
+        "least_stale": {
+          "max": 0.5986049487345664,
+          "mean": 0.5982991840736493,
+          "min": 0.5981562723299599
+        },
+        "lfru": {
+          "max": 0.5810484071987636,
+          "mean": 0.5810284660252256,
+          "min": 0.581006863087226
+        },
+        "lfu": {
+          "max": 0.6142089170281004,
+          "mean": 0.6141856523256394,
+          "min": 0.6141549096831015
+        },
+        "lru": {
+          "max": 0.5986049487345664,
+          "mean": 0.5982991840736493,
+          "min": 0.5981562723299599
+        },
+        "static": {
+          "initial_load_blocks": 333,
+          "mean": 0.7049287933928245
+        }
+      },
+      "recoverable_gap": 0.34693139193840616,
+      "rho": 0.2,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.11006353381369674,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.8899364661863033,
+      "logical_assignments": 240708,
+      "m_belady": 0.4823894511191983,
+      "m_best_causal": 0.6169599680941223,
+      "m_forced_admit": 0.4972007577645945,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.48238945111919834,
+          "mean": 0.4823894511191983,
+          "min": 0.48238945111919834
+        },
+        "belady_forced_admit": {
+          "max": 0.49722069893813253,
+          "mean": 0.4972007577645945,
+          "min": 0.49718746364890243
+        },
+        "least_stale": {
+          "max": 0.621441746846802,
+          "mean": 0.6212788939295744,
+          "min": 0.6209972248533493
+        },
+        "lfru": {
+          "max": 0.6171668577695797,
+          "mean": 0.6169599680941223,
+          "min": 0.6168095784103561
+        },
+        "lfu": {
+          "max": 0.6349560463299931,
+          "mean": 0.6346835169583063,
+          "min": 0.6345322963923093
+        },
+        "lru": {
+          "max": 0.621441746846802,
+          "mean": 0.6212788939295744,
+          "min": 0.6209972248533493
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.21811871747632453,
+      "rho": 0.2,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.0042390814640871815,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9957609185359129,
+      "logical_assignments": 240708,
+      "m_belady": 0.36520597570500357,
+      "m_best_causal": 0.6086444987287501,
+      "m_forced_admit": 0.3662379314355983,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.36520597570500357,
+          "mean": 0.36520597570500357,
+          "min": 0.36520597570500357
+        },
+        "belady_forced_admit": {
+          "max": 0.36624042408229057,
+          "mean": 0.3662379314355983,
+          "min": 0.3662362696711368
+        },
+        "least_stale": {
+          "max": 0.6340753111653954,
+          "mean": 0.6340362597005501,
+          "min": 0.6340129949980889
+        },
+        "lfru": {
+          "max": 0.6086627781378268,
+          "mean": 0.6086444987287501,
+          "min": 0.6086295428485966
+        },
+        "lfu": {
+          "max": 0.6132077039400435,
+          "mean": 0.6132010568821975,
+          "min": 0.6131952407065823
+        },
+        "lru": {
+          "max": 0.6340753111653954,
+          "mean": 0.6340362597005501,
+          "min": 0.6340129949980889
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.3999683288556888,
+      "rho": 0.2,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.002973550028760497,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9970264499712395,
+      "logical_assignments": 240708,
+      "m_belady": 0.4735447097728368,
+      "m_best_causal": 0.6439935523538893,
+      "m_forced_admit": 0.4740515479335959,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.4735447097728368,
+          "mean": 0.4735447097728368,
+          "min": 0.4735447097728368
+        },
+        "belady_forced_admit": {
+          "max": 0.4740515479335959,
+          "mean": 0.4740515479335959,
+          "min": 0.4740515479335959
+        },
+        "least_stale": {
+          "max": 0.653247918640012,
+          "mean": 0.6532080362929359,
+          "min": 0.6531856024727055
+        },
+        "lfru": {
+          "max": 0.6440334347009655,
+          "mean": 0.6439935523538893,
+          "min": 0.6439420376555827
+        },
+        "lfu": {
+          "max": 0.6566088372634062,
+          "mean": 0.6565756019741762,
+          "min": 0.6565589843295612
+        },
+        "lru": {
+          "max": 0.653247918640012,
+          "mean": 0.6532080362929359,
+          "min": 0.6531856024727055
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.26467476569918663,
+      "rho": 0.2,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.06860831891208583,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9313916810879141,
+      "logical_assignments": 240708,
+      "m_belady": 0.276563304917161,
+      "m_best_causal": 0.479656679462253,
+      "m_forced_admit": 0.2904971999268824,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.276563304917161,
+          "mean": 0.276563304917161,
+          "min": 0.276563304917161
+        },
+        "belady_forced_admit": {
+          "max": 0.29050966316034366,
+          "mean": 0.2904971999268824,
+          "min": 0.2904930455157286
+        },
+        "least_stale": {
+          "max": 0.5039217641291523,
+          "mean": 0.5036857935756186,
+          "min": 0.5034564700799309
+        },
+        "lfru": {
+          "max": 0.47968908386925235,
+          "mean": 0.479656679462253,
+          "min": 0.47962261329079214
+        },
+        "lfu": {
+          "max": 0.49095584691825783,
+          "mean": 0.4909134719244895,
+          "min": 0.4908602954617213
+        },
+        "lru": {
+          "max": 0.5039217641291523,
+          "mean": 0.5036857935756186,
+          "min": 0.5034564700799309
+        },
+        "static": {
+          "initial_load_blocks": 499,
+          "mean": 0.5889999501470662
+        }
+      },
+      "recoverable_gap": 0.4234140443385081,
+      "rho": 0.3,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.03354685333157226,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9664531466684277,
+      "logical_assignments": 240708,
+      "m_belady": 0.4437492729780481,
+      "m_best_causal": 0.5444056699403427,
+      "m_forced_admit": 0.4471259783638267,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.4437492729780481,
+          "mean": 0.4437492729780481,
+          "min": 0.4437492729780481
+        },
+        "belady_forced_admit": {
+          "max": 0.447135118068365,
+          "mean": 0.4471259783638267,
+          "min": 0.4471101916014424
+        },
+        "least_stale": {
+          "max": 0.5464421622879173,
+          "mean": 0.5461280888046929,
+          "min": 0.5459270153048507
+        },
+        "lfru": {
+          "max": 0.54450205227911,
+          "mean": 0.5444056699403427,
+          "min": 0.5442984861325756
+        },
+        "lfu": {
+          "max": 0.5523331173039533,
+          "mean": 0.5522491981986473,
+          "min": 0.5521503232131878
+        },
+        "lru": {
+          "max": 0.5464421622879173,
+          "mean": 0.5461280888046929,
+          "min": 0.5459270153048507
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.18489226420680877,
+      "rho": 0.3,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.0025051115327230293,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.997494888467277,
+      "logical_assignments": 240708,
+      "m_belady": 0.26415823321202453,
+      "m_best_causal": 0.4896970603386676,
+      "m_forced_admit": 0.2647232331289363,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.26415823321202453,
+          "mean": 0.26415823321202453,
+          "min": 0.26415823321202453
+        },
+        "belady_forced_admit": {
+          "max": 0.2647232331289363,
+          "mean": 0.2647232331289363,
+          "min": 0.2647232331289363
+        },
+        "least_stale": {
+          "max": 0.5254540771391063,
+          "mean": 0.5254225036143378,
+          "min": 0.5253834521494923
+        },
+        "lfru": {
+          "max": 0.496913272512754,
+          "mean": 0.49689831663260053,
+          "min": 0.4968841916346777
+        },
+        "lfu": {
+          "max": 0.4897095235721289,
+          "mean": 0.4896970603386676,
+          "min": 0.48968875151636004
+        },
+        "lru": {
+          "max": 0.5254540771391063,
+          "mean": 0.5254225036143378,
+          "min": 0.5253834521494923
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.4605680642041502,
+      "rho": 0.3,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.000703264554059244,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9992967354459408,
+      "logical_assignments": 240708,
+      "m_belady": 0.439823354437742,
+      "m_best_causal": 0.5579698223573791,
+      "m_forced_admit": 0.4399064426608172,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.439823354437742,
+          "mean": 0.439823354437742,
+          "min": 0.439823354437742
+        },
+        "belady_forced_admit": {
+          "max": 0.43990644266081724,
+          "mean": 0.4399064426608172,
+          "min": 0.43990644266081724
+        },
+        "least_stale": {
+          "max": 0.5606419396114795,
+          "mean": 0.5606253219668644,
+          "min": 0.5606087043222494
+        },
+        "lfru": {
+          "max": 0.5580121973511475,
+          "mean": 0.5579698223573791,
+          "min": 0.5579291091280721
+        },
+        "lfu": {
+          "max": 0.5647797331206275,
+          "mean": 0.5647697625338585,
+          "min": 0.5647589610648587
+        },
+        "lru": {
+          "max": 0.5606419396114795,
+          "mean": 0.5606253219668644,
+          "min": 0.5606087043222494
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.21174347282883055,
+      "rho": 0.3,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.03949161891476696,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9605083810852331,
+      "logical_assignments": 240708,
+      "m_belady": 0.19973993386177444,
+      "m_best_causal": 0.38200475264635986,
+      "m_forced_admit": 0.20693786662678434,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.19973993386177444,
+          "mean": 0.19973993386177444,
+          "min": 0.19973993386177444
+        },
+        "belady_forced_admit": {
+          "max": 0.20696030044701463,
+          "mean": 0.20693786662678434,
+          "min": 0.20692291074663077
+        },
+        "least_stale": {
+          "max": 0.4190969971916181,
+          "mean": 0.4188086810575468,
+          "min": 0.41851122521893747
+        },
+        "lfru": {
+          "max": 0.3845447596257706,
+          "mean": 0.38447330375392597,
+          "min": 0.38443259052461903
+        },
+        "lfu": {
+          "max": 0.3820396497000515,
+          "mean": 0.38200475264635986,
+          "min": 0.3819856423550526
+        },
+        "lru": {
+          "max": 0.4190969971916181,
+          "mean": 0.4188086810575468,
+          "min": 0.41851122521893747
+        },
+        "static": {
+          "initial_load_blocks": 666,
+          "mean": 0.48653139903950016
+        }
+      },
+      "recoverable_gap": 0.47712709729901376,
+      "rho": 0.4,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.013161085217015775,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9868389147829842,
+      "logical_assignments": 240708,
+      "m_belady": 0.4307002675440783,
+      "m_best_causal": 0.4923799790617678,
+      "m_forced_admit": 0.43151203948352357,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.4307002675440783,
+          "mean": 0.4307002675440783,
+          "min": 0.4307002675440783
+        },
+        "belady_forced_admit": {
+          "max": 0.43151453213021584,
+          "mean": 0.43151203948352357,
+          "min": 0.43150622330790833
+        },
+        "least_stale": {
+          "max": 0.49310783189590707,
+          "mean": 0.4930330524951393,
+          "min": 0.49287518487129633
+        },
+        "lfru": {
+          "max": 0.4924763614005351,
+          "mean": 0.4923799790617678,
+          "min": 0.4922894128986158
+        },
+        "lfu": {
+          "max": 0.4954509197866294,
+          "mean": 0.4953786330325539,
+          "min": 0.49524735364009503
+        },
+        "lru": {
+          "max": 0.49310783189590707,
+          "mean": 0.4930330524951393,
+          "min": 0.49287518487129633
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.1252685205341217,
+      "rho": 0.4,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.0018430102211178323,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9981569897788821,
+      "logical_assignments": 240708,
+      "m_belady": 0.1897319573923592,
+      "m_best_causal": 0.3813342306861426,
+      "m_forced_admit": 0.19008508234042906,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.1897319573923592,
+          "mean": 0.1897319573923592,
+          "min": 0.1897319573923592
+        },
+        "belady_forced_admit": {
+          "max": 0.19008508234042906,
+          "mean": 0.19008508234042906,
+          "min": 0.19008508234042906
+        },
+        "least_stale": {
+          "max": 0.43677817106203365,
+          "mean": 0.43676487694634164,
+          "min": 0.4367490901839573
+        },
+        "lfru": {
+          "max": 0.3953337653920933,
+          "mean": 0.39532047127640124,
+          "min": 0.3953129933363245
+        },
+        "lfu": {
+          "max": 0.38134586303737306,
+          "mean": 0.3813342306861426,
+          "min": 0.3813250909816043
+        },
+        "lru": {
+          "max": 0.43677817106203365,
+          "mean": 0.43676487694634164,
+          "min": 0.4367490901839573
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.5024523315125144,
+      "rho": 0.4,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.00024266838152444612,
+      "batch": 1,
+      "best_causal": "lfru",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9997573316184756,
+      "logical_assignments": 240708,
+      "m_belady": 0.42881831929142356,
+      "m_best_causal": 0.49729714010336173,
+      "m_forced_admit": 0.4288349369360387,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.4288183192914236,
+          "mean": 0.42881831929142356,
+          "min": 0.4288183192914236
+        },
+        "belady_forced_admit": {
+          "max": 0.4288349369360387,
+          "mean": 0.4288349369360387,
+          "min": 0.4288349369360387
+        },
+        "least_stale": {
+          "max": 0.4992438971700151,
+          "mean": 0.4992314339365539,
+          "min": 0.49921481629193876
+        },
+        "lfru": {
+          "max": 0.4973328680392841,
+          "mean": 0.49729714010336173,
+          "min": 0.4972747062831314
+        },
+        "lfu": {
+          "max": 0.5003905146484537,
+          "mean": 0.500369742592685,
+          "min": 0.5003489705369161
+        },
+        "lru": {
+          "max": 0.4992438971700151,
+          "mean": 0.4992314339365539,
+          "min": 0.49921481629193876
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.13770202015982852,
+      "rho": 0.4,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.07186544342512464,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": 0.9281345565748753,
+      "logical_assignments": 240708,
+      "m_belady": 0.35757016800438707,
+      "m_best_causal": 0.3586569619622114,
+      "m_forced_admit": 0.35764827093407786,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.35757016800438707,
+          "mean": 0.35757016800438707,
+          "min": 0.35757016800438707
+        },
+        "belady_forced_admit": {
+          "max": 0.35766156504976987,
+          "mean": 0.35764827093407786,
+          "min": 0.35764079299400103
+        },
+        "least_stale": {
+          "max": 0.37744902537514335,
+          "mean": 0.3768549445801552,
+          "min": 0.37656829021054555
+        },
+        "lfru": {
+          "max": 0.3587126310716719,
+          "mean": 0.3586611163733652,
+          "min": 0.3586129252039816
+        },
+        "lfu": {
+          "max": 0.35870847666051814,
+          "mean": 0.3586569619622114,
+          "min": 0.3586087707928278
+        },
+        "lru": {
+          "max": 0.37744902537514335,
+          "mean": 0.3768549445801552,
+          "min": 0.37656829021054555
+        },
+        "static": {
+          "initial_load_blocks": 166,
+          "mean": 0.35761586652707844
+        }
+      },
+      "recoverable_gap": 0.0030301766676394705,
+      "rho": 0.1,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.1,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.2099184617256907,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": 0.7900815382743093,
+      "logical_assignments": 240708,
+      "m_belady": 0.35757016800438707,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.3719020556026389,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.35757016800438707,
+          "mean": 0.35757016800438707,
+          "min": 0.35757016800438707
+        },
+        "belady_forced_admit": {
+          "max": 0.37190288648486963,
+          "mean": 0.3719020556026389,
+          "min": 0.3718987320737159
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.16032545071411844,
+      "rho": 0.1,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.1,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.6588568194680263,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": 0.3411431805319736,
+      "logical_assignments": 240708,
+      "m_belady": 0.28919271482460074,
+      "m_best_causal": 0.2965335593333001,
+      "m_forced_admit": 0.29402928028981173,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.28919271482460074,
+          "mean": 0.28919271482460074,
+          "min": 0.28919271482460074
+        },
+        "belady_forced_admit": {
+          "max": 0.29414477291988633,
+          "mean": 0.29402928028981173,
+          "min": 0.2939910597071971
+        },
+        "least_stale": {
+          "max": 0.32913322365687886,
+          "mean": 0.3273086062781462,
+          "min": 0.3256892168104093
+        },
+        "lfru": {
+          "max": 0.2970985592502119,
+          "mean": 0.2970196254382903,
+          "min": 0.2969074563371388
+        },
+        "lfu": {
+          "max": 0.29661664755637535,
+          "mean": 0.2965335593333001,
+          "min": 0.2964421622879173
+        },
+        "lru": {
+          "max": 0.32913322365687886,
+          "mean": 0.3273086062781462,
+          "min": 0.3256892168104093
+        },
+        "static": {
+          "initial_load_blocks": 333,
+          "mean": 0.29946657360785683
+        }
+      },
+      "recoverable_gap": 0.024755526913054566,
+      "rho": 0.2,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.2,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.32053013253313245,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": 0.6794698674668675,
+      "logical_assignments": 240708,
+      "m_belady": 0.28897253103345133,
+      "m_best_causal": 0.32219951144124837,
+      "m_forced_admit": 0.2996227794672383,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.28897253103345133,
+          "mean": 0.28897253103345133,
+          "min": 0.28897253103345133
+        },
+        "belady_forced_admit": {
+          "max": 0.2996618309320837,
+          "mean": 0.2996227794672383,
+          "min": 0.29954135300862456
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.4257066653372551,
+          "mean": 0.4257066653372551,
+          "min": 0.4257066653372551
+        },
+        "lfu": {
+          "max": 0.32221197467470963,
+          "mean": 0.32219951144124837,
+          "min": 0.3221912026189408
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.1031254835215845,
+      "rho": 0.2,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.2,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 1.7135481308643181,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": -0.7135481308643181,
+      "logical_assignments": 240708,
+      "m_belady": 0.22475779782973562,
+      "m_best_causal": 0.2414942586037855,
+      "m_forced_admit": 0.2534365289063928,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.22475779782973562,
+          "mean": 0.22475779782973562,
+          "min": 0.22475779782973562
+        },
+        "belady_forced_admit": {
+          "max": 0.25361433770377384,
+          "mean": 0.2534365289063928,
+          "min": 0.25331522010070295
+        },
+        "least_stale": {
+          "max": 0.2800862455755521,
+          "mean": 0.2784111869983549,
+          "min": 0.27639297405985674
+        },
+        "lfru": {
+          "max": 0.24373930239127906,
+          "mean": 0.24367864798843414,
+          "min": 0.24361467005666618
+        },
+        "lfu": {
+          "max": 0.2415873174136298,
+          "mean": 0.2414942586037855,
+          "min": 0.24140452332286422
+        },
+        "lru": {
+          "max": 0.2800862455755521,
+          "mean": 0.2784111869983549,
+          "min": 0.27639297405985674
+        },
+        "static": {
+          "initial_load_blocks": 499,
+          "mean": 0.24903617661232696
+        }
+      },
+      "recoverable_gap": 0.0693037626269577,
+      "rho": 0.3,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.3,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.16749692561018723,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": 0.8325030743898127,
+      "logical_assignments": 240708,
+      "m_belady": 0.2243465111255131,
+      "m_best_causal": 0.26420974791033125,
+      "m_forced_admit": 0.23102348073184106,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.22434651112551307,
+          "mean": 0.2243465111255131,
+          "min": 0.22434651112551307
+        },
+        "belady_forced_admit": {
+          "max": 0.23106419396114794,
+          "mean": 0.23102348073184106,
+          "min": 0.23099772338268773
+        },
+        "least_stale": {
+          "max": 0.42463482725958424,
+          "mean": 0.42459993020589265,
+          "min": 0.42457666550343154
+        },
+        "lfru": {
+          "max": 0.4205676587400502,
+          "mean": 0.4205626734466657,
+          "min": 0.4205593499177427
+        },
+        "lfu": {
+          "max": 0.26423301261279225,
+          "mean": 0.26420974791033125,
+          "min": 0.2641873140901009
+        },
+        "lru": {
+          "max": 0.42463482725958424,
+          "mean": 0.42459993020589265,
+          "min": 0.42457666550343154
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.15087723711975656,
+      "rho": 0.3,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.3,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 1.9406138992622317,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": -0.9406138992622318,
+      "logical_assignments": 240708,
+      "m_belady": 0.1654037256759227,
+      "m_best_causal": 0.19277049371022148,
+      "m_forced_admit": 0.21851205610116825,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.1654037256759227,
+          "mean": 0.1654037256759227,
+          "min": 0.1654037256759227
+        },
+        "belady_forced_admit": {
+          "max": 0.21879206341293186,
+          "mean": 0.21851205610116825,
+          "min": 0.21805673263871578
+        },
+        "least_stale": {
+          "max": 0.23153364242152316,
+          "mean": 0.23005799557970655,
+          "min": 0.22843029728966216
+        },
+        "lfru": {
+          "max": 0.1965618093291457,
+          "mean": 0.1965377137444539,
+          "min": 0.19647456669491667
+        },
+        "lfu": {
+          "max": 0.1928353025242202,
+          "mean": 0.19277049371022148,
+          "min": 0.1927148246007611
+        },
+        "lru": {
+          "max": 0.23153364242152316,
+          "mean": 0.23005799557970655,
+          "min": 0.22843029728966216
+        },
+        "static": {
+          "initial_load_blocks": 666,
+          "mean": 0.2021744187978796
+        }
+      },
+      "recoverable_gap": 0.14196554414306442,
+      "rho": 0.4,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "per-request reset would re-load the pinned set for every request (D-005)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.4,
+      "scope": "per_layer",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.0650541541229803,
+      "batch": 1,
+      "best_causal": "lfu",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": 0.9349458458770197,
+      "logical_assignments": 240708,
+      "m_belady": 0.16365056416903467,
+      "m_best_causal": 0.2116738953420742,
+      "m_forced_admit": 0.1667746813566645,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.16365056416903467,
+          "mean": 0.16365056416903467,
+          "min": 0.16365056416903467
+        },
+        "belady_forced_admit": {
+          "max": 0.16682868870166342,
+          "mean": 0.1667746813566645,
+          "min": 0.1667414460674344
+        },
+        "least_stale": {
+          "max": 0.41731890921780745,
+          "mean": 0.41731060039549994,
+          "min": 0.41730229157319243
+        },
+        "lfru": {
+          "max": 0.40232563936387655,
+          "mean": 0.40230071289695396,
+          "min": 0.4022882496634927
+        },
+        "lfu": {
+          "max": 0.21168386592884325,
+          "mean": 0.2116738953420742,
+          "min": 0.21165893946192066
+        },
+        "lru": {
+          "max": 0.41731890921780745,
+          "mean": 0.41731060039549994,
+          "min": 0.41730229157319243
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.22687413152874492,
+      "rho": 0.4,
+      "scope": "global",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": null,
+      "batch": 1,
+      "best_causal": "lru",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": false,
+      "event_definition": "E2 (whole-prefill)",
+      "future_victim_share": null,
+      "logical_assignments": 240708,
+      "m_belady": 0.42584376090532927,
+      "m_best_causal": 0.42584376090532927,
+      "m_forced_admit": 0.42584376090532927,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "belady_forced_admit": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "least_stale": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lfu": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "lru": {
+          "max": 0.42584376090532927,
+          "mean": 0.42584376090532927,
+          "min": 0.42584376090532927
+        },
+        "static": {
+          "NA": "global scope (PREREG \u00a73)"
+        }
+      },
+      "recoverable_gap": 0.0,
+      "rho": 0.4,
+      "scope": "global",
+      "start_state": "(ii) per-request reset"
+    },
+    {
+      "admission_share": 0.029977116704802777,
+      "batch": 8,
+      "best_causal": "lfru",
+      "capacity_blocks": 166,
+      "constructed_by_this_paper": true,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.9700228832951973,
+      "logical_assignments": 240708,
+      "m_belady": 0.5261644814463998,
+      "m_best_causal": 0.5515811688851222,
+      "m_forced_admit": 0.5269264004519999,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.5261644814463998,
+          "mean": 0.5261644814463998,
+          "min": 0.5261644814463998
+        },
+        "belady_forced_admit": {
+          "max": 0.5269413563321534,
+          "mean": 0.5269264004519999,
+          "min": 0.5269164298652309
+        },
+        "least_stale": {
+          "max": 0.5788299516426542,
+          "mean": 0.578215929674128,
+          "min": 0.5768482975223092
+        },
+        "lfru": {
+          "max": 0.5516850291639663,
+          "mean": 0.5515811688851222,
+          "min": 0.551498080662047
+        },
+        "lfu": {
+          "max": 0.5530435216112468,
+          "mean": 0.552965418681556,
+          "min": 0.5528690363427887
+        },
+        "lru": {
+          "max": 0.5788299516426542,
+          "mean": 0.578215929674128,
+          "min": 0.5768482975223092
+        },
+        "static": {
+          "NA": "secondary condition; Static not pre-registered for B = 8"
+        }
+      },
+      "recoverable_gap": 0.046079686676206884,
+      "rho": 0.1,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.4523985424675383,
+      "batch": 8,
+      "best_causal": "lfru",
+      "capacity_blocks": 333,
+      "constructed_by_this_paper": true,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.5476014575324617,
+      "logical_assignments": 240708,
+      "m_belady": 0.3930862289579075,
+      "m_best_causal": 0.45944131478804195,
+      "m_forced_admit": 0.42310517307276874,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.3930862289579075,
+          "mean": 0.3930862289579075,
+          "min": 0.3930862289579075
+        },
+        "belady_forced_admit": {
+          "max": 0.42318078335576714,
+          "mean": 0.42310517307276874,
+          "min": 0.42296059956461773
+        },
+        "least_stale": {
+          "max": 0.49575419180085417,
+          "mean": 0.4945336258038785,
+          "min": 0.4925345231566878
+        },
+        "lfru": {
+          "max": 0.45946125596158,
+          "mean": 0.45944131478804195,
+          "min": 0.4593823221496585
+        },
+        "lfu": {
+          "max": 0.46070342489655514,
+          "mean": 0.46065606460940217,
+          "min": 0.46062449108463366
+        },
+        "lru": {
+          "max": 0.49575419180085417,
+          "mean": 0.4945336258038785,
+          "min": 0.4925345231566878
+        },
+        "static": {
+          "NA": "secondary condition; Static not pre-registered for B = 8"
+        }
+      },
+      "recoverable_gap": 0.1444255962499729,
+      "rho": 0.2,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 1.1369460714344308,
+      "batch": 8,
+      "best_causal": "lfru",
+      "capacity_blocks": 499,
+      "constructed_by_this_paper": true,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": -0.1369460714344309,
+      "logical_assignments": 240708,
+      "m_belady": 0.2766380843179288,
+      "m_best_causal": 0.3779242900111338,
+      "m_forced_admit": 0.3917950379713179,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.2766380843179288,
+          "mean": 0.2766380843179288,
+          "min": 0.2766380843179288
+        },
+        "belady_forced_admit": {
+          "max": 0.3919271482460076,
+          "mean": 0.3917950379713179,
+          "min": 0.3916155674094754
+        },
+        "least_stale": {
+          "max": 0.4137835053259551,
+          "mean": 0.41191900560014627,
+          "min": 0.41016916762218125
+        },
+        "lfru": {
+          "max": 0.37799740764744005,
+          "mean": 0.3779242900111338,
+          "min": 0.37783954002359704
+        },
+        "lfu": {
+          "max": 0.37877012812204,
+          "mean": 0.37870531930804124,
+          "min": 0.37863718696511955
+        },
+        "lru": {
+          "max": 0.4137835053259551,
+          "mean": 0.41191900560014627,
+          "min": 0.41016916762218125
+        },
+        "static": {
+          "NA": "secondary condition; Static not pre-registered for B = 8"
+        }
+      },
+      "recoverable_gap": 0.2680066044186286,
+      "rho": 0.3,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    },
+    {
+      "admission_share": 0.5030113568912984,
+      "batch": 8,
+      "best_causal": "lfu",
+      "capacity_blocks": 666,
+      "constructed_by_this_paper": true,
+      "event_definition": "E1 (per-token)",
+      "future_victim_share": 0.4969886431087016,
+      "logical_assignments": 240708,
+      "m_belady": 0.19773750768566065,
+      "m_best_causal": 0.30272363195240704,
+      "m_forced_admit": 0.2505467205078352,
+      "miss_fraction": {
+        "belady": {
+          "max": 0.19773750768566065,
+          "mean": 0.19773750768566065,
+          "min": 0.19773750768566065
+        },
+        "belady_forced_admit": {
+          "max": 0.25106352925536335,
+          "mean": 0.2505467205078352,
+          "min": 0.24968841916346776
+        },
+        "least_stale": {
+          "max": 0.33074513518453896,
+          "mean": 0.3295403559499476,
+          "min": 0.32705601807999735
+        },
+        "lfru": {
+          "max": 0.3058352859065756,
+          "mean": 0.30576964621034614,
+          "min": 0.30569819033850143
+        },
+        "lfu": {
+          "max": 0.3027859481197135,
+          "mean": 0.30272363195240704,
+          "min": 0.30266131578510064
+        },
+        "lru": {
+          "max": 0.33074513518453896,
+          "mean": 0.3295403559499476,
+          "min": 0.32705601807999735
+        },
+        "static": {
+          "NA": "secondary condition; Static not pre-registered for B = 8"
+        }
+      },
+      "recoverable_gap": 0.34680518197288235,
+      "rho": 0.4,
+      "scope": "per_layer",
+      "start_state": "(i) persistent, cold start"
+    }
+  ]
+}

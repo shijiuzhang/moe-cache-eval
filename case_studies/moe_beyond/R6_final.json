@@ -1,0 +1,52 @@
+{
+  "a": {
+    "hits": 12,
+    "misses": 18,
+    "pass": true
+  },
+  "b": {
+    "cache-events-controller-probe-v0.1.3-olmoe-decode64-fcfs-b1-v1": {
+      "arrival_offsets_all_zero": true,
+      "events_content_equal": true,
+      "frozen_events_match_manifest": true,
+      "pass": true,
+      "requests_byte_equal": true,
+      "schedule_byte_equal_after_dropping_arrival_offsets": true
+    },
+    "cache-events-controller-probe-v0.1.3-olmoe-decode64-fcfs-b8-v1": {
+      "arrival_offsets_all_zero": true,
+      "events_content_equal": true,
+      "frozen_events_match_manifest": true,
+      "pass": true,
+      "requests_byte_equal": true,
+      "schedule_byte_equal_after_dropping_arrival_offsets": true
+    }
+  },
+  "c": {
+    "frozen_payload_sha256": "60464b33e6e7d82eeab2879822ab019412a00092b78507c5c37b821b0c44eba2",
+    "headers_equal": true,
+    "pass": true,
+    "resaved_payload_sha256": "60464b33e6e7d82eeab2879822ab019412a00092b78507c5c37b821b0c44eba2"
+  },
+  "d": {
+    "case_study_tests": {
+      "pass": true,
+      "returncode": 0,
+      "tail": [
+        "Ran 14 tests in 0.028s",
+        "",
+        "OK"
+      ]
+    },
+    "package_tests": {
+      "pass": true,
+      "returncode": 0,
+      "tail": [
+        "Ran 115 tests in 12.129s",
+        "",
+        "OK"
+      ]
+    }
+  },
+  "overall_pass": true
+}

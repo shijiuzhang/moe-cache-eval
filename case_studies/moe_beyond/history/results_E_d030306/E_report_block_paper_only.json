@@ -1,0 +1,162 @@
+{
+  "fields": {
+    "absolute_bytes_per_output_token": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "bandwidth_budget_assumed": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "cache_scope": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "capacity_per_layer": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "chat_template_applied": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "concurrency": {
+      "kind": "paper",
+      "source": "Abstract; \u00a75 Limitations",
+      "value": "1"
+    },
+    "conformance_trace": {
+      "kind": "paper",
+      "source": "no conformance or reference trace appears in \u00a74.1.4",
+      "value": "no"
+    },
+    "decode_steps_recorded": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "dedup_credited_to_policy": {
+      "kind": "paper",
+      "source": "Abstract; \u00a75 Limitations",
+      "value": "no (batch size one)"
+    },
+    "distinct_prompt_heads_finals": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "effect_stable_across_position_bands": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "event_unit": {
+      "kind": "paper",
+      "source": "\u00a74.1.4 Simulator",
+      "value": "token-by-token replay of each test prompt"
+    },
+    "expert_jaccard_low_text_overlap": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "experts_topk_layers": {
+      "kind": "paper",
+      "source": "\u00a74.1.1 Models; \u00a74.1.4 Simulator",
+      "value": "64 routed (+2 shared) / 6 / 27"
+    },
+    "forced_admission_decomposition": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "initial_pinned_load_counted": {
+      "kind": "paper",
+      "source": "\u00a74.1.3 Baseline",
+      "value": "n/a (only MoE-Infinity is compared)"
+    },
+    "intra_event_order": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "miss_denominator": {
+      "kind": "paper",
+      "source": "\u00a74.1.4; \u00a74.2.1 GPU Cache Hit Rate",
+      "value": "per ground-truth expert activation"
+    },
+    "offline_bound_reported": {
+      "kind": "paper",
+      "source": "no offline optimum in \u00a74.2 Results",
+      "value": "no"
+    },
+    "position_locked_cohorts": {
+      "kind": "paper",
+      "source": "Abstract; \u00a75 Limitations",
+      "value": "no (batch size one)"
+    },
+    "positional_token_agreement": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "r_union_over_capacity": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "residency_fraction": {
+      "kind": "paper",
+      "source": "Abstract; \u00a74.2.1",
+      "value": "0.10 headline; capacity swept"
+    },
+    "retention_decision": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "service_discipline": {
+      "kind": "paper",
+      "source": "\u00a74.1.4 Simulator",
+      "value": "one prompt replayed at a time"
+    },
+    "static_fit_source": {
+      "kind": "paper",
+      "source": "\u00a74.1.3 Baseline",
+      "value": "n/a (only MoE-Infinity is compared)"
+    },
+    "static_quota_rule": {
+      "kind": "paper",
+      "source": "\u00a74.1.3 Baseline",
+      "value": "n/a (only MoE-Infinity is compared)"
+    },
+    "templates_per_category": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "union_per_layer_step": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    },
+    "unique_generated_sequences": {
+      "kind": "NR",
+      "source": "not reported in the public text",
+      "value": "NR"
+    }
+  },
+  "filled_count": 13,
+  "inputs": {
+    "paper_files": {
+      "/Users/zhangyu/Documents/moe-cache-eval-release/third_party/moebeyond-paper/2508.17137v1.html": "ef57960064f883656578c12ed6df67d2d66313181ee333fd0ceb29888f0fc590"
+    }
+  },
+  "mode": "paper_only",
+  "total_fields": 30
+}

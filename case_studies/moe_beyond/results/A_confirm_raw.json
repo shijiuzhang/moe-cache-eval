@@ -1,0 +1,63 @@
+{
+  "confirmation": {
+    "denominator": {
+      "measured_accesses": 7,
+      "sentinel_plus_probe_expert_accesses": 7
+    },
+    "prefetch": {
+      "prefetch_file_sha256": "0d9a135ced285bc87f539579eb97a3407fe40d57cd3d1f4052663c2e05deecf5",
+      "same_denominator": true,
+      "with_predictions": {
+        "hits": 7,
+        "misses": 0,
+        "prediction_hits": 6,
+        "prediction_misses": 1
+      },
+      "without_predictions": {
+        "hits": 4,
+        "misses": 3,
+        "prediction_hits": 0,
+        "prediction_misses": 7
+      }
+    },
+    "seed": 11,
+    "stateless_between_calls": {
+      "first": {
+        "hits": 4,
+        "misses": 3,
+        "prediction_hits": 0,
+        "prediction_misses": 7
+      },
+      "identical": true,
+      "second": {
+        "hits": 4,
+        "misses": 3,
+        "prediction_hits": 0,
+        "prediction_misses": 7
+      }
+    }
+  },
+  "environment": {
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.0.6",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1"
+    },
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13"
+  },
+  "inputs": {
+    "files": {
+      "cache_simulator/infinity_moe_sim.py": "734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa"
+    },
+    "inputs_manifest_sha256": "bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+    "prereg_commit": "08938d1e4a9240b6afbb3017ed499468df1895bf",
+    "prereg_sha256": "187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d",
+    "third_party_commit": "47031eefc7808e996ecd5c01d7ed90aa32e32514"
+  },
+  "probe_file_sha256": {
+    "A0.csv": "e34390f51a28e309abe2dea13ef9e7b0b25caead305d5245772a098a14664d53",
+    "EXPECTED.json": "1322916d9011862aed2fd1e3c877920767874c7b71d7939b6a05a76893d5037b"
+  }
+}

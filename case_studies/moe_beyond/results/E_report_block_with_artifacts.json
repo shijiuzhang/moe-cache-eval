@@ -1,0 +1,205 @@
+{
+  "answered_count": 19,
+  "fields": {
+    "absolute_bytes_per_output_token": {
+      "kind": "not_applicable",
+      "provenance": "code_inspection",
+      "source": "expert_activation_scripts/generate_deepseek_logs_eamc.py sha256 17458e1904928fb8c381286cea7ef508b33b685a7d6910a2ac630b414525077e lines 122-124",
+      "value": "no generated token is recorded"
+    },
+    "bandwidth_budget_assumed": {
+      "kind": "DECLARE",
+      "provenance": "",
+      "source": "only the original authors can state the bandwidth they assumed",
+      "value": "DECLARE"
+    },
+    "cache_scope": {
+      "kind": "answered",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa lines 81-90 and 275 (one global cache; int(1664 x 0.10))",
+      "value": "global"
+    },
+    "capacity_per_layer": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": "166 blocks shared by all layers (global; round(1664 x 0.1))"
+    },
+    "chat_template_applied": {
+      "kind": "answered",
+      "provenance": "code_inspection",
+      "source": "expert_activation_scripts/generate_deepseek_logs_eamc.py sha256 17458e1904928fb8c381286cea7ef508b33b685a7d6910a2ac630b414525077e line 122",
+      "value": "no"
+    },
+    "concurrency": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": 1
+    },
+    "conformance_trace": {
+      "kind": "answered",
+      "provenance": "analyst_inference",
+      "source": "repository inventory INPUTS.sha256 sha256 bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+      "value": "no (none in the public repository)"
+    },
+    "decode_steps_recorded": {
+      "kind": "answered",
+      "provenance": "code_inspection",
+      "source": "expert_activation_scripts/generate_deepseek_logs_eamc.py sha256 17458e1904928fb8c381286cea7ef508b33b685a7d6910a2ac630b414525077e lines 122-124",
+      "value": 0
+    },
+    "dedup_credited_to_policy": {
+      "kind": "not_applicable",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa lines 284-292",
+      "value": "B = 1; nothing to deduplicate"
+    },
+    "distinct_prompt_heads_finals": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": "100 / 100"
+    },
+    "effect_stable_across_position_bands": {
+      "kind": "NA",
+      "provenance": "",
+      "source": "",
+      "value": "no category labels or matched template arm"
+    },
+    "event_unit": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "per-access (probe A2, five seeds)"
+    },
+    "expert_jaccard_low_text_overlap": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": 0.14737107054939225
+    },
+    "experts_topk_layers": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": "64 / 6 / 26"
+    },
+    "forced_admission_decomposition": {
+      "kind": "NA",
+      "provenance": "",
+      "source": "",
+      "value": "not defined for the original prefetch-inclusive per-access contract; a package-contract analysis is reported separately"
+    },
+    "initial_pinned_load_counted": {
+      "kind": "not_applicable",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa",
+      "value": "no static policy in the simulator"
+    },
+    "intra_event_order": {
+      "kind": "answered",
+      "provenance": "data_inspection",
+      "source": "canonical/test-e1-source sha256 e13cdf4aaece26c830b0552dd33623dbc8feaa9f3698db666f7123ed0f9087ef; cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa lines 242-251",
+      "value": "ascending id (40118 of 40118 replayed rows ascending; accessed in list order)"
+    },
+    "miss_denominator": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "denominator check in results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "per expert access, pre-dedup"
+    },
+    "offline_bound_reported": {
+      "kind": "answered",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa (no offline optimum)",
+      "value": "no"
+    },
+    "position_locked_cohorts": {
+      "kind": "not_applicable",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa lines 284-292 (one test file per replay call)",
+      "value": "B = 1; no concurrent requests"
+    },
+    "positional_token_agreement": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "results/C_workload.json sha256 42bd7984fe6a4c76f5bf365bb7de78e7599d7b871e686d4581a44fd5ec95dc25",
+      "value": {
+        "mean": 0.13429799792753483,
+        "p95": 0.2857142857142857,
+        "scope": "input sequences, first 48 records; post-hoc decomposition in C_exploratory_positional (D-004)"
+      }
+    },
+    "r_union_over_capacity": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": {
+        "fraction_gt_1": 0.0,
+        "mean": 0.03614457831325301,
+        "p95": 0.03614457831325301
+      }
+    },
+    "residency_fraction": {
+      "kind": "answered",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa lines 81-90 and 275 (one global cache; int(1664 x 0.10))",
+      "value": 0.1
+    },
+    "retention_decision": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "probe A2; results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "immediate"
+    },
+    "service_discipline": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "contract check in results/A_contract.json sha256 8e99a6aa6ce5bddeb320f5251b77177c2418a14dff5890cdfae2c946576c50e6",
+      "value": "one prompt replayed at a time; cache rebuilt for every prompt"
+    },
+    "static_fit_source": {
+      "kind": "not_applicable",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa",
+      "value": "no static policy in the simulator"
+    },
+    "static_quota_rule": {
+      "kind": "not_applicable",
+      "provenance": "code_inspection",
+      "source": "cache_simulator/infinity_moe_sim.py sha256 734891c7b3eed32416d6d806e354d7801363175ce12940906cdb8a0898fa9dfa",
+      "value": "no static policy in the simulator"
+    },
+    "templates_per_category": {
+      "kind": "NA",
+      "provenance": "",
+      "source": "",
+      "value": "no category labels in the public artifact"
+    },
+    "union_per_layer_step": {
+      "kind": "answered",
+      "provenance": "execution",
+      "source": "event trace events.safetensors sha256 e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+      "value": {
+        "mean": 6.0,
+        "p95": 6.0
+      }
+    },
+    "unique_generated_sequences": {
+      "kind": "not_applicable",
+      "provenance": "code_inspection",
+      "source": "expert_activation_scripts/generate_deepseek_logs_eamc.py sha256 17458e1904928fb8c381286cea7ef508b33b685a7d6910a2ac630b414525077e lines 122-124",
+      "value": "no generated token is recorded"
+    }
+  },
+  "inputs": {
+    "events_sha256": "e52f4782889d401091798e87c88a8cb28956cbacffae5cd78f03f1a9e2471d10",
+    "facts": {
+      "/Users/zhangyu/Documents/moe-cache-eval-release/case_studies/moe_beyond/results/E_facts.json": "630b4d508439388bdd7c222c7eae42486186227c12cf954ca25fb98831a4bf54"
+    }
+  },
+  "mode": "with_artifacts",
+  "not_applicable_count": 7,
+  "total_fields": 30
+}

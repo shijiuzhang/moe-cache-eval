@@ -1,0 +1,79 @@
+{
+  "category_dependent_items": "NA(no category labels)",
+  "chat_template_applied": {
+    "evidence": "all three collection scripts call tokenizer(text) on raw text (generate_deepseek_logs_eamc.py:122); the script instance that produced the test set is not identified in the repository",
+    "value": "no"
+  },
+  "decode_steps_recorded": {
+    "evidence": "one prefill forward pass per prompt (generate_deepseek_logs_eamc.py:122-124); no generate(), max_new_tokens or do_sample in any repository script",
+    "value": 0
+  },
+  "inputs": {
+    "files": {
+      "canonical/C_workload_local/C_prompts_for_audit.jsonl": "3050eb7d0a619385332102414f945de0b94365eba71f08d935e594838651aa2a",
+      "canonical/C_workload_local/detector_input_jsonl_local": "782657f5d54905273c3fac298ea404d71242eebd6ca98fa0f77df9bde89aa51d",
+      "canonical/C_workload_local/detector_manifest_local": "41e0b6c90895e91862762c5eb653e07850c985e42ad098193454211548aeaaae",
+      "canonical/C_workload_local/detector_pairwise_csv_local": "9780da7415fa1e6166bc707e6d5fec0503a3ef0c9bc23b6893cbe363578ef6f9",
+      "canonical/test-e1-source/routes-00000.jsonl": "66f353bcae898d3fd95fdc7138015a9dccc2a928ffd0ab0323003d30965f4717",
+      "canonical/test-e1-source/routes-00000.safetensors": "e13cdf4aaece26c830b0552dd33623dbc8feaa9f3698db666f7123ed0f9087ef",
+      "canonical/test_prompts.jsonl": "e90e1c305fe8596adebc868917c37b306be3e6c0f694325d17e4c8d9527cb2a0",
+      "expert_activation_scripts/generate_deepseek_logs.py": "7d431369dca8aca67575f17317a2d45e964c2511197dd5a8a41eca2e314f134b",
+      "expert_activation_scripts/generate_deepseek_logs_eamc.py": "17458e1904928fb8c381286cea7ef508b33b685a7d6910a2ac630b414525077e",
+      "expert_activation_scripts/generate_deepseek_logs_v2.py": "64e06f854362d8879efd7d7a7e46c72d749110f25eb221fcf1171cc20c903634",
+      "scripts/audit_external_route_contamination.py": "3a2ee086bbe4dee11599024be66b639c1d721eaab794e0a7ab8dc6aecf1b9f07",
+      "scripts/audit_probe_diversity.py": "03f2cd86366d68dea5633224900d0bc0e9a6cee2507df12fc10eb5fe5f2f774c"
+    },
+    "inputs_manifest_sha256": "bc8213a0a58672ab42ba031801de3028345d3865619925019ff53b45e2a6512c",
+    "prereg_commit": "08938d1e4a9240b6afbb3017ed499468df1895bf",
+    "prereg_sha256": "187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d",
+    "third_party_commit": "47031eefc7808e996ecd5c01d7ed90aa32e32514"
+  },
+  "prompt_side": {
+    "audit_probe_printout": [
+      "=== prompt-side audit: /Users/zhangyu/Documents/moe-cache-eval-release/case_studies/moe_beyond/canonical/C_workload_local/C_prompts_for_audit.jsonl (100 records) ===",
+      "cell                                                       n heads tails jacc.mean jacc.p95 chars.med",
+      "-----------------------------------------------------------------------------------------------------",
+      "webglm_qa_test                                           100   100   100    0.0000   0.0000        64",
+      "",
+      "No contaminated cell detected."
+    ],
+    "distinct_final_lines": 100,
+    "distinct_prompt_heads_70_chars": 100,
+    "flag_rules": "heads <= 2, or final lines <= 2, or p95 5-gram Jaccard >= 0.30 (audit_probe_diversity.py:96-101)",
+    "input_sha256": "3050eb7d0a619385332102414f945de0b94365eba71f08d935e594838651aa2a",
+    "max_repeated_template_count": "NA(no skeleton-clustering rule exists in the paper, \u00a75.6)",
+    "median_prompt_chars": 64,
+    "prompt_side_flag": false,
+    "records": 100,
+    "word_5gram_jaccard_mean": 1.2626262626262626e-05,
+    "word_5gram_jaccard_p95": 0.0
+  },
+  "route_side": {
+    "contamination_flag": true,
+    "expert_jaccard_higher_token_mean": 0.24635960733153006,
+    "expert_jaccard_low_token_mean": 0.14737107054939225,
+    "expert_jaccard_mean": 0.24311264291580395,
+    "expert_jaccard_pairwise_quantiles": {
+      "p25": 0.17725136169192113,
+      "p5": 0.14538155471979,
+      "p50": 0.21470005463511954,
+      "p75": 0.3067360524091294,
+      "p95": 0.40857760295260287
+    },
+    "higher_token_pair_count": 1091,
+    "layers": 26,
+    "malformed_or_partial_lines_skipped": 0,
+    "pair_count": 1128,
+    "records": 48,
+    "spearman_p_value": 0.0,
+    "spearman_token_agreement_vs_expert_jaccard": 0.8654103249679507,
+    "token_5gram_jaccard_mean": 2.110773387369132e-05,
+    "token_5gram_jaccard_p95": 0.0,
+    "token_positional_agreement_mean": 0.13429799792753483,
+    "token_positional_agreement_p95": 0.2857142857142857,
+    "tokens_per_record_audited": 512,
+    "top_k": 6,
+    "unique_token_sequences": 48
+  },
+  "route_side_scope": "first 48 complete test records in predicted numbering, prompt input sequences (no generated tokens exist), detector defaults frozen in \u00a75.8"
+}

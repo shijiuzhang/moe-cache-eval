@@ -1,0 +1,38 @@
+% Generated for the SPE revision; every number is a \CS* macro (case_study_macros.tex).
+% Deliberately contains no residency-gap figure: those are not comparable with the
+% prefetch-inclusive hit rates reported in the first block (PREREG §5).
+% Revised after the 2026-10-19 audit (DEVIATIONS D-006, D-007). Previous version: history/paper_d030306/.
+\begin{table}[t]
+\centering
+\caption{External case study: MoE-Beyond's public artifact run through the
+package. Contract fields were obtained by executing the published simulator;
+regime and workload fields by the package's diagnostics.}
+\label{tab:case-study}
+\small
+\begin{tabular}{@{}p{0.48\columnwidth}p{0.46\columnwidth}@{}}
+\toprule
+\multicolumn{2}{@{}l}{\emph{Execution contract of the published simulator}}\\
+Reproduction at 10\%, mean of \CSseeds{} seeds & \CSreproInfinity{} vs \CSreportedInfinity{} (MoE-Infinity); \CSreproBeyond{} vs \CSreportedBeyond{} (MoE-Beyond)\\
+Executed retention & per-access (in-event probe: \CSprobeAtwoMisses{} misses)\\
+Cache scope and capacity at 10\% & global, \CStheirCapacity{} blocks\\
+Start state & rebuilt per prompt; random pre-fill; first 10 tokens not counted\\
+Hit denominator & each expert access\\
+Prefetch loads counted as hits & no (they change residency)\\
+Event fit at the reported point & all events fit (capacity observation only)\\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Operating regime, our frame ($\rho = 40\%$, per-layer)}}\\
+$\bar r$, per-token events & \CSrbarEoneRhoForty{} (nearest: \CSnearestEone{})\\
+$\bar r$, whole-prefill events & \CSrbarEtwoRhoForty{} (nearest: \CSnearestEtwo{})\\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Workload construction (\CStestPrompts{} test prompts)}}\\
+Distinct heads / final lines & \CSheadsDistinct{} / \CSfinalsDistinct{}\\
+Chat template; decode steps recorded & no; none (one prefill pass per prompt)\\
+\S5.8 detector flag (first \CSdetectorRecords{} records) & \CSdetectorFlag{} (length-sensitive; see text)\\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Reporting block (Appendix~B.1), published configuration}}\\
+Answered from the paper text & \CSfieldsPaperOnly{} of \CSfieldsTotal{} (\CSfieldsPaperOnlyNotApplicable{} not applicable)\\
+Answered with artifact, package and analyst steps & \CSfieldsWithArtifacts{} of \CSfieldsTotal{} (\CSfieldsWithArtifactsNotApplicable{} not applicable)\\
+Provenance of the \CSfieldsAnsweredOnlyWithArtifacts{} added answers & \CSaddedByExecution{} execution, \CSaddedByCodeInspection{} code, \CSaddedByDataInspection{} data\\
+\bottomrule
+\end{tabular}
+\end{table}
