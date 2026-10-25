@@ -20,9 +20,8 @@ import prereg_guard  # noqa: E402
 from moe_controller.events import sha256_file  # noqa: E402
 
 RESULTS = CASE_DIR / "results"
-LAB_PAPER = Path("/Users/zhangyu/Documents/moe-hierarchy-lab/paper")
 PAPER_FILES = ("case_study_macros.tex", "case_study_table.tex", "case_study_section.tex",
-               "response_point3_ii.md", "how_to_use_walkthrough.md")
+               "how_to_use_walkthrough.md")
 NOTE = ("These are prefetch-free residency results under our replay contract and are not "
         "comparable with the prefetch-inclusive hit rates reported by MoE-Beyond.")
 FORBIDDEN = ("incorrect", "wrong", "flawed", "deficient", "overestimat", "underestimat", "inflated",
@@ -137,7 +136,7 @@ def main() -> None:
                 + (tail[-1].strip() if tail else "no summary line found") + ".", ""]
     out += ["## Final R6 regression", "", "```json", json.dumps(r6, indent=2, sort_keys=True), "```", ""]
     hits = []
-    for name in ("case_study_section.tex", "response_point3_ii.md"):
+    for name in ("case_study_section.tex",):
         for n, line in enumerate((CASE_DIR / "paper" / name).read_text(encoding="utf-8").splitlines(), 1):
             hits += [f"{name}:{n} [{w}]" for w in FORBIDDEN if w in line.lower()]
     out += ["## Forbidden-word check (protocol §6.5)", "", "No hits." if not hits else "\n".join(f"- {h}" for h in hits), ""]
@@ -157,10 +156,10 @@ def main() -> None:
             "- [x] Every table with Belady or gap carries the non-comparability note.",
             "- [x] Every constructed B > 1 result is labelled “constructed by this paper”.",
             "- [x] The first paragraph lists every deviation.", "",
-            "## Paper files (lab repository copies; the 2026-10-18 versions are archived byte-for-byte under history/)", "", "| file | sha256 | identical to source |", "|---|---|---|"]
+            "## Public paper files", "", "| file | sha256 |", "|---|---|"]
     for name in PAPER_FILES:
-        src, dst = CASE_DIR / "paper" / name, LAB_PAPER / name
-        out.append(f"| {name} | `{sha256_file(src)}` | {dst.is_file() and sha256_file(dst) == sha256_file(src)} |")
+        src = CASE_DIR / "paper" / name
+        out.append(f"| {name} | `{sha256_file(src)}` |")
     out.append("")
     (CASE_DIR / "REPORT.md").write_text("\n".join(out), encoding="utf-8")
     print(CASE_DIR / "REPORT.md")

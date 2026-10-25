@@ -1,5 +1,7 @@
 # MoE-Beyond external case study — report
 
+Public historical copy: correspondence omitted and journal-specific header comments removed. Numerical analyses are unchanged; the original copy is retained privately.
+
 **Deviations from the protocol and the pre-registration** (full text in `DEVIATIONS.md`): D-001 — Location of the reporting-block generator (protocol path, not PREREG); D-002 — Seeding of the reproduction runs (clarification of PREREG P3); D-003 — R6 compares safetensors files by content, not by raw file hash (approved by the author 2026-10-18); D-004 — Post-hoc decomposition of the route-side positional agreement (approved by the author 2026-10-18); D-005 — Static under the per-request reset column (clarification of PREREG §3). In addition, `RECON.md` §7 corrects a stage-0 descriptive statistic (test-prompt lengths); the reported version is archived under `history/`, and PREREG was unaffected.
 
 Pre-registration: `PREREG.md` sha256 `187427d8f9173f644d597bab27283864c2df6d3e5089a34fcdc20fc16170a69d`, commit `08938d1e4a9240b6afbb3017ed499468df1895bf`. Third-party commit `47031eefc7808e996ecd5c01d7ed90aa32e32514`.
@@ -163,12 +165,11 @@ No hits.
 - [x] Every constructed B > 1 result is labelled “constructed by this paper”.
 - [x] The first paragraph lists every deviation.
 
-## Paper files (lab repository copies, new files only)
+## Public historical paper files
 
-| file | sha256 | identical to source |
-|---|---|---|
-| case_study_macros.tex | `a961ba84c8592106c4e9bd7e70e6694656089c4a85cb5f11786c5481f4ebd84d` | True |
-| case_study_table.tex | `db7f7a7e0d4263f532f9d68f9c89816b5214c61a33e7408e1690792e67041bbc` | True |
-| case_study_section.tex | `60012ebed0c28629352534d6fac2d35b6dc0338cd6d2b961feca7bbefbf8de7f` | True |
-| response_point3_ii.md | `be02beff808e5927af5b771d32f4c6f6ea7c5e4267a5ce8be977d36fc7604595` | True |
-| how_to_use_walkthrough.md | `6628d7fc7fe01d17ed74a0d4943aa7b5da693ae39c2711ea308a6608f673c35d` | True |
+| file | sha256 |
+|---|---|
+| case_study_macros.tex | `a961ba84c8592106c4e9bd7e70e6694656089c4a85cb5f11786c5481f4ebd84d` |
+| case_study_table.tex | `7bd93feaa4b1e5b083d0e546f2642fdf8bc60b627535720f2186f0bf05b3fe79` |
+| case_study_section.tex | `bddf7ab76afbe8466ef18f0c6ce54fc889e5f4c3bee3ec9be475583970850754` |
+| how_to_use_walkthrough.md | `6628d7fc7fe01d17ed74a0d4943aa7b5da693ae39c2711ea308a6608f673c35d` |

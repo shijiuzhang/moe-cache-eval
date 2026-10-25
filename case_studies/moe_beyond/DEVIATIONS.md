@@ -9,7 +9,7 @@ Every change or clarification is appended here, in order.
 - Results read before this change: **none**. No analysis script had run, and `results/` did not exist.
 - Protocol §4.4 names `tools/report_block.py` (`python -m tools.report_block`).
 - Implemented instead as the package module `moe_controller/report_block.py` (`python -m moe_controller.report_block`).
-- Reason: the reviewer asks what a reader can do with the *released* artifact. A top-level `tools` package
+- Reason: readers need the generator in the *released* artifact. A top-level `tools` package
   is not included in the built distribution (`pyproject.toml` packages only `moe_controller*` and `oicap*`),
   so the generator would be absent from what readers install. The change is a new file;
   no existing module is modified (R1).

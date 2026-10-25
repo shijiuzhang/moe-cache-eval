@@ -170,12 +170,11 @@ No hits.
 - [x] Every constructed B > 1 result is labelled “constructed by this paper”.
 - [x] The first paragraph lists every deviation.
 
-## Paper files (lab repository copies; the 2026-10-18 versions are archived byte-for-byte under history/)
+## Public paper files
 
-| file | sha256 | identical to source |
-|---|---|---|
-| case_study_macros.tex | `097d0c703804e25d826ba04d334c8c5c95a5c3b01f003b318ec1dbf4f9c7a897` | True |
-| case_study_table.tex | `10c892a437fb6476038284630d4575d46934d1e2006fffcc700586befabdedd0` | True |
-| case_study_section.tex | `8ce88da00d411b1cbe68023397d2ef6f1517cd88cdab429142c3f6184e95a937` | True |
-| response_point3_ii.md | `dd80bcb44bb510b3ebaef119b8daac9129d7860dc63f6d757819337f6ef1a1a4` | True |
-| how_to_use_walkthrough.md | `ae3d954d8cfd037bb0fcfc462d156ea941b55cc100bc6207b902106b721927dd` | True |
+| file | sha256 |
+|---|---|
+| case_study_macros.tex | `097d0c703804e25d826ba04d334c8c5c95a5c3b01f003b318ec1dbf4f9c7a897` |
+| case_study_table.tex | `3c82c6c6e4ea0ae6bbb493052517d54a4614c8fd36f2034265213b791d2509aa` |
+| case_study_section.tex | `8ca7cd997951b79b80f7c7cd9616867faf735245de62f8a031b7220c04e72db9` |
+| how_to_use_walkthrough.md | `ae3d954d8cfd037bb0fcfc462d156ea941b55cc100bc6207b902106b721927dd` |
